@@ -20,6 +20,8 @@ body {
   margin: 0;
   padding: 0;
   font-size: 16px;
+  --app-card-shadow: 0 0 5px #ccc;
+  --app-card-radius: 5px;
 }
 
 #app {

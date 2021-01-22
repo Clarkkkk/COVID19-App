@@ -72,14 +72,21 @@ export default {
 <style scoped>
 #app-menu {
   height: 100vh;
+  width: 5rem;
 }
 
 .ant-menu {
   box-sizing: border-box;
   height: 100%;
+  position: absolute;
+  z-index: 10;
 }
 
 @media screen and (min-device-aspect-ratio: 3/4) {
+  #app-menu {
+    height: 100vh;
+    width: 5rem;
+  }
   .ant-menu {
     transform: translateX(0);
     width: 10rem;
@@ -95,6 +102,10 @@ export default {
 }
 
 @media not screen and (min-device-aspect-ratio: 3/4) {
+  #app-menu {
+    height: 100vh;
+    width: 0;
+  }
   .ant-menu {
     padding-top: 3rem;
     width: 100vw;
@@ -106,14 +117,14 @@ export default {
   }
 
   .collapse-button {
-    position: absolute;
+    position: fixed;
     height: 2.5rem;
     width: 3.5rem;
     margin-left: 0.75rem;
     margin-top: 0.5rem;
     left: 0;
     top: 0;
-    z-index: 10;
+    z-index: 20;
   }
 }
 
