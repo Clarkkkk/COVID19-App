@@ -32,4 +32,21 @@ body {
   color: #2c3e50;
   display: flex;
 }
+
+/* global scrollbar style */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;    /* color of the scroll thumb */
+  border-radius: 8px;       /* roundness of the scroll thumb */
+  border: 2px solid #fff;  /* creates padding around scroll thumb */
+}
+
+:root, body * {
+  scrollbar-width: thin;          /* "auto" or "thin" */
+  scrollbar-color: #ccc #fff;   /* scroll thumb and track */
+}
+
 </style>

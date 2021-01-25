@@ -36,8 +36,9 @@ export default {
 
 <style scoped>
 #today-brief {
-  min-width: 20rem;
-  min-height: 25rem;
+  min-width: 18rem;
+  min-height: 22rem;
+  margin: 1.5rem;
   padding: 2rem;
   box-sizing: border-box;
   color: #222;
@@ -47,6 +48,18 @@ export default {
   align-items: end;
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
+}
+
+@media not screen and (min-aspect-ratio: 4/3) {
+  #today-brief {
+    margin: 0.5rem;
+  }
+}
+
+@media not screen and (min-device-aspect-ratio: 3/4) {
+  #today-brief {
+    margin: 0.5rem;
+  }
 }
 
 .title {

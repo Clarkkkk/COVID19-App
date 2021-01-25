@@ -72,7 +72,7 @@ export default {
 <style scoped>
 #app-menu {
   height: 100vh;
-  width: 5rem;
+  width: 4rem;
 }
 
 .ant-menu {
@@ -85,7 +85,8 @@ export default {
 @media screen and (min-device-aspect-ratio: 3/4) {
   #app-menu {
     height: 100vh;
-    width: 5rem;
+    width: 80px;
+    flex: none;
   }
   .ant-menu {
     transform: translateX(0);
@@ -93,7 +94,7 @@ export default {
   }
 
   .ant-menu.ant-menu-inline-collapsed {
-    width: 5rem;
+    width: 80px;
   }
 
   .collapse-button {

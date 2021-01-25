@@ -1,5 +1,5 @@
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -22,6 +22,7 @@ module.exports = {
           urlPattern: new RegExp(/^https?:\/\/.*isaaclin\.cn/),
           handler: 'StaleWhileRevalidate',
           options: {
+            cacheName: 'isaaclinData',
             // Configure which responses are considered cacheable.
             cacheableResponse: {
               statuses: [200]
@@ -35,13 +36,15 @@ module.exports = {
       ]
     },
     // 这里的设置会反映在index.html中
-    /*
     name: 'neteasemusic',
     themeColor: '#ff3932',
     msTileColor: '#ff3932',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black-translucent',
     manifestPath: 'public/manifest.json',
+  },
+
+  /*
     iconPaths: {
       favicon32: 'img/icons/favicon-32x32.png',
       favicon16: 'img/icons/favicon-16x16.png',
@@ -49,8 +52,8 @@ module.exports = {
       appleTouchIcon: 'img/icons/apple-touch-icon.png',
       maskIcon: 'img/icons/safari-pinned-tab.svg',
       msTileImage: 'img/icons/mstile-150x150.png'
-    }
-  },
+    },
+    */
   css: {
     loaderOptions: {
       css: {
@@ -59,7 +62,7 @@ module.exports = {
       }
     }
   },
-  */
+  /*
   configureWebpack: {
     plugins: [
       // copy sw.js path.resolve(__dirname, ‘sw.js所在路径’)
@@ -72,4 +75,6 @@ module.exports = {
       ])
     ]
   },
+  */
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
 };
