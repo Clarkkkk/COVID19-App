@@ -1,22 +1,20 @@
 <template>
   <div id="today">
-    <section class="map-and-brief">
-      <today-map />
-      <today-brief />
-    </section>
-    <section class="news">
-
-    </section>
+    <today-map />
+    <today-brief />
+    <today-news />
   </div>
 </template>
 
 <script>
 import TodayMap from '@/components/TodayMap';
 import TodayBrief from '@/components/TodayBrief';
+import TodayNews from '@/components/TodayNews';
 export default {
   components: {
     TodayMap,
-    TodayBrief
+    TodayBrief,
+    TodayNews
   }
 };
 </script>
@@ -24,29 +22,24 @@ export default {
 <style scoped>
 #today {
   width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-flow: column nowrap;
-}
-
-.map-and-brief {
+  min-height: 80vh;
   display: flex;
 }
 
 @media screen and (min-aspect-ratio: 4/3) {
-  .map-and-brief {
-    flex-flow: row nowrap;
+  #today {
+    flex-flow: row wrap;
   }
 }
 
 @media not screen and (min-aspect-ratio: 4/3) {
-  .map-and-brief {
+  #today {
     flex-flow: column nowrap;
   }
 }
 
 @media not screen and (min-device-aspect-ratio: 3/4) {
-  .map-and-brief {
+  #today {
     flex-flow: column nowrap;
     margin-top: 3rem;
   }

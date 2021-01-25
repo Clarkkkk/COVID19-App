@@ -78,7 +78,7 @@ export default {
 .ant-menu {
   box-sizing: border-box;
   height: 100%;
-  position: absolute;
+  position: fixed;
   z-index: 10;
 }
 

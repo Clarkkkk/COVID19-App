@@ -1,5 +1,5 @@
 <template>
-  <div id="today-map">
+  <div id="today-map" class="covid-flex-item">
     <div class="map" ref="map"></div>
     <a-select
       :default-value="selectGroup[0]"
@@ -129,31 +129,32 @@ export default {
     this.chinaDataSet;
     this.worldDataSet;
     // fetch and normalize data
-    const data = require('@/area.json');
-    console.log(data);
-    // the area data consists of china's and the world's
-    const chinaData = [];
-    const worldData = [];
-    for (const entry of data.results) {
-      if (entry.countryName === entry.provinceName) {
-        worldData.push(entry);
-      } else if (entry.countryName === '中国') {
-        chinaData.push(entry);
-      } else {
-        console.log('else data: ' + entry);
+    fetchJSON('', '/data/area.json').then((data) => {
+      console.log(data);
+      // the area data consists of china's and the world's
+      const chinaData = [];
+      const worldData = [];
+      for (const entry of data.results) {
+        if (entry.countryName === entry.provinceName) {
+          worldData.push(entry);
+        } else if (entry.countryName === '中国') {
+          chinaData.push(entry);
+        } else {
+          console.log('else data: ' + entry);
+        }
       }
-    }
-    this.chinaData = chinaData;
-    // normalizeData
-    this.chinaDataSet = this.normalizeData(chinaData);
-    this.worldDataSet = this.normalizeData(worldData);
-    console.log(this.chinaDataSet);
-    const province = this.chinaDataSet.source.map((item) => {
-      return item[0];
-    });
-    console.log(province);
-    // create map after mounted
-    this.$nextTick().then(() => {
+      this.chinaData = chinaData;
+      // normalizeData
+      this.chinaDataSet = this.normalizeData(chinaData);
+      this.worldDataSet = this.normalizeData(worldData);
+      console.log(this.chinaDataSet);
+      const province = this.chinaDataSet.source.map((item) => {
+        return item[0];
+      });
+      console.log(province);
+      // create map after mounted
+      return this.$nextTick();
+    }).then(() => {
       const series = this.createSeriesOption('china');
       this.map = mapHelper.createMap(this.$refs.map, {
         title: {
@@ -172,29 +173,14 @@ export default {
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
   position: relative;
-  margin: 1.5rem;
+  min-width: 80vw;
+  height: 80vw;
 }
 
 @media screen and (min-aspect-ratio: 4/3) {
   #today-map {
     min-width: 60vw;
     height: 40vw;
-  }
-}
-
-@media not screen and (min-aspect-ratio: 4/3) {
-  #today-map {
-    min-width: 80vw;
-    height: 80vw;
-    margin: 0.5rem;
-  }
-}
-
-@media not screen and (min-device-aspect-ratio: 3/4) {
-  #today-map {
-    min-width: 80vw;
-    height: 80vw;
-    margin: 0.5rem;
   }
 }
 

@@ -49,4 +49,17 @@ body {
   scrollbar-color: #ccc #fff;   /* scroll thumb and track */
 }
 
+/* flex-item's universal style */
+.covid-flex-item {
+  box-shadow: var(--app-card-shadow);
+  border-radius: var(--app-card-radius);
+  position: relative;
+  margin: 0.5rem;
+}
+
+@media screen and (min-aspect-ratio: 4/3) {
+  .covid-flex-item {
+    margin: 1.5rem;
+  }
+}
 </style>
