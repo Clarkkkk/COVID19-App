@@ -20,8 +20,9 @@ body {
   margin: 0;
   padding: 0;
   font-size: 16px;
-  --app-card-shadow: 0 0 5px #ccc;
+  --app-card-shadow: 0 0 3px #ccc;
   --app-card-radius: 5px;
+  --app-color: #0054f0;
 }
 
 #app {
@@ -31,6 +32,7 @@ body {
   text-align: center;
   color: #2c3e50;
   display: flex;
+  background-color: #fafafa;
 }
 
 /* global scrollbar style */
@@ -55,6 +57,7 @@ body {
   border-radius: var(--app-card-radius);
   position: relative;
   margin: 0.5rem;
+  background-color: #fff;
 }
 
 @media screen and (min-aspect-ratio: 4/3) {

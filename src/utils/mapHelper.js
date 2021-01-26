@@ -1,16 +1,14 @@
 import '@/assets/china.js';
 import fetchJSON from '@/utils/fetchJSON';
-import {nameMap, provincePinyinMap} from '@/utils/mappings';
+import {nameMap, provinceFileNameMap} from '@/utils/mappings';
 import * as echarts from 'echarts';
-
-
 
 const DIMENSION_COLOR = ['#EF6C00', '#C62828', '#0277BD', '#283593'];
 
 const helper = {
   createMap(elem, option) {
     // initialize echarts
-    const map = echarts.init(elem);  
+    const map = echarts.init(elem);
     // create a basic option object using the defaults defined above
     const basicOption = helper.createBasicOption(
       'title',
@@ -25,11 +23,11 @@ const helper = {
     const zoomProxy = helper.createZoomProxy(map);
     basicOption.toolbox.feature.myZoomIn.onclick = () => zoomProxy.level *= 2;
     basicOption.toolbox.feature.myZoomOut.onclick = () => zoomProxy.level /= 2;
-    map.setOption(basicOption);
+    map.setOption(basicOption, {lazyUpdate: true});
 
     // set option using user's option
     if (option) {
-      map.setOption(option);
+      map.setOption(option, {lazyUpdate: true});
       console.log(option);
       console.log(map.getOption());
       helper.setPieces(map);
@@ -42,6 +40,11 @@ const helper = {
       helper.setPieces(map);
       helper.setMapLegendSymbol(map);
       console.log('legendselectchanged');
+      console.log(map.getOption());
+    });
+
+    // for test
+    map.on('dblclick', function(params) {
       console.log(map.getOption());
     });
 
@@ -97,7 +100,7 @@ const helper = {
           }
         }
       }
-    });
+    }, {lazyUpdate: true});
   },
   // set the map's zoom level
   setZoomLevel(level, map) {
@@ -121,7 +124,7 @@ const helper = {
         formatter: '{b}'
       };
     });
-    map.setOption({series: series});
+    map.setOption({series: series}, {lazyUpdate: true});
     console.log(map.getOption());
   },
   // find the selected legend and determine if its symbol need to display
@@ -135,7 +138,13 @@ const helper = {
       const name = item.name;
       item.showLegendSymbol = !labelShow && (name === selected.dimension);
     });
-    map.setOption({series: series});
+    map.setOption({series: series}, {lazyUpdate: true});
+  },
+  // reset the center to null for every series
+  resetSeriesCenter(map) {
+    const series = map.getOption().series;
+    series.forEach((item) => item.center = null);
+    map.setOption({series: series}, {lazyUpdate: true});
   },
   // find the currently selected legend
   // return dimension name and dimension index
@@ -202,7 +211,7 @@ const helper = {
           colorLightness: [1, 0.2]
         }
       }
-    });
+    }, {lazyUpdate: true});
   },
   // import another map
   importMap(mapName) {
@@ -217,26 +226,25 @@ const helper = {
       console.log('showloading');
       map.showLoading();
       id = 0;
-    }, 500);
+    }, 300);
 
     let fetchMap;
-    // no need to fetch china
-    if (provinceName === 'china' || echarts.getMap(provinceName)) {
+    // no need to fetch china map
+    if (provinceName === '中国' || echarts.getMap(provinceName)) {
       fetchMap = Promise.resolve();
     } else {
-      let mapFileName;
-      if (provinceName === 'world') {
-        mapFileName = 'world.json';
-      } else {
-        mapFileName = provincePinyinMap[provinceName] + '.json';
-      }
+      console.log(option);
+      const mapFileName = provinceFileNameMap[provinceName] + '.json';
       fetchMap = fetchJSON('', '/maps/' + mapFileName);
     }
     fetchMap.then((mapJson) => {
-      echarts.registerMap(provinceName, mapJson);
-      map.setOption(option);
+      if (mapJson) {
+        echarts.registerMap(provinceName, mapJson);
+      }
+      map.setOption(option, {lazyUpdate: true});
       helper.setPieces(map);
       helper.setMapLegendSymbol(map);
+      helper.resetSeriesCenter(map);
       console.log(map.getOption());
       // hide loading or clear timer for loading
       if (id) {

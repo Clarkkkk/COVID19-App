@@ -6,7 +6,6 @@ let retryCount = 0;
 function fetchJSON(serverURL, api, init) {
   // If no response in 5 seconds, abort the request
   const controller = new AbortController();
-  const signal = controller.signal;
   const id = setTimeout(() => controller.abort(), 6000);
 
   // convert init object to query string
@@ -23,7 +22,7 @@ function fetchJSON(serverURL, api, init) {
   return fetch(requestURL, {
     method: 'get',
     headers: {'Content-Type': 'application/json;charset=utf-8'},
-    signal
+    signal: controller.signal
   })
     .then((body) => {
       // cancel the abortion timer when response arrived
@@ -57,6 +56,7 @@ function fetchJSON(serverURL, api, init) {
           alert('网络似乎有点慢，正在重试……');
         }
         retryCount++;
+        // try again in (500*retryCount)ms
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve(fetchJSON(serverURL, api, init));
