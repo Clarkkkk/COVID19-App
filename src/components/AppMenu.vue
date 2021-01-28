@@ -1,33 +1,19 @@
 <template>
   <div id="app-menu">
-    <a-button class="collapse-button" @click="isHidden = !isHidden">
-      <a-icon type="menu" />
-    </a-button>
-    <a-menu
-      mode="inline"
-      :inline-collapsed="isCollapse"
-      :default-selected-keys="['item1']"
-      @mouseenter="onMouseEnter"
-      @mouseleave="onMouseLeave"
-      :class="{'menu-hidden': isHidden}"
+    <span
+      v-for="page in pages"
+      :key="page.name"
+      :class="['menu-item', {'active': currentPage === page.name}]"
+      @click="onClick(page.name)"
     >
-      <a-menu-item key="item1">
-        <a-icon type="calendar" />
-        <span>今日疫情</span>
-      </a-menu-item>
-      <a-menu-item key="item2">
-        <a-icon type="global" />
-        <span>疫情地图</span>
-      </a-menu-item>
-      <a-menu-item key="item3">
-        <a-icon type="read" />
-        <span>疫情新闻</span>
-      </a-menu-item>
-    </a-menu>
-    <footer :class="{'footer-hidden': isCollapse || isHidden}">
-      <span>Made by Carlo</span>
-      <span>2021</span>
-    </footer>
+      {{ page.title }}
+    </span>
+    <div class="indicator-container">
+      <div
+        :class="['indicator', {'moving': moving}]"
+        ref="indicator"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -35,118 +21,115 @@
 export default {
   data() {
     return {
-      isCollapse: true,
-      isHidden: false
+      moving: false
     };
   },
 
+  computed: {
+    currentPage() {
+      return this.$route.name;
+    }
+  },
+
+  watch: {
+    currentPage(newPage, oldPage) {
+      console.log(oldPage);
+      this.$nextTick().then(() => {
+        this.moveIndicator(newPage);
+      });
+    }
+  },
+
   methods: {
-    switchCollapse() {
-      this.isCollapse = !this.isCollapse;
+    onClick(route) {
+      console.log(route);
+      this.$router.push({name: route});
     },
 
-    onMouseEnter() {
-      this.isCollapse = false;
-    },
-
-    onMouseLeave() {
-      if (this.$root.deviceAspectRatio > (3/4)) {
-        this.isCollapse = true;
-      }
+    moveIndicator(moving) {
+      const routeElem =
+        document.querySelector('.menu-item.active') ||
+        document.querySelector('.menu-item');
+      const indicator = this.$refs.indicator;
+      // eslint-disable-next-line max-len
+      const offset = routeElem.offsetLeft + routeElem.offsetWidth / 2 - indicator.offsetWidth / 2;
+      indicator.style = `transform: translateX(${offset}px)`;
+      this.moving = moving;
     }
   },
 
   created() {
-    if (this.$root.deviceAspectRatio > (3/4)) {
-      this.isCollapse = true;
-      this.isHidden = false;
-    } else {
-      this.isCollapse = false;
-      this.isHidden = true;
-    }
-    console.log(this.$root.deviceAspectRatio);
+    this.pages = [
+      {name: 'today', title: '今日疫情'},
+      {name: 'history', title: '历史数据'},
+      {name: 'links', title: '相关网站'}
+    ];
+  },
+
+  mounted() {
+    this.moveIndicator(false);
+    this.$refs.indicator.addEventListener('animationend', () => {
+      this.moving = false;
+    });
   }
 };
 </script>
 
 <style scoped>
 #app-menu {
-  height: 100vh;
-  width: 4rem;
-}
-
-.ant-menu {
-  box-sizing: border-box;
-  height: 100%;
-  position: fixed;
-  z-index: 10;
-}
-
-@media screen and (min-device-aspect-ratio: 3/4) {
-  #app-menu {
-    height: 100vh;
-    width: 80px;
-    flex: none;
-  }
-  .ant-menu {
-    transform: translateX(0);
-    width: 10rem;
-  }
-
-  .ant-menu.ant-menu-inline-collapsed {
-    width: 80px;
-  }
-
-  .collapse-button {
-    display: none;
-  }
+  height: 2.8rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: var(--app-color);
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: white;
 }
 
 @media not screen and (min-device-aspect-ratio: 3/4) {
   #app-menu {
-    height: 100vh;
-    width: 0;
-  }
-  .ant-menu {
-    padding-top: 3rem;
-    width: 100vw;
-    transition: transform 300ms;
-  }
-
-  .menu-hidden {
-    transform: translateX(-100vw);
-  }
-
-  .collapse-button {
-    position: fixed;
-    height: 2.5rem;
-    width: 3.5rem;
-    margin-left: 0.75rem;
-    margin-top: 0.5rem;
-    left: 0;
-    top: 0;
-    z-index: 20;
+    justify-content: space-around;
   }
 }
 
-footer {
+.menu-item {
+  cursor: pointer;
+  width: 6rem;
+}
+
+.indicator-container {
+  width: 100%;
+  height: 0.5rem;
   position: absolute;
   left: 0;
-  bottom: 2rem;
+  top: 2.2rem;
   display: flex;
-  flex-flow: column wrap;
-  width: 10rem;
-  height: 2.5rem;
-  justify-content: space-around;
-  align-content: center;
-  font-size: 0.8rem;
-  color: #aaa;
-  transition: opacity 300ms 200ms;
-  pointer-events: none;
+  align-items: flex-start;
 }
 
-footer.footer-hidden {
-  opacity: 0;
-  transition: opacity 300ms;
+.indicator {
+  height: 0.2rem;
+  width: 1.5rem;
+  border-radius: 0.2rem;;
+  background-color: white;
+}
+
+.moving {
+  animation: pull 300ms;
+  transition: all 300ms;
+}
+
+@keyframes pull {
+  10% {
+    width: 1.5rem;
+  }
+  40% {
+    width: 3rem;
+  }
+  100% {
+    width: 1.5rem;
+  }
 }
 </style>

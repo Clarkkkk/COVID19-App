@@ -26,6 +26,7 @@ import fetchJSON from '@/utils/fetchJSON';
 export default {
   data() {
     return {
+      // eslint-disable-next-line max-len
       selectGroup: ['中国', '世界', '河北', '北京', '天津', '陕西', '吉林', '辽宁', '广西', '广东', '湖北', '黑龙江', '山东', '山西', '上海', '香港', '台湾', '浙江', '河南', '福建', '内蒙古', '四川', '云南', '湖南', '重庆', '甘肃', '新疆', '安徽', '海南', '江苏', '贵州', '宁夏', '青海', '江西', '西藏', '澳门'],
       currentDataSet: undefined,
       currentProvince: 'china'
@@ -170,10 +171,16 @@ export default {
 
 .header {
   width: 100%;
-  height: 3rem;
+  height: 3.5rem;
+  padding: 0 1.5rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .ant-select {

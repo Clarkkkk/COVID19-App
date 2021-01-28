@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <app-menu />
+    <app-header />
     <router-view />
   </div>
 </template>
 
 <script>
-import AppMenu from '@/components/AppMenu';
+import AppHeader from '@/components/AppHeader';
 export default {
   name: 'app',
   components: {
-    AppMenu,
+    AppHeader,
   }
 };
 </script>
@@ -22,7 +22,7 @@ body {
   font-size: 16px;
   --app-card-shadow: 0 0 3px #ccc;
   --app-card-radius: 5px;
-  --app-color: #0054f0;
+  --app-color: #00a59d;
 }
 
 #app {
@@ -31,8 +31,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  display: flex;
   background-color: #fafafa;
+  position: relative;
 }
 
 /* global scrollbar style */
