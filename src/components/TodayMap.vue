@@ -46,7 +46,7 @@ export default {
   position: relative;
   min-width: 80vw;
   height: 80vw;
-  flex: 1 1 auto;
+  flex: 1 1 60vw;
 }
 
 @media screen and (min-aspect-ratio: 4/3) {

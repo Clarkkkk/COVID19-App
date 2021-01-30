@@ -38,7 +38,7 @@ export default {
 #today-brief {
   min-width: 18rem;
   min-height: 22rem;
-  flex: 1 1 auto;
+  flex: 1 1 18rem;
   padding: 2rem;
   box-sizing: border-box;
   color: #222;

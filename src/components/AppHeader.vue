@@ -36,10 +36,6 @@ export default {
         links: '相关网站'
       };
       return pages[this.$route.name];
-    },
-
-    view() {
-      return this.showMenu ? AppMenu : this.pageTitle;
     }
   },
 

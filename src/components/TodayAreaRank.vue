@@ -20,5 +20,7 @@ export default {
 </script>
 
 <style scoped>
-
+#today-area-rank {
+  min-width: 40vw;
+}
 </style>

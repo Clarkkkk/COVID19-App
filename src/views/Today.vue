@@ -166,13 +166,6 @@ export default {
   }
 }
 
-@media not screen and (min-device-aspect-ratio: 3/4) {
-  #today {
-    flex-flow: column nowrap;
-    margin-top: 3rem;
-  }
-}
-
 .header {
   width: 100%;
   height: 3.5rem;
