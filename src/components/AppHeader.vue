@@ -90,8 +90,10 @@ export default {
 </script>
 
 <style scoped>
+/* Use inline or contents(if supported) to avoid being the scrolling container */
 #app-header {
   display: inline;
+  display: contents;
 }
 
 .title-container {

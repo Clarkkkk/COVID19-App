@@ -4,7 +4,18 @@
 
 <script>
 export default {
-  props: ['dataset', 'province']
+  props: ['dataset', 'province'],
+  custom: {
+    a: 1
+  },
+  created() {
+    console.log(this.$options.custom);
+  },
+  watch: {
+    dataset(newDataSet) {
+
+    }
+  }
 };
 </script>
 

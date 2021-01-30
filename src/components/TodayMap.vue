@@ -3,58 +3,39 @@
 </template>
 
 <script>
-import mapHelper from '@/utils/mapHelper.js';
+import MapChart from '@/utils/MapChart';
 export default {
   props: ['dataset', 'province'],
+
+  created() {
+    this.map;
+    // for dimensionNames used in legend, create relavant series
+    this.dimensionNames = [
+      '现存确诊',
+      '累计确诊',
+      '治愈',
+      '死亡'
+    ];
+  },
 
   watch: {
     dataset(newDataSet) {
       if (this.map) {
-        this.switchMap(this.province, newDataSet);
+        // if dataset is changed, this.province shoule have been changed
+        const option = {dataset: newDataSet};
+        this.map.updateMap(option, this.province);
       } else {
         this.$nextTick().then(() => {
-          const series = this.createSeriesOption(this.province);
           const option = {
-            title: {
-              text: '今日疫情地图'
-            },
-            series,
+            title: {text: '今日疫情地图'},
             dataset: this.dataset
           };
-          this.map = mapHelper.createMap(this.$el, option);
+          this.map =
+            new MapChart(this.$el, option, 'china', this.dimensionNames);
         });
       }
     }
-  },
-  methods: {
-    // mapName should be in Chinese
-    createSeriesOption(mapName) {
-      const series = [];
-      // for dimensionNames used in legend, create relavant series
-      const dimensionNames = [
-        '现存确诊',
-        '累计确诊',
-        '治愈',
-        '死亡'
-      ];
-      for (let i = 0; i < dimensionNames.length; i++) {
-        const option = mapHelper.createBasicOption('series');
-        option.map = mapName;
-        option.name = dimensionNames[i];
-        series.push(option);
-      }
-      return series;
-    },
-
-    switchMap(province, dataset) {
-      const series = this.createSeriesOption(province);
-      const option = {
-        series: series,
-        dataset: dataset
-      };
-      mapHelper.updateMap(option, province, this.map);
-    }
-  },
+  }
 };
 </script>
 

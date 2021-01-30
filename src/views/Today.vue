@@ -13,6 +13,10 @@
       :province="currentProvince"
     />
     <today-brief />
+    <today-area-rank
+      :dataset="currentDataSet"
+      :province="currentProvince"
+    />
     <today-news />
   </div>
 </template>
