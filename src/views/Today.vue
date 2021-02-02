@@ -13,7 +13,7 @@
       :province="currentProvince"
     />
     <today-brief />
-    <today-area-rank
+    <today-rate-rank
       :dataset="currentDataSet"
       :province="currentProvince"
     />
@@ -24,7 +24,7 @@
 <script>
 import TodayMap from '@/components/TodayMap';
 import TodayBrief from '@/components/TodayBrief';
-import TodayAreaRank from '@/components/TodayAreaRank';
+import TodayRateRank from '@/components/TodayRateRank';
 import TodayNews from '@/components/TodayNews';
 import fetchJSON from '@/utils/fetchJSON';
 export default {
@@ -40,7 +40,7 @@ export default {
   components: {
     TodayMap,
     TodayBrief,
-    TodayAreaRank,
+    TodayRateRank,
     TodayNews
   },
 

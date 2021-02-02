@@ -15,12 +15,13 @@ export default class MapChart extends BasicChart {
     // setSeries should be called before dimensions relavant functions
     this._setSeries(province);
     this._setMapLegendSymbol();
-    this._setPieces();
+    this._setVisualMap();
 
     // when a different legend is selected
     // set the legend symbol accordingly
     this._chart.on('legendselectchanged', (params) => {
       this._setMapLegendSymbol();
+      this._setVisualMap();
     });
 
     // resize the map when window resizes
@@ -63,9 +64,10 @@ export default class MapChart extends BasicChart {
       }
       this._setSeries(province);
       this._setOption(option);
-      this._setPieces();
+      this._setVisualMap();
       this._setMapLegendSymbol();
       this._resetSeriesCenter();
+      this.zoomLevel = 1;
       console.log(this._getOption());
       // hide loading or clear timer for loading
       if (id) {
@@ -200,6 +202,57 @@ export default class MapChart extends BasicChart {
     const series = this._getOption().series;
     series.forEach((item) => item.center = null);
     this._setOption({series: series});
+  }
+
+  // set pieces for visualMap
+  _setVisualMap() {
+    const option = this._getOption();
+    const index = this._getSelected().index;
+    const source = option.dataset[0].source;
+    // find the max number in the data of selected dimension
+    let max = 0;
+    source.forEach((arr) => {
+      if (arr[index] > max) {
+        max = arr[index];
+      }
+    });
+    // normalize the number, for example, 356 to 300, 1234 to 1000
+    const orderOfMagnitude = 10 ** Math.floor(Math.log10(max));
+    max = max - (max % orderOfMagnitude);
+    const pieces = [];
+    // increase fast, 1, 10, 100, 1000, etc
+    if (orderOfMagnitude >= 10000) {
+      for (let i = Math.min(8, Math.log10(orderOfMagnitude)); i > 0; i--) {
+        pieces.push({min: 10 ** (i - 1), max: 10 ** i});
+      }
+      pieces.push({value: 0});
+      pieces.unshift({min: 10 ** Math.min(8, Math.log10(orderOfMagnitude))});
+    } else {
+      // increase slower, 10, 20, 30, 40, etc
+      const piece = max / 5;
+      for (let i = 5; i > 1; i--) {
+        pieces.push({min: piece * (i - 1), max: piece * i});
+      }
+      if (piece > 1) {
+        pieces.push({min: 1, max: piece});
+      }
+      pieces.push({value: 0});
+      pieces.unshift({min: piece * 5});
+    }
+    console.log(pieces);
+    this._setOption({
+      visualMap: {
+        type: 'piecewise',
+        right: 10,
+        bottom: 10,
+        pieces: pieces,
+        dimension: index,
+        inRange: {
+          color: this.DIMENSION_COLOR[index - 1],
+          colorLightness: [1, 0.2]
+        }
+      }
+    });
   }
 
   _setSeries(mapName) {
