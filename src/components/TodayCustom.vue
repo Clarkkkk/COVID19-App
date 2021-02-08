@@ -1,14 +1,14 @@
 <template>
-  <div id="today-map" class="covid-flex-item"></div>
+  <div id="today-custom" class="covid-flex-item"></div>
 </template>
 
 <script>
-import MapChart from '@/utils/MapChart';
+import CustomChart from '@/utils/CustomChart';
 export default {
   props: ['dataset', 'province'],
 
   created() {
-    this.map;
+    this.chart;
     // for dimensionNames used in legend, create relavant series
     this.dimensionNames = [
       '现存确诊',
@@ -20,20 +20,23 @@ export default {
 
   watch: {
     dataset(newDataSet) {
-      if (this.map) {
+      if (this.chart) {
         // if dataset is changed, this.province shoule have been changed
         const option = {dataset: newDataSet};
         console.log(newDataSet);
-        this.map.updateMap(option, this.province);
+        this.chart.update(option, this.province);
       } else {
         this.$nextTick().then(() => {
           const option = {
-            title: {text: '今日疫情地图'},
+            title: {text: '各地数据'},
             dataset: this.dataset
           };
           console.log(this.dataset);
-          this.map = new MapChart(this.$el, option, {
-            province: 'china'
+          this.chart = new CustomChart(this.$el, option, {
+            chartTypes: [{
+              name: 'bar',
+              config: {isVertical: true, isInverse: true}
+            }]
           });
         });
       }
@@ -43,7 +46,7 @@ export default {
 </script>
 
 <style scoped>
-#today-map {
+#today-custom {
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
   position: relative;
@@ -53,7 +56,7 @@ export default {
 }
 
 @media screen and (min-aspect-ratio: 4/3) {
-  #today-map {
+  #today-custom {
     min-width: 60vw;
     height: 40vw;
   }

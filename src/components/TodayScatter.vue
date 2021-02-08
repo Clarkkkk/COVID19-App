@@ -1,29 +1,33 @@
 <template>
-  <div id="today-rate-rank" class="covid-flex-item"></div>
+  <div id="today-scatter" class="covid-flex-item">
+    <div class="canvas" ref="canvas"></div>
+  </div>
 </template>
 
 <script>
-import BarChart from '@/utils/BarChart';
+import ScatterChart from '@/utils/ScatterChart';
 export default {
   props: ['dataset', 'province'],
   created() {
-    this.barChart;
+    this.scatterChart;
   },
   watch: {
     dataset(newDataSet) {
       console.log(newDataSet);
       const dataset = this.convertDataSet(newDataSet);
       console.log(dataset);
-      if (this.barChart) {
-        this.barChart.update(dataset);
+      if (this.scatterChart) {
+        this.scatterChart.update(dataset);
       } else {
         const option = {
-          title: {text: '治疗率与死亡率'},
+          title: {text: '估计治疗率与各指标散点图'},
           dataset
         };
-        this.barChart = new BarChart(this.$el, option, {
-          valueType: 'percentage'
-        });
+        const legendDimensions = ['估计治疗率与住院死亡率'];
+        this.scatterChart =
+          new ScatterChart(this.$refs.canvas, option, {
+            dimensionNames: legendDimensions
+          });
       }
     }
   },
@@ -40,7 +44,6 @@ export default {
         '地方名',
         '估计治疗率',
         '住院死亡率',
-        '累计死亡率',
         '更新时间'
       ];
       const rateSource = source.map((entry) => {
@@ -62,34 +65,15 @@ export default {
         dimensions: rateDimensions,
         source: rateSource,
       }, {
-        id: '估计治疗率',
-        transform: [{
-          type: 'sort',
-          print: true,
-          config: {dimension: 1, order: 'desc'}
-        }, {
+        transform: {
           type: 'filter',
-          config: {dimension: 1, '>': 0}
-        }]
-      }, {
-        id: '住院死亡率',
-        transform: [{
-          type: 'sort',
-          print: true,
-          config: {dimension: 2, order: 'desc'}
-        }, {
-          type: 'filter',
-          config: {dimension: 2, '>': 0, '<': 1}
-        }]
-      }, {
-        id: '累计死亡率',
-        transform: [{
-          type: 'sort',
-          config: {dimension: 3, order: 'desc'}
-        }, {
-          type: 'filter',
-          config: {dimension: 3, '>': 0, '<': 1}
-        }]
+          config: {
+            and: [
+              {dimension: 1, '>': 0},
+              {dimension: 2, '>': 0, '<': 1}
+            ]
+          },
+        }
       }];
     }
   }
@@ -97,7 +81,12 @@ export default {
 </script>
 
 <style scoped>
-#today-rate-rank {
+#today-scatter {
+  min-width: 40vw;
+  min-height: 60vw;
+}
+
+.canvas {
   min-width: 40vw;
   min-height: 60vw;
 }

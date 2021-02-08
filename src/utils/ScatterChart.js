@@ -1,17 +1,10 @@
 import BasicChart from '@/utils/BasicChart.js';
 
-export default class BarChart extends BasicChart {
+export default class ScatterChart extends BasicChart {
   constructor(elem, option, {valueType}) {
     super(elem, option, {valueType});
-    this._setOption(this._createBarBasicOption());
+    this._setOption(this._createScatterBasicOption());
     this._setSeries();
-
-    // when a different legend is selected,
-    // reset all the series's datasetIndex
-    // otherwise the order of the specific dataset won't come into effect
-    this._chart.on('legendselectchanged', (params) => {
-      this._setDatasetIndex();
-    });
   }
 
   update(dataset) {
@@ -23,58 +16,17 @@ export default class BarChart extends BasicChart {
     // it means this is the initial setOption for series
     const isInitial = !this._getOption().series.length;
     const series = [];
-    for (const dimension of this._getLegendDimensions()) {
+    const legendDimensions = this._getLegendDimensions();
+    for (const dimension of legendDimensions) {
       const option = isInitial ? this._createSeriesBasicOption() : {};
       option.name = dimension;
       series.push(option);
     }
     console.log(series);
     this._setOption({series});
-    this._setDatasetIndex();
   }
 
-  // set dataset index
-  // if there is only one dataset, use it
-  // if there are more than one datasets,
-  // use one whose id matches the dimensionName,
-  // otherwise use the last one of them
-  // shoule be called after this._setSeries()
-  _setDatasetIndex() {
-    const dataset = this._getOption().dataset;
-    const selectedDimension = this._getSelected().dimension;
-    let datasetIndex = 0;
-    if (Array.isArray(dataset)) {
-      const datasetIds = dataset.map((entry) => entry.id);
-      if (datasetIds.includes(selectedDimension)) {
-        datasetIndex = datasetIds.indexOf(selectedDimension);
-      } else {
-        datasetIndex = dataset.length - 1;
-      }
-    }
-
-    const series = this._getLegendDimensions().map((dimension) => {
-      return {
-        name: dimension,
-        datasetIndex
-      };
-    });
-    console.log(this._getOption());
-    this._setOption({
-      series
-    }, false);
-    // update the order of axis's categories
-    this._updateAxis();
-  }
-
-  // set the axis with the same option to reflect the order change
-  // otherwise the order of axis's categories won't change
-  _updateAxis() {
-    const xAxis = this._getOption().xAxis;
-    const yAxis = this._getOption().yAxis;
-    this._setOption({xAxis, yAxis});
-  }
-
-  _createBarBasicOption() {
+  _createScatterBasicOption() {
     return {
       legend: {
         orient: 'horizontal',
@@ -90,28 +42,33 @@ export default class BarChart extends BasicChart {
       }],
       xAxis: {
         type: 'value',
+        scale: true,
+        splitLine: {
+          show: false
+        },
         axisLabel: {
           formatter: (value, index) => this._valueFormatter(value)
         }
       },
       yAxis: {
-        type: 'category',
-        inverse: true,
+        type: 'value',
+        scale: true,
+        splitLine: {
+          show: false
+        },
         axisLabel: {
-          interval: 0
+          formatter: (value, index) => this._valueFormatter(value)
         }
       },
-      dataZoom: {
+      dataZoom: [{
         type: 'slider',
         orient: 'vertical',
-        right: 20,
-        zoomLock: true,
-        brushSelect: false,
-        startValue: 0,
-        endValue: 12,
-        maxValueSpan: 13,
-        rangeMode: ['value', 'value']
-      },
+        left: 20,
+      }, {
+        type: 'slider',
+        orient: 'horizontal',
+        bottom: 20,
+      }],
       tooltip: {
         formatter: ({seriesName, dimensionNames, data, name}) => {
           if (data) {
@@ -124,6 +81,14 @@ export default class BarChart extends BasicChart {
           } else {
             return `${name} | 暂无数据`;
           }
+        },
+        axisPointer: {
+          show: true,
+          type: 'cross',
+          lineStyle: {
+            type: 'dashed',
+            width: 1
+          }
         }
       },
     };
@@ -131,18 +96,23 @@ export default class BarChart extends BasicChart {
 
   _createSeriesBasicOption() {
     return {
-      type: 'bar',
+      type: 'scatter',
       label: {
-        show: true,
+        show: false,
         position: 'right',
         formatter: (params) => {
+          console.log(params);
           const index = params.dimensionNames.indexOf(params.seriesName);
           const value = params.value[index];
           return this._valueFormatter(value);
         }
       },
+      encode: {
+        x: 1,
+        y: 2
+      },
+      datasetIndex: 1,
       emphasis: {
-        focus: 'self',
         label: {
           textShadowColor: '#888',
           textShadowBlur: 2

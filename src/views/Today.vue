@@ -17,6 +17,14 @@
       :dataset="currentDataSet"
       :province="currentProvince"
     />
+    <today-scatter
+      :dataset="currentDataSet"
+      :province="currentProvince"
+    />
+    <today-custom
+      :dataset="currentDataSet"
+      :province="currentProvince"
+    />
     <today-news />
   </div>
 </template>
@@ -25,6 +33,8 @@
 import TodayMap from '@/components/TodayMap';
 import TodayBrief from '@/components/TodayBrief';
 import TodayRateRank from '@/components/TodayRateRank';
+import TodayScatter from '@/components/TodayScatter';
+import TodayCustom from '@/components/TodayCustom';
 import TodayNews from '@/components/TodayNews';
 import fetchJSON from '@/utils/fetchJSON';
 export default {
@@ -41,6 +51,8 @@ export default {
     TodayMap,
     TodayBrief,
     TodayRateRank,
+    TodayScatter,
+    TodayCustom,
     TodayNews
   },
 

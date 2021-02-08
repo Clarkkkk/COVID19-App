@@ -4,12 +4,11 @@ import fetchJSON from '@/utils/fetchJSON';
 import {nameMap, provinceFileNameMap} from '@/utils/mappings';
 
 export default class MapChart extends BasicChart {
-  constructor(elem, option, province, dimensionNames) {
+  constructor(elem, option, {valueType, province}) {
     // initialize this._chart
-    super(elem, option);
+    super(elem, option, {valueType});
     // initialize zoom level's value and dimensionNames
     this.zoomLevelValue = 1;
-    this.dimensionNames = dimensionNames;
     // set zooming tool's callbacks and map legend symbol
     this._setZoomFeatures();
     // setSeries should be called before dimensions relavant functions
@@ -260,10 +259,11 @@ export default class MapChart extends BasicChart {
     // it means this is the initial setOption for series
     const isInitial = !this._getOption().series.length;
     const series = [];
-    for (const dimensionName of this.dimensionNames) {
+    const legendDimensions = this._getLegendDimensions();
+    for (const dimension of legendDimensions) {
       const option = isInitial ? this._createSeriesBasicOption() : {};
       option.map = mapName;
-      option.name = dimensionName;
+      option.name = dimension;
       series.push(option);
     }
     this._setOption({series: series});
