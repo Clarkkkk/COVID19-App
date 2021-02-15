@@ -36,6 +36,7 @@ export default class BasicChart {
 
   // this._chart's methods
   _setOption(option, lazyUpdate = true, replaceMerge) {
+    console.log(option);
     this._chart.setOption(option, {lazyUpdate, replaceMerge});
   }
 

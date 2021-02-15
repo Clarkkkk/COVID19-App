@@ -21,10 +21,7 @@ export default {
   watch: {
     dataset(newDataSet) {
       if (this.chart) {
-        // if dataset is changed, this.province shoule have been changed
-        const option = {dataset: newDataSet};
-        console.log(newDataSet);
-        this.chart.update(option, this.province);
+        this.chart.update(newDataSet);
       } else {
         this.$nextTick().then(() => {
           const option = {
@@ -34,8 +31,8 @@ export default {
           console.log(this.dataset);
           this.chart = new CustomChart(this.$el, option, {
             chartTypes: [{
-              name: 'bar',
-              config: {isVertical: true, isInverse: true}
+              name: 'pie',
+              config: {isVertical: false, isInverse: true}
             }]
           });
         });
