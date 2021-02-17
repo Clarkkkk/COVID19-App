@@ -99,6 +99,6 @@ export default {
 <style scoped>
 #today-rate-rank {
   min-width: 40vw;
-  min-height: 60vw;
+  height: 80vmin;
 }
 </style>

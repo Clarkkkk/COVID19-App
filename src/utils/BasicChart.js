@@ -31,13 +31,32 @@ export default class BasicChart {
       this._setOption(option);
     }
 
+    // resize the map when window resizes
+    let id = 0;
+    window.addEventListener('resize', (event) => {
+      if (id) {
+        clearTimeout(id);
+      }
+      id = setTimeout(() => {
+        this._resize();
+        id = 0;
+      }, 350);
+    });
+
+    // for test
     this._chart.on('dblclick', () => console.log(this._getOption()));
   }
 
   // this._chart's methods
-  _setOption(option, lazyUpdate = true, replaceMerge) {
-    console.log(option);
-    this._chart.setOption(option, {lazyUpdate, replaceMerge});
+  _setOption(option, config) {
+    if (!config) {
+      config = {};
+    }
+    if (config.lazyUpdate === undefined) {
+      config.lazyUpdate = true;
+    }
+    this._chart.setOption(option, config);
+    console.log(this._getOption());
   }
 
   _getOption() {

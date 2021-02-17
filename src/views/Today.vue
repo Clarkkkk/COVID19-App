@@ -13,19 +13,21 @@
       :province="currentProvince"
     />
     <today-brief />
-    <today-rate-rank
-      :dataset="currentDataSet"
-      :province="currentProvince"
-    />
-    <today-scatter
-      :dataset="currentDataSet"
-      :province="currentProvince"
-    />
-    <today-custom
-      :dataset="currentDataSet"
-      :province="currentProvince"
-    />
-    <today-news />
+    <div class="graphs">
+      <today-rate-rank
+        :dataset="currentDataSet"
+        :province="currentProvince"
+      />
+      <today-scatter
+        :dataset="currentDataSet"
+        :province="currentProvince"
+      />
+      <today-custom
+        :dataset="currentDataSet"
+        :province="currentProvince"
+      />
+    </div>
+    <today-news class="news"/>
   </div>
 </template>
 
@@ -190,6 +192,14 @@ export default {
 .title {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.graphs {
+  flex: 2 1 50vw;
+}
+
+.news {
+  flex: 1 1 40vw;
 }
 
 .ant-select {

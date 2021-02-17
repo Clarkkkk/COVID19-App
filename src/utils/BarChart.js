@@ -59,9 +59,7 @@ export default class BarChart extends BasicChart {
       };
     });
     console.log(this._getOption());
-    this._setOption({
-      series
-    }, false);
+    this._setOption({series}, {lazyUpdate: false});
     // update the order of axis's categories
     this._updateAxis();
   }

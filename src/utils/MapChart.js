@@ -22,18 +22,6 @@ export default class MapChart extends BasicChart {
       this._setMapLegendSymbol();
       this._setVisualMap();
     });
-
-    // resize the map when window resizes
-    let id = 0;
-    window.addEventListener('resize', (event) => {
-      if (id) {
-        clearTimeout(id);
-      }
-      id = setTimeout(() => {
-        this._resize();
-        id = 0;
-      }, 350);
-    });
     console.log(this._getOption());
   }
 
@@ -164,7 +152,9 @@ export default class MapChart extends BasicChart {
       series: {
         zoom: level
       }
-    }, false);
+    }, {
+      lazyUpdate: false
+    });
   }
 
   // set the map labels to show or not

@@ -8,6 +8,7 @@ export default class CustomChart extends BasicChart {
     this.frameCount = [];
     this._setOption(this.options[0]);
     this._chart.on('legendselectchanged', () => {
+      console.log('legend changed');
       this.isLegendChanged = true;
       this._setOption({});
     });
@@ -15,6 +16,17 @@ export default class CustomChart extends BasicChart {
 
   update(dataset) {
     this._setOption({dataset});
+  }
+
+  switchType(type) {
+    for (const option of this.options) {
+      if (option.type === type) {
+        this._setOption(option, {
+          lazyUpdate: false,
+        });
+        break;
+      }
+    }
   }
 
   _createOptions() {
@@ -31,18 +43,24 @@ export default class CustomChart extends BasicChart {
 
   _createBarOption({isVertical, isInverse}) {
     const option = {
+      type: 'bar',
       xAxis: {
+        id: 'xAxis',
+        show: true,
         type: isVertical ? 'category' : 'value',
         inverse: isVertical && isInverse
       },
       yAxis: {
+        id: 'yAxis',
+        show: true,
         type: isVertical ? 'value' : 'category',
         inverse: !isVertical && isInverse
       },
       dataZoom: {
+        id: 'dataZoom',
+        show: true,
         orient: isVertical ? 'horizontal' : 'vertical',
         startValue: 0,
-        endValue: 12,
       },
       animationDuration: 1000,
       legend: {
@@ -119,10 +137,17 @@ export default class CustomChart extends BasicChart {
             const frameCount = this.frameCount[params.dataIndex];
             if (frameCount < 1 && !this.isLegendChanged) {
               this.frameCount[params.dataIndex] += 1 / 30;
-              duringAPI.setShape('x', isVertical ? xCoord - gapWidth : gridX);
-              duringAPI.setShape('y', isVertical ? yCoord : yCoord - gapWidth);
-              duringAPI.setShape('height', isVertical ? yAxisLength + gridY - yCoord : gapWidth * 2);
-              duringAPI.setShape('width', ((frameCount - 1) ** 3 + 1) * size);
+              if (isVertical) {
+                duringAPI.setShape('x', isVertical ? xCoord - gapWidth : gridX);
+                duringAPI.setShape('y', isVertical ? yCoord : yCoord - gapWidth);
+                duringAPI.setShape('height', ((frameCount - 1) ** 3 + 1) * size);
+                duringAPI.setShape('width', gapWidth * 2);
+              } else {
+                duringAPI.setShape('x', isVertical ? xCoord - gapWidth : gridX);
+                duringAPI.setShape('y', isVertical ? yCoord : yCoord - gapWidth);
+                duringAPI.setShape('height', isVertical ? yAxisLength + gridY - yCoord : gapWidth * 2);
+                duringAPI.setShape('width', ((frameCount - 1) ** 3 + 1) * size);
+              }
             }
             // console.log(duringAPI.getShape('width'));
             // console.log(++count);
@@ -142,7 +167,22 @@ export default class CustomChart extends BasicChart {
 
   _createPieOption() {
     const option = {
+      type: 'pie',
       animationDuration: 1000,
+      xAxis: {
+        id: 'xAxis',
+        show: false
+      },
+      yAxis: {
+        id: 'yAxis',
+        show: false,
+      },
+      dataZoom: {
+        id: 'dataZoom',
+        show: true,
+        orient: 'horizontal',
+        startValue: 0,
+      },
       legend: {
         selectedMode: 'single',
         orient: 'vertical',
@@ -176,11 +216,8 @@ export default class CustomChart extends BasicChart {
       const seriesEntry = {
         type: 'custom',
         name: dimension,
-        coordinateSystem: null,
         animationDurationUpdate: 1000
       };
-
-      //seriesEntry.encode = {x: 0, y: dimensionIndex};
 
       const dimensionData = data.map((arr) => arr[dimensionIndex]);
       const angles = this._createPieAngles(dimensionData);

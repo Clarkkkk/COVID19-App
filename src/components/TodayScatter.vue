@@ -83,11 +83,11 @@ export default {
 <style scoped>
 #today-scatter {
   min-width: 40vw;
-  min-height: 60vw;
+  height: 80vmin;
 }
 
 .canvas {
   min-width: 40vw;
-  min-height: 60vw;
+  height: 80vmin;
 }
 </style>

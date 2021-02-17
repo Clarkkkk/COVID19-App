@@ -1,11 +1,35 @@
 <template>
-  <div id="today-custom" class="covid-flex-item"></div>
+  <div id="today-custom" class="covid-flex-item">
+    <div class="canvas" ref="canvas"></div>
+    <div class="btn-group">
+      <button
+        :class="{'active': chartType === 'bar'}"
+        @click="onClick('bar')"
+      >柱状图</button>
+      <button
+        :class="{'active': chartType === 'pie'}"
+        @click="onClick('pie')"
+      >饼图</button>
+    </div>
+  </div>
 </template>
 
 <script>
 import CustomChart from '@/utils/CustomChart';
 export default {
+  data() {
+    return {
+      chartType: 'bar'
+    };
+  },
   props: ['dataset', 'province'],
+
+  methods: {
+    onClick(type) {
+      this.chartType = type;
+      this.chart.switchType(type);
+    }
+  },
 
   created() {
     this.chart;
@@ -29,10 +53,12 @@ export default {
             dataset: this.dataset
           };
           console.log(this.dataset);
-          this.chart = new CustomChart(this.$el, option, {
+          this.chart = new CustomChart(this.$refs.canvas, option, {
             chartTypes: [{
-              name: 'pie',
+              name: 'bar',
               config: {isVertical: false, isInverse: true}
+            }, {
+              name: 'pie',
             }]
           });
         });
@@ -44,18 +70,59 @@ export default {
 
 <style scoped>
 #today-custom {
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
   position: relative;
-  min-width: 80vw;
-  height: 80vw;
-  flex: 1 1 60vw;
+  min-width: 40vw;
+  height: 80vmin;
 }
 
-@media screen and (min-aspect-ratio: 4/3) {
-  #today-custom {
-    min-width: 60vw;
-    height: 40vw;
-  }
+.canvas {
+  min-width: 40vw;
+  height: 80vmin;
+}
+
+.btn-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  border: 1px solid var(--app-color);
+  border-right: none;
+  background-color: white;
+  height: 2rem;
+  box-sizing: border-box;
+  padding: 0 0.5rem;
+  transition: all 200ms;
+  cursor: pointer;
+}
+
+button:first-child {
+  border-radius: 0.3rem 0 0 0.3rem;
+}
+
+button:last-child {
+  border-right: 1px solid var(--app-color);
+  border-radius: 0 0.3rem 0.3rem 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:active {
+  outline: none;
+  box-shadow: 0 0 5px var(--app-color);
+}
+
+button.active {
+  background-color: var(--app-color);
+  color: white;
 }
 </style>
