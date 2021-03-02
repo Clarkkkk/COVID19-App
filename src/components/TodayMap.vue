@@ -5,7 +5,7 @@
 <script>
 import MapChart from '@/utils/MapChart';
 export default {
-  props: ['dataset', 'province'],
+  props: ['dataset', 'area'],
 
   created() {
     this.map;
@@ -20,20 +20,20 @@ export default {
 
   watch: {
     dataset(newDataSet) {
+      console.log(this.dataset);
       if (this.map) {
-        // if dataset is changed, this.province shoule have been changed
+        // if dataset is changed, this.area shoule have been changed
         const option = {dataset: newDataSet};
         console.log(newDataSet);
-        this.map.updateMap(option, this.province);
+        this.map.updateMap(option, this.area);
       } else {
         this.$nextTick().then(() => {
           const option = {
             title: {text: '今日疫情地图'},
             dataset: this.dataset
           };
-          console.log(this.dataset);
           this.map = new MapChart(this.$el, option, {
-            province: 'china'
+            area: 'China'
           });
         });
       }

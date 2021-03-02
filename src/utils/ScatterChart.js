@@ -22,7 +22,6 @@ export default class ScatterChart extends BasicChart {
       option.name = dimension;
       series.push(option);
     }
-    console.log(series);
     this._setOption({series});
   }
 
@@ -72,12 +71,12 @@ export default class ScatterChart extends BasicChart {
       tooltip: {
         formatter: ({seriesName, dimensionNames, data, name}) => {
           if (data) {
-            const province = data[0];
+            const area = data[0];
             const index = dimensionNames.indexOf(seriesName);
             const value = this._valueFormatter(data[index]);
             const updateTime = data[data.length - 1];
             const formatTime = (new Date(updateTime)).toLocaleString();
-            return `${province} | ${seriesName}：${value} <br> ${formatTime}`;
+            return `${area} | ${seriesName}：${value} <br> ${formatTime}`;
           } else {
             return `${name} | 暂无数据`;
           }
@@ -101,7 +100,6 @@ export default class ScatterChart extends BasicChart {
         show: false,
         position: 'right',
         formatter: (params) => {
-          console.log(params);
           const index = params.dimensionNames.indexOf(params.seriesName);
           const value = params.value[index];
           return this._valueFormatter(value);

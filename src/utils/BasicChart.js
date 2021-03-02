@@ -56,7 +56,6 @@ export default class BasicChart {
       config.lazyUpdate = true;
     }
     this._chart.setOption(option, config);
-    console.log(this._getOption());
   }
 
   _getOption() {
@@ -98,7 +97,6 @@ export default class BasicChart {
     // the dataset follow a convention that the first dimension is
     // area name, and the last is update time
     const dimensions = this._getOption().dataset[0].dimensions;
-    console.log(this._getOption().dataset);
     return dimensions.slice(1, dimensions.length - 1);
   }
 

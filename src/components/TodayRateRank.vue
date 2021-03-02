@@ -5,15 +5,13 @@
 <script>
 import BarChart from '@/utils/BarChart';
 export default {
-  props: ['dataset', 'province'],
+  props: ['dataset'],
   created() {
     this.barChart;
   },
   watch: {
-    dataset(newDataSet) {
-      console.log(newDataSet);
-      const dataset = this.convertDataSet(newDataSet);
-      console.log(dataset);
+    dataset(newDataset) {
+      const dataset = this.convertDataset(newDataset);
       if (this.barChart) {
         this.barChart.update(dataset);
       } else {
@@ -29,8 +27,7 @@ export default {
   },
 
   methods: {
-    convertDataSet(dataset) {
-      console.log(dataset);
+    convertDataset(dataset) {
       const {dimensions, source} = dataset;
       const confirmed = dimensions.indexOf('累计确诊');
       const cured = dimensions.indexOf('治愈');
@@ -43,6 +40,7 @@ export default {
         '累计死亡率',
         '更新时间'
       ];
+
       const rateSource = source.map((entry) => {
         return [
           // 地方名
@@ -57,7 +55,6 @@ export default {
           entry[entry.length - 1]
         ];
       });
-      console.log(rateSource);
       return [{
         dimensions: rateDimensions,
         source: rateSource,
@@ -65,7 +62,6 @@ export default {
         id: '估计治疗率',
         transform: [{
           type: 'sort',
-          print: true,
           config: {dimension: 1, order: 'desc'}
         }, {
           type: 'filter',
@@ -75,7 +71,6 @@ export default {
         id: '住院死亡率',
         transform: [{
           type: 'sort',
-          print: true,
           config: {dimension: 2, order: 'desc'}
         }, {
           type: 'filter',

@@ -1,9 +1,10 @@
 /*  Simplied and enhanced version of fetch API  */
-// const serverURL = 'https://lab.isaaclin.cn/nCoV/api';
+const serverURL = process.env.NODE_ENV === 'development' ?
+  'http://localhost:3100' : 'https://api.carllllo.work/covid19';
 const RETRY_TIMES = 3;
 let retryCount = 0;
 
-function fetchJSON(serverURL, api, init) {
+function fetchJSON(api, init) {
   // If no response in 5 seconds, abort the request
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), 6000);
@@ -59,7 +60,7 @@ function fetchJSON(serverURL, api, init) {
         // try again in (500*retryCount)ms
         return new Promise((resolve) => {
           setTimeout(() => {
-            resolve(fetchJSON(serverURL, api, init));
+            resolve(fetchJSON(api, init));
           }, 500 * retryCount);
         });
       }

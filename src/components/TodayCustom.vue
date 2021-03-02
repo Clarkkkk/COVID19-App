@@ -22,7 +22,7 @@ export default {
       chartType: 'bar'
     };
   },
-  props: ['dataset', 'province'],
+  props: ['dataset'],
 
   methods: {
     onClick(type) {
@@ -43,9 +43,9 @@ export default {
   },
 
   watch: {
-    dataset(newDataSet) {
+    dataset(newDataset) {
       if (this.chart) {
-        this.chart.update(newDataSet);
+        this.chart.update(newDataset);
       } else {
         this.$nextTick().then(() => {
           const option = {

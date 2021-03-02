@@ -241,8 +241,6 @@ export default class CustomChart extends BasicChart {
           },
         };
       };
-
-      console.log(option.series);
       option.series.push(seriesEntry);
     }
 

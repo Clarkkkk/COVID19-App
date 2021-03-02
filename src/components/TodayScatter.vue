@@ -7,15 +7,13 @@
 <script>
 import ScatterChart from '@/utils/ScatterChart';
 export default {
-  props: ['dataset', 'province'],
+  props: ['dataset'],
   created() {
     this.scatterChart;
   },
   watch: {
-    dataset(newDataSet) {
-      console.log(newDataSet);
-      const dataset = this.convertDataSet(newDataSet);
-      console.log(dataset);
+    dataset(newDataset) {
+      const dataset = this.convertDataset(newDataset);
       if (this.scatterChart) {
         this.scatterChart.update(dataset);
       } else {
@@ -33,8 +31,7 @@ export default {
   },
 
   methods: {
-    convertDataSet(dataset) {
-      console.log(dataset);
+    convertDataset(dataset) {
       const {dimensions, source} = dataset;
       const confirmed = dimensions.indexOf('累计确诊');
       const cured = dimensions.indexOf('治愈');
@@ -60,7 +57,6 @@ export default {
           entry[entry.length - 1]
         ];
       });
-      console.log(rateSource);
       return [{
         dimensions: rateDimensions,
         source: rateSource,

@@ -1,70 +1,59 @@
 import BasicChart from '@/utils/BasicChart.js';
-import '@/assets/china.js';
 import fetchJSON from '@/utils/fetchJSON';
-import {nameMap, provinceFileNameMap} from '@/utils/mappings';
+import {nameMap} from '@/utils/mappings';
 
 export default class MapChart extends BasicChart {
-  constructor(elem, option, {valueType, province}) {
+  constructor(elem, option, {valueType, area}) {
     // initialize this._chart
     super(elem, option, {valueType});
-    // initialize zoom level's value and dimensionNames
-    this.zoomLevelValue = 1;
-    // set zooming tool's callbacks and map legend symbol
-    this._setZoomFeatures();
-    // setSeries should be called before dimensions relavant functions
-    this._setSeries(province);
-    this._setMapLegendSymbol();
-    this._setVisualMap();
-
-    // when a different legend is selected
-    // set the legend symbol accordingly
-    this._chart.on('legendselectchanged', (params) => {
+    this._registerMap(area).then(() => {
+      // initialize zoom level's value and dimensionNames
+      this.zoomLevelValue = 1;
+      // set zooming tool's callbacks and map legend symbol
+      this._setZoomFeatures();
+      // setSeries should be called before dimensions relavant functions
+      this._setSeries(area);
       this._setMapLegendSymbol();
       this._setVisualMap();
+
+      // when a different legend is selected
+      // set the legend symbol accordingly
+      this._chart.on('legendselectchanged', (params) => {
+        this._setMapLegendSymbol();
+        this._setVisualMap();
+      });
     });
-    console.log(this._getOption());
   }
 
   // register a new map and update it with the option
-  updateMap(option, province) {
+  async updateMap(option, area) {
     // hide loading anyway at first
     this._hideLoading();
-    // if update time exceeds 500ms, show loading animation
+    // if update time exceeds 350ms, show loading animation
     let id = 0;
     id = setTimeout(() => {
       console.log('showloading');
       this._showLoading();
       id = 0;
-    }, 300);
+    }, 350);
 
-    let fetchMap;
-    // no need to fetch china map
-    if (province === '中国' || this._getMap(province)) {
-      fetchMap = Promise.resolve();
+    await this._registerMap(area);
+
+    this._setSeries(area);
+    this._setOption(option);
+    this._setVisualMap();
+    this._setMapLegendSymbol();
+    this._resetSeriesCenter();
+    this.zoomLevel = 1;
+
+    // hide loading or clear the timer to show loading
+    if (id) {
+      console.log('clear');
+      clearTimeout(id);
+      id = 0;
     } else {
-      const mapFileName = provinceFileNameMap[province] + '.json';
-      fetchMap = fetchJSON('', '/maps/' + mapFileName);
+      this._hideLoading();
     }
-    fetchMap.then((mapJson) => {
-      if (mapJson) {
-        this._registerMap(province, mapJson);
-      }
-      this._setSeries(province);
-      this._setOption(option);
-      this._setVisualMap();
-      this._setMapLegendSymbol();
-      this._resetSeriesCenter();
-      this.zoomLevel = 1;
-      console.log(this._getOption());
-      // hide loading or clear timer for loading
-      if (id) {
-        console.log('clear');
-        clearTimeout(id);
-        id = 0;
-      } else {
-        this._hideLoading();
-      }
-    });
   }
 
   /*
@@ -73,12 +62,16 @@ export default class MapChart extends BasicChart {
    */
 
   // this._echarts's methods
-  _getMap(provinceName) {
-    return this._echarts.getMap(provinceName);
+  _getMap(areaName) {
+    return this._echarts.getMap(areaName);
   }
 
-  _registerMap(provinceName, mapJson) {
-    this._echarts.registerMap(provinceName, mapJson);
+  async _registerMap(area) {
+    // if the map is not registered, fetch it and register it
+    if (!this._getMap(area)) {
+      const mapJson = await fetchJSON('/maps/' + area + '.json');
+      this._echarts.registerMap(area, mapJson);
+    }
   }
   // create a zoom proxy
   // when the zoom level changes, change other relavant options accordingly
@@ -95,7 +88,6 @@ export default class MapChart extends BasicChart {
     // when zoom level is over 1, show the map label
     this._setMapLabel(this.zoomLevelValue > 1);
     this._setMapLegendSymbol();
-    console.log(this._getOption());
   }
 
   get zoomLevel() {
@@ -228,7 +220,6 @@ export default class MapChart extends BasicChart {
       pieces.push({value: 0});
       pieces.unshift({min: piece * 5});
     }
-    console.log(pieces);
     this._setOption({
       visualMap: {
         type: 'piecewise',
@@ -268,7 +259,7 @@ export default class MapChart extends BasicChart {
       seriousLayoutBy: 'column',
       showLegendSymbol: false,
       roam: 'move',
-      nameMap: nameMap,
+      nameMap,
       zoom: 1,
       label: {
         show: false,

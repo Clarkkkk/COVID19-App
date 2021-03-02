@@ -28,7 +28,6 @@ export default class BarChart extends BasicChart {
       option.name = dimension;
       series.push(option);
     }
-    console.log(series);
     this._setOption({series});
     this._setDatasetIndex();
   }
@@ -58,7 +57,6 @@ export default class BarChart extends BasicChart {
         datasetIndex
       };
     });
-    console.log(this._getOption());
     this._setOption({series}, {lazyUpdate: false});
     // update the order of axis's categories
     this._updateAxis();
@@ -113,12 +111,12 @@ export default class BarChart extends BasicChart {
       tooltip: {
         formatter: ({seriesName, dimensionNames, data, name}) => {
           if (data) {
-            const province = data[0];
+            const area = data[0];
             const index = dimensionNames.indexOf(seriesName);
             const value = this._valueFormatter(data[index]);
             const updateTime = data[data.length - 1];
             const formatTime = (new Date(updateTime)).toLocaleString();
-            return `${province} | ${seriesName}：${value} <br> ${formatTime}`;
+            return `${area} | ${seriesName}：${value} <br> ${formatTime}`;
           } else {
             return `${name} | 暂无数据`;
           }
