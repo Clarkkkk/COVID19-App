@@ -2,6 +2,10 @@ import Vue from 'vue';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
+import bulma from 'bulma';
+import 'bulma/css/bulma.css';
+ 
+Vue.use(bulma);
 
 Vue.config.productionTip = false;
 

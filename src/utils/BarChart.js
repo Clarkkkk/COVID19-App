@@ -3,7 +3,7 @@ import BasicChart from '@/utils/BasicChart.js';
 export default class BarChart extends BasicChart {
   constructor(elem, option, {valueType}) {
     super(elem, option, {valueType});
-    this._setOption(this._createBarBasicOption());
+    this._setOption(this._createBarBasicOption(option));
     this._setSeries();
 
     // when a different legend is selected,
@@ -14,8 +14,8 @@ export default class BarChart extends BasicChart {
     });
   }
 
-  update(dataset) {
-    this._setOption({dataset});
+  update(option) {
+    this._setOption(option);
   }
 
   _setSeries() {
@@ -70,15 +70,15 @@ export default class BarChart extends BasicChart {
     this._setOption({xAxis, yAxis});
   }
 
-  _createBarBasicOption() {
+  _createBarBasicOption(userOption) {
     return {
-      legend: {
+      legend: userOption.legend || {
         orient: 'horizontal',
         selectedMode: 'single',
         right: 'center',
         top: 20
       },
-      grid: [{
+      grid: userOption.grid || [{
         left: 110,
         right: 120,
         top: 80,
@@ -97,7 +97,7 @@ export default class BarChart extends BasicChart {
           interval: 0
         }
       },
-      dataZoom: {
+      dataZoom: userOption.dataZoom || {
         type: 'slider',
         orient: 'vertical',
         right: 20,
@@ -134,7 +134,7 @@ export default class BarChart extends BasicChart {
         formatter: (params) => {
           const index = params.dimensionNames.indexOf(params.seriesName);
           const value = params.value[index];
-          return this._valueFormatter(value);
+          return params.value[0] + ': ' + this._valueFormatter(value);
         }
       },
       emphasis: {

@@ -2,13 +2,20 @@
   <div id="history">
     <div class="header">
       <span class="title">历史数据</span>
-      <select :default-value="selectGroup[0]" @change="onChange">
-        <option v-for="option in selectGroup" :key="option">
-          {{ option }}
-        </option>
-      </select>
+      <div class="select">
+        <select :default-value="selectGroup[0]" @change="onChange">
+          <option v-for="option in selectGroup" :key="option">
+            {{ option }}
+          </option>
+        </select>
+      </div>
     </div>
     <history-map
+      :area="currentArea"
+      :datasetArr="currentDatasetArr"
+      :dates="dates"
+    />
+    <history-area-rank
       :area="currentArea"
       :datasetArr="currentDatasetArr"
       :dates="dates"
@@ -18,6 +25,7 @@
 
 <script>
 import HistoryMap from '@/components/HistoryMap';
+import HistoryAreaRank from '@/components/HistoryAreaRank';
 import {
   isoCountryToEchartsName as isoToCountry,
   isoProvinceToEchartsName as isoToProvince
@@ -35,37 +43,54 @@ export default {
   },
 
   components: {
-    HistoryMap
+    HistoryMap,
+    HistoryAreaRank
   },
 
   created() {
     this.datasetArrays = {};
-    this.fetchData('China', 20);
     this.currentArea = 'China';
-    this.currentDatasetArr = this.datasetArrays['China'];
+    this.initializeData('China');
   },
 
   methods: {
-    fetchData(area, limit, page = 0) {
-      return fetchJSON('/countries/' + area, {limit, page}).then((res) => {
-        console.log(res);
-        if (this.datasetArrays[area]) {
-          this.datasetArrays[area] = Object.freeze([
-            ...this.datasetArrays[area],
-            ...this.normalizeData(res)
-          ]);
+    async initializeData(area) {
+      const limit = 30;
+      let page = 0;
+      let more = true;
+      while (more) {
+        // fetch data
+        const rawData = await fetchJSON('/countries/' + area, {limit, page});
+
+        if (this.dates) {
+          // if this.dates exists, append the new data to it
+          this.dates = [...this.dates, ...this.createDates(rawData)];
         } else {
-          this.datasetArrays[area] = Object.freeze(this.normalizeData(res));
+          // initialize this.dates
+          this.dates = this.createDates(rawData);
         }
-        this.dates = this.createDates(res);
+
+        // normalize data
+        const data = this.normalizeData(rawData);
+
+        const thisArr = this.datasetArrays;
+        // the data should be frozen to avoid reactivity in Vue
+        if (thisArr[area]) {
+          // if thisArr[area] exists, append the new data to it
+          thisArr[area] = Object.freeze([...thisArr[area], ...data]);
+        } else {
+          // initialize thisArr[area]
+          thisArr[area] = Object.freeze(data);
+        }
         if (this.currentArea === area) {
-          this.currentDatasetArr = this.datasetArrays[area];
+          this.currentDatasetArr = thisArr[area];
         }
-        if (res.more) {
-          return this.fetchData(area, limit, page + 1);
-        }
-      });
+        more = false;
+        //more = rawData.more;
+        page++;
+      }
     },
+
     normalizeData(rawData) {
       const sources = [];
       for (const item of rawData.provinces) {
@@ -85,14 +110,14 @@ export default {
             singleDayData.ConfirmedIncr,
             singleDayData.RecoveredIncr,
             singleDayData.DeathsIncr,
-            singleDayData.updateTime
+            singleDayData.Date
           ]);
         });
       }
       return sources.map((source) => {
         return {
           dimensions: ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-            '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '更新时间'],
+            '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'],
           source
         };
       });
@@ -109,7 +134,11 @@ export default {
         this.currentDatasetArr = this.datasetArrays['China'];
       } else if (value === '世界') {
         this.currentArea = 'World';
-        this.currentDatasetArr = this.datasetArrays['World'];
+        if (this.datasetArrays['World']) {
+          this.currentDatasetArr = this.datasetArrays['World'];
+        } else {
+          this.initializeData('World');
+        }
       }
     }
   }

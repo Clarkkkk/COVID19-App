@@ -202,14 +202,26 @@ export default class BasicChart {
         trigger: 'item',
         show: true,
         extraCssText: 'align-items: flex-start',
-        formatter: ({seriesName, dimensionNames, data, name}) => {
+        formatter: (params) => {
+          const {
+            componentType,
+            seriesName,
+            dimensionNames,
+            data,
+            name
+          } = params;
+
           if (data) {
-            const province = data[0];
-            const index = dimensionNames.indexOf(seriesName);
-            const value = this._valueFormatter(data[index]);
-            const updateTime = data[data.length - 1];
-            const formatTime = (new Date(updateTime)).toLocaleString();
-            return `${province} | ${seriesName}：${value} <br> ${formatTime}`;
+            if (componentType === 'series') {
+              const province = data[0];
+              const index = dimensionNames.indexOf(seriesName);
+              const value = this._valueFormatter(data[index]);
+              const updateTime = data[data.length - 1];
+              const formatTime = (new Date(updateTime)).toLocaleString();
+              return `${province} | ${seriesName}：${value} <br> ${formatTime}`;
+            } else if (componentType === 'timeline') {
+              return name;
+            }
           } else {
             return `${name} | 暂无数据`;
           }

@@ -81,6 +81,18 @@ module.exports = {
       }
     };
   },
+  chainWebpack: (config) => {
+    config.module
+      .rule('sass')
+      .test(/\.sass$/)
+      .use('sass-loader')
+      .loader('sass-loader')
+      .options({
+        sassOptions: {
+          indentedSyntax: true
+        }
+      }).end();
+  },
   /*
   configureWebpack: {
     plugins: [

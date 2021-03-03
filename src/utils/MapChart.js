@@ -223,8 +223,8 @@ export default class MapChart extends BasicChart {
     this._setOption({
       visualMap: {
         type: 'piecewise',
-        right: 10,
-        bottom: 10,
+        right: option?.visualMap[0]?.right || 10,
+        bottom: option?.visualMap[0]?.bottom || 10,
         pieces: pieces,
         dimension: index,
         inRange: {
