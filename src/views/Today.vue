@@ -2,11 +2,11 @@
   <div id="today">
     <div class="header">
       <span class="title">今日疫情</span>
-      <a-select :default-value="selectGroup[0]" @change="onChange">
-        <a-select-option v-for="option in selectGroup" :key="option">
+      <select :default-value="selectGroup[0]" @change="onChange">
+        <option v-for="option in selectGroup" :key="option">
           {{ option }}
-        </a-select-option>
-      </a-select>
+        </option>
+      </select>
     </div>
     <today-map
       :dataset="currentDataset"
@@ -62,7 +62,7 @@ export default {
   methods: {
     // normalize the source data to a dataset
     normalizeData(rawData) {
-      const source =[];
+      const source = [];
       for (const item of rawData) {
         source.push([
           isoToCountry[item.iso] || isoToProvince[item.iso],

@@ -28,7 +28,7 @@
 <script>
 export default {
   created() {
-    this.data = require('@/overall.json').results[0];
+    this.data = {};
     console.log(this.data);
   }
 };

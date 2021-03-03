@@ -1,4 +1,55 @@
-import * as echarts from 'echarts';
+
+import * as echarts from 'echarts/core';
+
+// import charts
+import {
+  BarChart,
+  MapChart,
+  ScatterChart,
+  CustomChart
+} from 'echarts/charts';
+
+// import echarts components
+import {
+  TitleComponent,
+  ToolboxComponent,
+  TooltipComponent,
+  AxisPointerComponent,
+  GridComponent,
+  DataZoomSliderComponent,
+  LegendPlainComponent,
+  VisualMapPiecewiseComponent,
+  TimelineComponent,
+  GeoComponent,
+  DatasetComponent,
+  TransformComponent
+} from 'echarts/components';
+
+// import renderer
+import {CanvasRenderer} from 'echarts/renderers';
+
+// 注册必须的组件
+echarts.use(
+  [
+    BarChart,
+    MapChart,
+    ScatterChart,
+    CustomChart,
+    TitleComponent,
+    ToolboxComponent,
+    TooltipComponent,
+    AxisPointerComponent,
+    GridComponent,
+    DataZoomSliderComponent,
+    LegendPlainComponent,
+    VisualMapPiecewiseComponent,
+    TimelineComponent,
+    GeoComponent,
+    DatasetComponent,
+    TransformComponent,
+    CanvasRenderer
+  ]
+);
 
 export default class BasicChart {
   constructor(elem, option, {valueType}) {
@@ -29,6 +80,7 @@ export default class BasicChart {
     // set option using user's option
     if (option) {
       this._setOption(option);
+      console.log(this._getOption());
     }
 
     // resize the map when window resizes
@@ -96,6 +148,8 @@ export default class BasicChart {
   _getLegendDimensions() {
     // the dataset follow a convention that the first dimension is
     // area name, and the last is update time
+    console.log(this._getOption());
+    console.log(this._getOption().dataset);
     const dimensions = this._getOption().dataset[0].dimensions;
     return dimensions.slice(1, dimensions.length - 1);
   }

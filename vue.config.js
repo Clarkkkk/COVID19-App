@@ -36,24 +36,19 @@ module.exports = {
       ]
     },
     // 这里的设置会反映在index.html中
-    name: 'neteasemusic',
-    themeColor: '#ff3932',
-    msTileColor: '#ff3932',
+    name: 'COVID-19疫情小站',
+    themeColor: '#00a59d',
+    msTileColor: '#00a59d',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black-translucent',
     manifestPath: 'public/manifest.json',
-  },
-
-  /*
     iconPaths: {
-      favicon32: 'img/icons/favicon-32x32.png',
-      favicon16: 'img/icons/favicon-16x16.png',
-      androidChrome: 'img/icons/android-chrome-192x192.png',
-      appleTouchIcon: 'img/icons/apple-touch-icon.png',
-      maskIcon: 'img/icons/safari-pinned-tab.svg',
-      msTileImage: 'img/icons/mstile-150x150.png'
-    },
-    */
+      favicon32: 'img/icons/favicon-196.png',
+      favicon16: 'img/icons/favicon-196.png',
+      androidChrome: 'img/icons/manifest-icon-512.png',
+      appleTouchIcon: 'img/icons/apple-icon-180.png'
+    }
+  },
   css: {
     loaderOptions: {
       css: {
@@ -61,6 +56,30 @@ module.exports = {
         esModule: false
       }
     }
+  },
+  configureWebpack: (config) => {
+    return {
+      optimization: {
+        splitChunks: {
+          chunks: 'async',
+          minSize: 300,
+          cacheGroups: {
+            vendors: {
+              name: `chunk-vendors`,
+              test: /[\\/]node_modules[\\/]/,
+              priority: -10,
+              chunks: 'initial'
+            },
+            echarts: {
+              name: `chunk-echarts`,
+              test: /[\\/]echarts[\\/]|[\\/]zrender[\\/]/,
+              priority: -5,
+              chunks: 'initial'
+            }
+          }
+        }
+      }
+    };
   },
   /*
   configureWebpack: {
