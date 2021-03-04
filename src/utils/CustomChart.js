@@ -1,9 +1,13 @@
 import BasicChart from '@/utils/BasicChart.js';
 
 export default class CustomChart extends BasicChart {
-  constructor(elem, option, {valueType, chartTypes}) {
-    super(elem, option, {valueType});
-    this.chartTypes = chartTypes;
+  constructor(elem, option, config) {
+    super(elem, config);
+    this._setOption(option);
+    if (!config.chartTypes) {
+      throw new Error('Chart types must be provided');
+    }
+    this.chartTypes = config.chartTypes;
     this.options = this._createOptions();
     this.frameCount = [];
     this._setOption(this.options[0]);
@@ -14,8 +18,8 @@ export default class CustomChart extends BasicChart {
     });
   }
 
-  update(dataset) {
-    this._setOption({dataset});
+  update(option) {
+    this._setOption(option);
   }
 
   switchType(type) {
@@ -80,8 +84,6 @@ export default class CustomChart extends BasicChart {
     option.series = [];
     // dimensions excluding area name and update time
     const legendDimensions = this._getLegendDimensions();
-    // all dimensions
-    const dimensions = this._getOption().dataset[0].dimensions;
 
     this._chart.on('finished', () => {
       for (let i = 0; i < this.frameCount.length; i++) {
@@ -90,7 +92,7 @@ export default class CustomChart extends BasicChart {
     });
 
     for (const dimension of legendDimensions) {
-      const dimensionIndex = dimensions.indexOf(dimension);
+      const dimensionIndex = this.dimensions.indexOf(dimension);
       const seriesEntry = {
         type: 'custom',
         name: dimension,
@@ -139,12 +141,16 @@ export default class CustomChart extends BasicChart {
               this.frameCount[params.dataIndex] += 1 / 30;
               if (isVertical) {
                 duringAPI.setShape('x', isVertical ? xCoord - gapWidth : gridX);
+                // eslint-disable-next-line max-len
                 duringAPI.setShape('y', isVertical ? yCoord : yCoord - gapWidth);
+                // eslint-disable-next-line max-len
                 duringAPI.setShape('height', ((frameCount - 1) ** 3 + 1) * size);
                 duringAPI.setShape('width', gapWidth * 2);
               } else {
                 duringAPI.setShape('x', isVertical ? xCoord - gapWidth : gridX);
+                // eslint-disable-next-line max-len
                 duringAPI.setShape('y', isVertical ? yCoord : yCoord - gapWidth);
+                // eslint-disable-next-line max-len
                 duringAPI.setShape('height', isVertical ? yAxisLength + gridY - yCoord : gapWidth * 2);
                 duringAPI.setShape('width', ((frameCount - 1) ** 3 + 1) * size);
               }
@@ -200,8 +206,6 @@ export default class CustomChart extends BasicChart {
     option.series = [];
     // dimensions excluding area name and update time
     const legendDimensions = this._getLegendDimensions();
-    // all dimensions
-    const dimensions = this._getOption().dataset[0].dimensions;
     const data = this._getOption().dataset[0].source;
 
     /*
@@ -212,7 +216,7 @@ export default class CustomChart extends BasicChart {
     });
 */
     for (const dimension of legendDimensions) {
-      const dimensionIndex = dimensions.indexOf(dimension);
+      const dimensionIndex = this.dimensions.indexOf(dimension);
       const seriesEntry = {
         type: 'custom',
         name: dimension,

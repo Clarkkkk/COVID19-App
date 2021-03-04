@@ -33,34 +33,29 @@ export default {
 
   created() {
     this.chart;
-    // for dimensionNames used in legend, create relavant series
-    this.dimensionNames = [
-      '现存确诊',
-      '累计确诊',
-      '治愈',
-      '死亡'
-    ];
+    this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡', '更新时间'];
   },
 
   watch: {
     dataset(newDataset) {
       if (this.chart) {
-        this.chart.update(newDataset);
+        this.chart.update({dataset: newDataset});
       } else {
         this.$nextTick().then(() => {
           const option = {
             title: {text: '各地数据'},
             dataset: this.dataset
           };
-          console.log(this.dataset);
-          this.chart = new CustomChart(this.$refs.canvas, option, {
+          const config = {
+            dimensions: this.dimensions,
             chartTypes: [{
               name: 'bar',
               config: {isVertical: false, isInverse: true}
             }, {
               name: 'pie',
             }]
-          });
+          };
+          this.chart = new CustomChart(this.$refs.canvas, option, config);
         });
       }
     }

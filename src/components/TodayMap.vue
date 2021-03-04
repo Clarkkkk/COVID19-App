@@ -9,22 +9,15 @@ export default {
 
   created() {
     this.map;
-    // for dimensionNames used in legend, create relavant series
-    this.dimensionNames = [
-      '现存确诊',
-      '累计确诊',
-      '治愈',
-      '死亡'
-    ];
+    this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡', '更新时间'];
   },
 
   watch: {
-    dataset(newDataSet) {
-      console.log(this.dataset);
+    dataset(newDataset) {
       if (this.map) {
         // if dataset is changed, this.area shoule have been changed
-        const option = {dataset: newDataSet};
-        console.log(newDataSet);
+        const option = {dataset: newDataset};
+        console.log(newDataset);
         this.map.updateMap(option, this.area);
       } else {
         this.$nextTick().then(() => {
@@ -33,6 +26,7 @@ export default {
             dataset: this.dataset
           };
           this.map = new MapChart(this.$el, option, {
+            dimensions: this.dimensions,
             area: 'China'
           });
         });

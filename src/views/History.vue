@@ -12,10 +12,17 @@
     </div>
     <history-map
       :area="currentArea"
+      :dimensions="dimensions"
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
     <history-area-rank
+      :area="currentArea"
+      :dimensions="dimensions"
+      :datasetArr="currentDatasetArr"
+      :dates="dates"
+    />
+    <history-rate-rank
       :area="currentArea"
       :datasetArr="currentDatasetArr"
       :dates="dates"
@@ -26,6 +33,7 @@
 <script>
 import HistoryMap from '@/components/HistoryMap';
 import HistoryAreaRank from '@/components/HistoryAreaRank';
+import HistoryRateRank from '@/components/HistoryRateRank';
 import {
   isoCountryToEchartsName as isoToCountry,
   isoProvinceToEchartsName as isoToProvince
@@ -44,11 +52,14 @@ export default {
 
   components: {
     HistoryMap,
-    HistoryAreaRank
+    HistoryAreaRank,
+    HistoryRateRank
   },
 
   created() {
     this.datasetArrays = {};
+    this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
+      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'];
     this.currentArea = 'China';
     this.initializeData('China');
   },
@@ -116,8 +127,7 @@ export default {
       }
       return sources.map((source) => {
         return {
-          dimensions: ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-            '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'],
+          dimensions: this.dimensions,
           source
         };
       });

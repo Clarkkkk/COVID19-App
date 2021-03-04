@@ -7,19 +7,27 @@ import BarChart from '@/utils/BarChart';
 export default {
   props: ['dataset'],
   created() {
-    this.barChart;
+    this.chart;
+    this.dimensions = [
+      '地方名',
+      '估计治疗率',
+      '住院死亡率',
+      '累计死亡率',
+      '更新时间'
+    ];
   },
   watch: {
     dataset(newDataset) {
       const dataset = this.convertDataset(newDataset);
-      if (this.barChart) {
-        this.barChart.update(dataset);
+      if (this.chart) {
+        this.chart.update({dataset});
       } else {
         const option = {
           title: {text: '治疗率与死亡率'},
           dataset
         };
-        this.barChart = new BarChart(this.$el, option, {
+        this.chart = new BarChart(this.$el, option, {
+          dimensions: this.dimensions,
           valueType: 'percentage'
         });
       }
@@ -32,14 +40,6 @@ export default {
       const confirmed = dimensions.indexOf('累计确诊');
       const cured = dimensions.indexOf('治愈');
       const dead = dimensions.indexOf('死亡');
-
-      const rateDimensions = [
-        '地方名',
-        '估计治疗率',
-        '住院死亡率',
-        '累计死亡率',
-        '更新时间'
-      ];
 
       const rateSource = source.map((entry) => {
         return [
@@ -56,7 +56,7 @@ export default {
         ];
       });
       return [{
-        dimensions: rateDimensions,
+        dimensions: this.dimensions,
         source: rateSource,
       }, {
         id: '估计治疗率',

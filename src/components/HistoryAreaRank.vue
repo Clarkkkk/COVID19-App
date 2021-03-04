@@ -5,11 +5,7 @@
 <script>
 import BarChart from '@/utils/BarChart';
 export default {
-  props: ['area', 'datasetArr', 'dates'],
-  created() {
-    
-  },
-
+  props: ['area', 'datasetArr', 'dimensions', 'dates'],
   methods: {
     createSortTransform(dimensions) {
       return dimensions.map((dimension, index) => {
@@ -27,15 +23,14 @@ export default {
     datasetArr(arr) {
       console.log(arr);
       const options = arr.map((item) => {
-        console.log(item);
         const date = item.source[0][item.source[0].length - 1];
         return {
-          title: {text: '疫情地图 | ' + date},
+          title: {text: '疫情地区排行 | ' + date},
           dataset: [item, ...this.createSortTransform(item.dimensions)]
         };
       });
       const basicOption = {
-        title: {text: '疫情地图'},
+        title: {text: '疫情地区排行'},
         timeline: {
           data: this.dates,
           axisType: 'category',
@@ -74,7 +69,11 @@ export default {
       if (this.chart) {
         this.chart.update(basicOption);
       } else {
-        this.chart = new BarChart(this.$el, basicOption, {valueType: 'integer'});
+        this.chart =
+          new BarChart(this.$el, basicOption, {
+            valueType: 'integer',
+            dimensions: this.dimensions
+          });
       }
     }
   }

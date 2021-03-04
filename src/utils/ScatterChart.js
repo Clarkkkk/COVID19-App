@@ -1,14 +1,15 @@
 import BasicChart from '@/utils/BasicChart.js';
 
 export default class ScatterChart extends BasicChart {
-  constructor(elem, option, {valueType}) {
-    super(elem, option, {valueType});
-    this._setOption(this._createScatterBasicOption());
+  constructor(elem, option, basicConfig) {
+    super(elem, basicConfig);
+    this._setOption(option);
+    this._setOption(this._createScatterBasicOption(option));
     this._setSeries();
   }
 
-  update(dataset) {
-    this._setOption({dataset});
+  update(option) {
+    this._setOption(option);
   }
 
   _setSeries() {
@@ -25,21 +26,21 @@ export default class ScatterChart extends BasicChart {
     this._setOption({series});
   }
 
-  _createScatterBasicOption() {
+  _createScatterBasicOption(userOption) {
     return {
-      legend: {
+      legend: userOption.legend || {
         orient: 'horizontal',
         selectedMode: 'single',
         right: 'center',
         top: 20
       },
-      grid: [{
+      grid: userOption.grid || [{
         left: 110,
         right: 120,
         top: 80,
         bottom: 50
       }],
-      xAxis: {
+      xAxis: userOption.xAxis || {
         type: 'value',
         scale: true,
         splitLine: {
@@ -49,7 +50,7 @@ export default class ScatterChart extends BasicChart {
           formatter: (value, index) => this._valueFormatter(value)
         }
       },
-      yAxis: {
+      yAxis: userOption.yAxis || {
         type: 'value',
         scale: true,
         splitLine: {
@@ -59,7 +60,7 @@ export default class ScatterChart extends BasicChart {
           formatter: (value, index) => this._valueFormatter(value)
         }
       },
-      dataZoom: [{
+      dataZoom: userOption.dataZoom || [{
         type: 'slider',
         orient: 'vertical',
         left: 20,
@@ -68,7 +69,7 @@ export default class ScatterChart extends BasicChart {
         orient: 'horizontal',
         bottom: 20,
       }],
-      tooltip: {
+      tooltip: userOption.tooltip || {
         formatter: ({seriesName, dimensionNames, data, name}) => {
           if (data) {
             const area = data[0];

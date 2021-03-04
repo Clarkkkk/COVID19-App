@@ -9,23 +9,26 @@ import ScatterChart from '@/utils/ScatterChart';
 export default {
   props: ['dataset'],
   created() {
-    this.scatterChart;
+    this.chart;
+    this.dimensions = [
+      '地方名',
+      '估计治疗率',
+      '住院死亡率',
+      '更新时间'
+    ];
   },
   watch: {
     dataset(newDataset) {
       const dataset = this.convertDataset(newDataset);
-      if (this.scatterChart) {
-        this.scatterChart.update(dataset);
+      if (this.chart) {
+        this.chart.update({dataset});
       } else {
         const option = {
           title: {text: '估计治疗率与各指标散点图'},
           dataset
         };
-        const legendDimensions = ['估计治疗率与住院死亡率'];
-        this.scatterChart =
-          new ScatterChart(this.$refs.canvas, option, {
-            dimensionNames: legendDimensions
-          });
+        const config = {dimensions: this.dimensions};
+        this.chart = new ScatterChart(this.$refs.canvas, option, config);
       }
     }
   },
@@ -37,12 +40,6 @@ export default {
       const cured = dimensions.indexOf('治愈');
       const dead = dimensions.indexOf('死亡');
 
-      const rateDimensions = [
-        '地方名',
-        '估计治疗率',
-        '住院死亡率',
-        '更新时间'
-      ];
       const rateSource = source.map((entry) => {
         return [
           // 地方名
@@ -58,7 +55,7 @@ export default {
         ];
       });
       return [{
-        dimensions: rateDimensions,
+        dimensions: this.imensions,
         source: rateSource,
       }, {
         transform: {

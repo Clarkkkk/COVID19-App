@@ -3,16 +3,22 @@ import fetchJSON from '@/utils/fetchJSON';
 import {nameMap} from '@/utils/mappings';
 
 export default class MapChart extends BasicChart {
-  constructor(elem, option, {valueType, area}) {
+  constructor(elem, option, config) {
     // initialize this._chart
-    super(elem, option, {valueType});
-    this._registerMap(area).then(() => {
+    super(elem, config);
+    this._setOption(option);
+
+    if (!config.area) {
+      throw new Error('Area must be provided.');
+    }
+
+    this._registerMap(config.area).then(() => {
       // initialize zoom level's value and dimensionNames
       this.zoomLevelValue = 1;
       // set zooming tool's callbacks and map legend symbol
       this._setZoomFeatures();
       // setSeries should be called before dimensions relavant functions
-      this._setSeries(area);
+      this._setSeries(config.area);
       this._setMapLegendSymbol();
       this._setVisualMap();
 
@@ -55,11 +61,6 @@ export default class MapChart extends BasicChart {
       this._hideLoading();
     }
   }
-
-  /*
-   *  The functions below are auxilary functions
-   *  and should not be used outside the class
-   */
 
   // this._echarts's methods
   _getMap(areaName) {
@@ -161,7 +162,7 @@ export default class MapChart extends BasicChart {
         formatter: '{b}'
       };
     });
-    this._setOption({series: series});
+    this._setOption({series});
   }
 
   // find the selected legend and determine if its symbol need to display

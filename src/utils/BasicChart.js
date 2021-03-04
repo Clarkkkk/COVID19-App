@@ -28,7 +28,6 @@ import {
 // import renderer
 import {CanvasRenderer} from 'echarts/renderers';
 
-// 注册必须的组件
 echarts.use(
   [
     BarChart,
@@ -52,22 +51,24 @@ echarts.use(
 );
 
 export default class BasicChart {
-  constructor(elem, option, {valueType}) {
+  constructor(elem, {dimensions, valueType, legendRange}) {
     // BasicChart is used as a basic class for MapChart etc
     if (new.target === BasicChart) {
       throw new Error('BasicChart is used as a basic class');
     }
 
-    // Params "elem" and "option" are required
-    if (!elem || !option) {
+    // Params "elem" and "dimensions" are required
+    if (!elem || !dimensions) {
       // eslint-disable-next-line max-len
-      throw new Error('Params "elem" and "option" are required.');
+      throw new Error('Params "elem" and "dimensions" are required');
     }
 
     // initialize echarts
     this._echarts = echarts;
     this._chart = this._echarts.init(elem);
+    this.dimensions = dimensions;
     this.valueType = valueType;
+    this.legendRange = legendRange;
     // eslint-disable-next-line max-len
     this.DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
     // ['#EF6C00', '#C62828', '#0277BD', '#283593'];
@@ -76,12 +77,6 @@ export default class BasicChart {
     // create a basic option object
     const basicOption = this._createBasicOption();
     this._setOption(basicOption);
-
-    // set option using user's option
-    if (option) {
-      this._setOption(option);
-      console.log(this._getOption());
-    }
 
     // resize the map when window resizes
     let id = 0;
@@ -101,9 +96,7 @@ export default class BasicChart {
 
   // this._chart's methods
   _setOption(option, config) {
-    if (!config) {
-      config = {};
-    }
+    config = config || {};
     if (config.lazyUpdate === undefined) {
       config.lazyUpdate = true;
     }
@@ -128,17 +121,22 @@ export default class BasicChart {
 
   // find the currently selected legend
   // return dimension name and dimension index
-  // must be called after the series is set
   _getSelected() {
     const option = this._getOption();
     // An object like: {dimensionName: true/false}
     const selected = option.legend[0].selected;
+
+    // _getSelected() must be called after the dataset series is set
+    if (typeof selected !== 'object') {
+      throw new Error('Selected is not an object.' +
+        '_getSelected() must be called after the dataset and series are set');
+    }
+
     // find the dimensionName whose value is true
     const selectedDimension =
       Object.keys(selected).find((key) => selected[key]);
     // get its index in dataset's dimensions
-    const seletedIndex =
-      option.dataset[0].dimensions.indexOf(selectedDimension);
+    const seletedIndex = this.dimensions.indexOf(selectedDimension);
     return {
       dimension: selectedDimension,
       index: seletedIndex
@@ -146,18 +144,22 @@ export default class BasicChart {
   }
 
   _getLegendDimensions() {
+    // if this.legendRange is not provided,
     // the dataset follow a convention that the first dimension is
     // area name, and the last is update time
-    console.log(this._getOption());
-    console.log(this._getOption().dataset);
-    const dimensions = this._getOption().dataset[0].dimensions;
-    return dimensions.slice(1, dimensions.length - 1);
+    const range = this.legendRange || [1, this.dimensions.length - 1];
+    return this.dimensions.slice(...range);
   }
 
-  _valueFormatter(value) {
-    if (this.valueType === 'percentage') {
+  // format the value by the valueType
+  // if valueType is an array,
+  // it means values in different dimensions have different types
+  _valueFormatter(value, dimensionIndex) {
+    const type = Array.isArray(this.valueType) ?
+      this.valueType[dimensionIndex] : this.valueType;
+    if (type === 'percentage') {
       return (value * 100).toFixed(2) + '%';
-    } else if (this.valueType === 'decimal') {
+    } else if (type === 'decimal') {
       return value.toFixed(2);
     } else {
       return value;
@@ -165,7 +167,7 @@ export default class BasicChart {
   }
 
   // create a basic chart option
-  _createBasicOption(...components) {
+  _createBasicOption() {
     // title, color, toolbox, tooltip, legend are required components
     const basicOption = {
       title: {
@@ -215,7 +217,7 @@ export default class BasicChart {
             if (componentType === 'series') {
               const province = data[0];
               const index = dimensionNames.indexOf(seriesName);
-              const value = this._valueFormatter(data[index]);
+              const value = this._valueFormatter(data[index], index);
               const updateTime = data[data.length - 1];
               const formatTime = (new Date(updateTime)).toLocaleString();
               return `${province} | ${seriesName}：${value} <br> ${formatTime}`;

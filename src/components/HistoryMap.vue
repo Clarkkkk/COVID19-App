@@ -5,24 +5,16 @@
 <script>
 import MapChart from '@/utils/MapChart';
 export default {
-  props: ['area', 'datasetArr', 'dates'],
+  props: ['area', 'datasetArr', 'dimensions', 'dates'],
 
   created() {
     this.map;
-    // for dimensionNames used in legend, create relavant series
-    this.dimensionNames = [
-      '现存确诊',
-      '累计确诊',
-      '治愈',
-      '死亡'
-    ];
   },
 
   watch: {
     datasetArr(arr) {
       console.log(arr);
       const options = arr.map((item) => {
-        console.log(item);
         const date = item.source[0][item.source[0].length - 1];
         return {
           title: {text: '疫情地图 | ' + date},
@@ -53,7 +45,8 @@ export default {
         this.map.updateMap(basicOption, this.area);
       } else {
         this.map = new MapChart(this.$el, basicOption, {
-          area: this.area
+          area: this.area,
+          dimensions: this.dimensions
         });
       }
     }

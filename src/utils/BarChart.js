@@ -1,8 +1,9 @@
 import BasicChart from '@/utils/BasicChart.js';
 
 export default class BarChart extends BasicChart {
-  constructor(elem, option, {valueType}) {
-    super(elem, option, {valueType});
+  constructor(elem, option, basicConfig) {
+    super(elem, basicConfig);
+    this._setOption(option);
     this._setOption(this._createBarBasicOption(option));
     this._setSeries();
 
@@ -84,13 +85,13 @@ export default class BarChart extends BasicChart {
         top: 80,
         bottom: 50
       }],
-      xAxis: {
+      xAxis: userOption.xAxis || {
         type: 'value',
         axisLabel: {
           formatter: (value, index) => this._valueFormatter(value)
         }
       },
-      yAxis: {
+      yAxis: userOption.yAxis || {
         type: 'category',
         inverse: true,
         axisLabel: {
@@ -107,21 +108,7 @@ export default class BarChart extends BasicChart {
         endValue: 12,
         maxValueSpan: 13,
         rangeMode: ['value', 'value']
-      },
-      tooltip: {
-        formatter: ({seriesName, dimensionNames, data, name}) => {
-          if (data) {
-            const area = data[0];
-            const index = dimensionNames.indexOf(seriesName);
-            const value = this._valueFormatter(data[index]);
-            const updateTime = data[data.length - 1];
-            const formatTime = (new Date(updateTime)).toLocaleString();
-            return `${area} | ${seriesName}：${value} <br> ${formatTime}`;
-          } else {
-            return `${name} | 暂无数据`;
-          }
-        }
-      },
+      }
     };
   }
 
@@ -134,7 +121,7 @@ export default class BarChart extends BasicChart {
         formatter: (params) => {
           const index = params.dimensionNames.indexOf(params.seriesName);
           const value = params.value[index];
-          return params.value[0] + ': ' + this._valueFormatter(value);
+          return params.value[0] + ': ' + this._valueFormatter(value, index);
         }
       },
       emphasis: {
