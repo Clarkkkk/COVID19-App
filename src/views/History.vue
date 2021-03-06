@@ -27,6 +27,12 @@
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
+    <history-time-series
+      :area="currentArea"
+    />
+    <history-histogram
+      :area="currentArea"
+    />
   </div>
 </template>
 
@@ -34,6 +40,8 @@
 import HistoryMap from '@/components/HistoryMap';
 import HistoryAreaRank from '@/components/HistoryAreaRank';
 import HistoryRateRank from '@/components/HistoryRateRank';
+import HistoryTimeSeries from '@/components/HistoryTimeSeries';
+import HistoryHistogram from '@/components/HistoryHistogram';
 import {
   isoCountryToEchartsName as isoToCountry,
   isoProvinceToEchartsName as isoToProvince
@@ -53,7 +61,9 @@ export default {
   components: {
     HistoryMap,
     HistoryAreaRank,
-    HistoryRateRank
+    HistoryRateRank,
+    HistoryTimeSeries,
+    HistoryHistogram
   },
 
   created() {
@@ -71,7 +81,8 @@ export default {
       let more = true;
       while (more) {
         // fetch data
-        const rawData = await fetchJSON('/countries/' + area, {limit, page});
+        const rawData =
+          await fetchJSON(`/countries/${area}/all`, {limit, page});
 
         if (this.dates) {
           // if this.dates exists, append the new data to it

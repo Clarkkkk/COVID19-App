@@ -1,18 +1,22 @@
 import BasicChart from '@/utils/BasicChart.js';
+import * as ecStat from 'echarts-stat';
 
-export default class BarChart extends BasicChart {
+export default class HistogramChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
+    this._echarts.registerTransform(ecStat.transform.histogram);
+    option.dataset = this._transformDataset(option.dataset);
     this._setOption(option);
-    this._setOption(this._createBarBasicOption(option));
+    this._setOption(this._createHistogramBasicOption(option));
     this._setSeries();
+    console.log(this._getOption());
 
     // when a different legend is selected,
     // reset all the series's datasetIndex
     // otherwise the order of the specific dataset won't come into effect
     // when using different transform for different dimensions
     this._chart.on('legendselectchanged', (params) => {
-      this._setDatasetIndex();
+      //this._setDatasetIndex();
     });
   }
 
@@ -20,32 +24,66 @@ export default class BarChart extends BasicChart {
     this._setOption(option);
   }
 
+  _transformDataset(dataset) {
+    const transforms = this._getLegendDimensions().map((dimension) => {
+      return {
+        id: dimension,
+        transform: {
+          type: 'ecStat:histogram',
+          print: true,
+          config: {
+            dimensions: dimension,
+            method: 'freedmanDiaconis'
+          }
+        }
+      };
+    });
+    const transform = [{
+      transform: {
+        type: 'ecStat:histogram',
+        print: true,
+        config: {
+          dimensions: 0,
+          method: 'freedmanDiaconis'
+        }
+      }
+    }, {
+      transform: {
+        type: 'ecStat:histogram',
+        print: false,
+        config: {
+          dimensions: 1,
+          method: 'freedmanDiaconis'
+        }
+      }
+    }];
+    return Array.isArray(dataset) ?
+      [...dataset, ...transforms] :
+      [dataset, ...transforms];
+  }
+
   _setSeries() {
-    // if series's length is zero
-    // it means this is the initial setOption for series
-    const isInitial = !this._getOption().series.length;
+    const dataset = this._getOption().dataset;
     const series = [];
     for (const dimension of this._getLegendDimensions()) {
-      const option = isInitial ? this._createSeriesBasicOption() : {};
+      const option = this._createSeriesBasicOption();
       option.name = dimension;
+      option.datasetIndex =
+        dataset.findIndex((value) => value.id === dimension);
       series.push(option);
     }
     this._setOption({series});
-    this._setDatasetIndex();
   }
 
-  // set dataset index
-  // if there is only one dataset, use it
-  // if there are more than one datasets,
-  // use one whose id matches the dimensionName,
-  // otherwise use the last one of them
-  // shoule be called after this._setSeries()
   _setDatasetIndex() {
     const dataset = this._getOption().dataset;
     const selectedDimension = this._getSelected().dimension;
+    console.log(selectedDimension);
     let datasetIndex = 0;
     if (Array.isArray(dataset)) {
       const datasetIds = dataset.map((entry) => entry.id);
+      console.log(datasetIds);
+      console.log(selectedDimension);
       if (datasetIds.includes(selectedDimension)) {
         datasetIndex = datasetIds.indexOf(selectedDimension);
       } else {
@@ -60,19 +98,9 @@ export default class BarChart extends BasicChart {
       };
     });
     this._setOption({series}, {lazyUpdate: false});
-    // update the order of axis's categories
-    this._updateAxis();
   }
 
-  // set the axis with the same option to reflect the order change
-  // otherwise the order of axis's categories won't change
-  _updateAxis() {
-    const xAxis = this._getOption().xAxis;
-    const yAxis = this._getOption().yAxis;
-    this._setOption({xAxis, yAxis});
-  }
-
-  _createBarBasicOption(userOption) {
+  _createHistogramBasicOption(userOption) {
     return {
       legend: userOption.legend || {
         orient: 'horizontal',
@@ -87,46 +115,34 @@ export default class BarChart extends BasicChart {
         bottom: 50
       }],
       xAxis: userOption.xAxis || {
+        name: '单位：人/每百万人',
         type: 'value',
+        scale: true,
         axisLabel: {
           formatter: (value) => this._valueFormatter(value)
         }
       },
       yAxis: userOption.yAxis || {
-        type: 'category',
-        inverse: true,
+        type: 'value',
         axisLabel: {
           interval: 0
         }
       },
-      dataZoom: userOption.dataZoom || {
-        type: 'slider',
-        orient: 'vertical',
-        right: 20,
-        zoomLock: true,
-        brushSelect: false,
-        startValue: 0,
-        endValue: 12,
-        maxValueSpan: 13,
-        rangeMode: ['value', 'value']
-      }
+      dataZoom: {}
     };
   }
 
   _createSeriesBasicOption() {
     return {
       type: 'bar',
+      barWidth: '100%',
+      barCategoryGap: '0%',
+      barGap: '0%',
       label: {
         show: true,
-        position: 'right',
-        formatter: (params) => {
-          const index = params.dimensionNames.indexOf(params.seriesName);
-          const value = params.value[index];
-          return params.value[0] + ': ' + this._valueFormatter(value, index);
-        }
+        position: 'top'
       },
       emphasis: {
-        focus: 'self',
         label: {
           textShadowColor: '#888',
           textShadowBlur: 2

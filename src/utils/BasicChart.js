@@ -4,6 +4,7 @@ import * as echarts from 'echarts/core';
 // import charts
 import {
   BarChart,
+  LineChart,
   MapChart,
   ScatterChart,
   CustomChart
@@ -17,6 +18,7 @@ import {
   AxisPointerComponent,
   GridComponent,
   DataZoomSliderComponent,
+  LegendScrollComponent,
   LegendPlainComponent,
   VisualMapPiecewiseComponent,
   TimelineComponent,
@@ -31,6 +33,7 @@ import {CanvasRenderer} from 'echarts/renderers';
 echarts.use(
   [
     BarChart,
+    LineChart,
     MapChart,
     ScatterChart,
     CustomChart,
@@ -41,6 +44,7 @@ echarts.use(
     GridComponent,
     DataZoomSliderComponent,
     LegendPlainComponent,
+    LegendScrollComponent,
     VisualMapPiecewiseComponent,
     TimelineComponent,
     GeoComponent,
@@ -162,7 +166,14 @@ export default class BasicChart {
     } else if (type === 'decimal') {
       return value.toFixed(2);
     } else {
-      return value;
+      const valueAbs = Math.abs(value);
+      if (valueAbs < 10000) {
+        return value;
+      } else if (valueAbs >= 10000 && valueAbs < 100000000) {
+        return (value / 10000).toFixed(1) + '万';
+      } else {
+        return (value / 100000000).toFixed(1) + '亿';
+      }
     }
   }
 
@@ -205,6 +216,7 @@ export default class BasicChart {
         show: true,
         extraCssText: 'align-items: flex-start',
         formatter: (params) => {
+          //console.log(params);
           const {
             componentType,
             seriesName,

@@ -1,19 +1,11 @@
 import BasicChart from '@/utils/BasicChart.js';
 
-export default class BarChart extends BasicChart {
+export default class LineChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
     this._setOption(option);
-    this._setOption(this._createBarBasicOption(option));
+    this._setOption(this._createLineBasicOption(option));
     this._setSeries();
-
-    // when a different legend is selected,
-    // reset all the series's datasetIndex
-    // otherwise the order of the specific dataset won't come into effect
-    // when using different transform for different dimensions
-    this._chart.on('legendselectchanged', (params) => {
-      this._setDatasetIndex();
-    });
   }
 
   update(option) {
@@ -60,64 +52,74 @@ export default class BarChart extends BasicChart {
       };
     });
     this._setOption({series}, {lazyUpdate: false});
-    // update the order of axis's categories
-    this._updateAxis();
   }
 
-  // set the axis with the same option to reflect the order change
-  // otherwise the order of axis's categories won't change
-  _updateAxis() {
-    const xAxis = this._getOption().xAxis;
-    const yAxis = this._getOption().yAxis;
-    this._setOption({xAxis, yAxis});
-  }
-
-  _createBarBasicOption(userOption) {
+  _createLineBasicOption(userOption) {
     return {
       legend: userOption.legend || {
-        orient: 'horizontal',
-        selectedMode: 'single',
-        right: 'center',
-        top: 20
+        orient: 'vertical',
+        selectedMode: 'multiple',
+        right: 10,
+        top: 50
       },
       grid: userOption.grid || [{
-        left: 110,
-        right: 120,
+        left: 50,
+        right: 30,
         top: 80,
-        bottom: 50
+        bottom: 70
       }],
       xAxis: userOption.xAxis || {
+        type: 'category',
+      },
+      yAxis: userOption.yAxis || {
         type: 'value',
         axisLabel: {
           formatter: (value) => this._valueFormatter(value)
         }
       },
-      yAxis: userOption.yAxis || {
-        type: 'category',
-        inverse: true,
-        axisLabel: {
-          interval: 0
-        }
-      },
       dataZoom: userOption.dataZoom || {
         type: 'slider',
-        orient: 'vertical',
-        right: 20,
-        zoomLock: true,
+        orient: 'horizontal',
+        bottom: 10,
+        zoomLock: false,
         brushSelect: false,
         startValue: 0,
         endValue: 12,
-        maxValueSpan: 13,
         rangeMode: ['value', 'value']
+      },
+      tooltip: {
+        trigger: 'item',
+        show: true,
+        extraCssText: 'align-items: flex-start',
+        formatter: (params) => {
+          const {
+            seriesName,
+            dimensionNames,
+            data,
+          } = params;
+
+          const date = data[0];
+          const index = dimensionNames.indexOf(seriesName);
+          const value = this._valueFormatter(data[index], index);
+          if (data) {
+            return `${date} | ${seriesName}：${value}`;
+          } else {
+            return `${date} | 暂无数据`;
+          }
+        }
       }
     };
   }
 
   _createSeriesBasicOption() {
     return {
-      type: 'bar',
+      type: 'line',
+      smooth: true,
+      //sampling: 'lttb',
+      //showSymbol: false,
+      //showAllSymbol: true,
       label: {
-        show: true,
+        show: false,
         position: 'right',
         formatter: (params) => {
           const index = params.dimensionNames.indexOf(params.seriesName);
