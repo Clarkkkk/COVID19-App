@@ -9,15 +9,6 @@ export default class HistogramChart extends BasicChart {
     this._setOption(option);
     this._setOption(this._createHistogramBasicOption(option));
     this._setSeries();
-    console.log(this._getOption());
-
-    // when a different legend is selected,
-    // reset all the series's datasetIndex
-    // otherwise the order of the specific dataset won't come into effect
-    // when using different transform for different dimensions
-    this._chart.on('legendselectchanged', (params) => {
-      //this._setDatasetIndex();
-    });
   }
 
   update(option) {
@@ -30,7 +21,6 @@ export default class HistogramChart extends BasicChart {
         id: dimension,
         transform: {
           type: 'ecStat:histogram',
-          print: true,
           config: {
             dimensions: dimension,
             method: 'freedmanDiaconis'
@@ -38,25 +28,6 @@ export default class HistogramChart extends BasicChart {
         }
       };
     });
-    const transform = [{
-      transform: {
-        type: 'ecStat:histogram',
-        print: true,
-        config: {
-          dimensions: 0,
-          method: 'freedmanDiaconis'
-        }
-      }
-    }, {
-      transform: {
-        type: 'ecStat:histogram',
-        print: false,
-        config: {
-          dimensions: 1,
-          method: 'freedmanDiaconis'
-        }
-      }
-    }];
     return Array.isArray(dataset) ?
       [...dataset, ...transforms] :
       [dataset, ...transforms];
@@ -64,40 +35,21 @@ export default class HistogramChart extends BasicChart {
 
   _setSeries() {
     const dataset = this._getOption().dataset;
-    const series = [];
+    const histogramSeries = [];
     for (const dimension of this._getLegendDimensions()) {
       const option = this._createSeriesBasicOption();
       option.name = dimension;
       option.datasetIndex =
         dataset.findIndex((value) => value.id === dimension);
-      series.push(option);
+      histogramSeries.push(option);
     }
-    this._setOption({series});
-  }
-
-  _setDatasetIndex() {
-    const dataset = this._getOption().dataset;
-    const selectedDimension = this._getSelected().dimension;
-    console.log(selectedDimension);
-    let datasetIndex = 0;
-    if (Array.isArray(dataset)) {
-      const datasetIds = dataset.map((entry) => entry.id);
-      console.log(datasetIds);
-      console.log(selectedDimension);
-      if (datasetIds.includes(selectedDimension)) {
-        datasetIndex = datasetIds.indexOf(selectedDimension);
-      } else {
-        datasetIndex = dataset.length - 1;
-      }
-    }
-
-    const series = this._getLegendDimensions().map((dimension) => {
-      return {
-        name: dimension,
-        datasetIndex
-      };
+    const auxilarySeries = this._createAuxilarySeries();
+    this._setOption({
+      series: [
+        ...histogramSeries,
+        ...auxilarySeries
+      ]
     });
-    this._setOption({series}, {lazyUpdate: false});
   }
 
   _createHistogramBasicOption(userOption) {
@@ -105,17 +57,16 @@ export default class HistogramChart extends BasicChart {
       legend: userOption.legend || {
         orient: 'horizontal',
         selectedMode: 'single',
-        right: 'center',
-        top: 20
+        right: 20,
+        top: 50
       },
       grid: userOption.grid || [{
-        left: 110,
-        right: 120,
+        left: 50,
+        right: 30,
         top: 80,
         bottom: 50
       }],
       xAxis: userOption.xAxis || {
-        name: '单位：人/每百万人',
         type: 'value',
         scale: true,
         axisLabel: {
@@ -128,7 +79,44 @@ export default class HistogramChart extends BasicChart {
           interval: 0
         }
       },
-      dataZoom: {}
+      dataZoom: {
+        type: 'slider',
+        brushSelect: false
+      },
+      tooltip: {
+        trigger: 'item',
+        show: true,
+        extraCssText: 'align-items: flex-start',
+        formatter: (params) => {
+          const {
+            seriesType,
+            seriesName,
+            dimensionNames,
+            data
+          } = params;
+
+          if (data) {
+            if (seriesType === 'bar') {
+              const categoryIndex = dimensionNames.indexOf('DisplayableName');
+              const category = data[categoryIndex];
+              const valueIndex = dimensionNames.indexOf('VCount');
+              const value = data[valueIndex];
+              const dimensionIndex = this.dimensions.indexOf(seriesName);
+              const unit = this.valueUnit[dimensionIndex];
+              return `<b>${category}${unit}</b><br>${value} `;
+            } else {
+              const category = data[0];
+              const valueIndex = dimensionNames.indexOf(seriesName);
+              const value = this._valueFormatter(data[valueIndex]);
+              const dimensionIndex = this.dimensions.indexOf(seriesName);
+              const unit = this.valueUnit[dimensionIndex];
+              return `<b>${category}</b><br>${value}${unit}`;
+            }
+          } else {
+            return `暂无数据`;
+          }
+        }
+      },
     };
   }
 
@@ -153,5 +141,87 @@ export default class HistogramChart extends BasicChart {
         }
       }
     };
+  }
+
+  _createAuxilarySeries() {
+    const dataset = this._getOption().dataset[0];
+    const legendDimensions = this._getLegendDimensions();
+
+    const customDimensions = ['类型', ...legendDimensions];
+    const meanArr = ['平均数'];
+    const middleArr = ['中位数'];
+
+    for (const dimension of legendDimensions) {
+      const index = this.dimensions.indexOf(dimension);
+      const dimensionData = dataset.source
+        .map((item) => item[index])
+        .sort((a, b) => a - b);
+      meanArr.push(this._calcMean(dimensionData));
+      middleArr.push(this._calcMiddle(dimensionData));
+    }
+
+    const series = [];
+    const customData = [middleArr, meanArr];
+    for (const dimension of legendDimensions) {
+      series.push({
+        type: 'custom',
+        name: dimension,
+        dimensions: customDimensions,
+        data: customData,
+        encode: {
+          x: customDimensions.indexOf(dimension)
+        },
+        z: 3,
+        renderItem(params, api) {
+          const dataIndex = params.dataIndex;
+          const xValue = api.value(customDimensions.indexOf(dimension));
+          const [xCoord] = api.coord([xValue, xValue]);
+          // const xAxisLength = params.coordSys.width;
+          const yAxisLength = params.coordSys.height;
+          // const gridX = params.coordSys.x;
+          const gridY = params.coordSys.y;
+          // const dataCount = params.dataInsideLength;
+          const barWidth = 2;
+          const colors = ['#fac858', '#ee6666'];
+          const labelHeight = (dataIndex + 1) * 6 + '%';
+          return {
+            type: 'rect',
+            shape: {
+              x: xCoord - barWidth / 2,
+              y: gridY,
+              width: barWidth,
+              height: yAxisLength
+            },
+            textContent: {
+              style: {
+                text: customData[dataIndex][0] + ': ' + xValue.toFixed(2)
+              }
+            },
+            textConfig: {
+              // label position
+              position: [-15, labelHeight]
+            },
+            style: {
+              fill: colors[dataIndex],
+              opacity: 0.8
+            },
+          };
+        }
+      });
+    }
+    console.log(series);
+    return series;
+  }
+
+  _calcMean(arr) {
+    const sum = arr.reduce((prev, curr) => prev + curr, 0);
+    return sum / arr.length;
+  }
+
+  _calcMiddle(arr) {
+    const index = arr.length % 2 ?
+      Math.floor(arr.length / 2) :
+      (arr[arr.length / 2] + arr[arr.length / 2 + 1]) / 2;
+    return arr[index];
   }
 }

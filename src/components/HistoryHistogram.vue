@@ -19,14 +19,16 @@ export default {
 
     fetchJSON('/latest').then((res) => {
       const dataset = this.createDataset(res);
-      console.log(dataset);
+      const titleText = this.area === 'China' ? '中国' : '全球';
       this.chart = new HistogramChart(this.$el, {
         title: {
-          text: this.area + '各地区疫情指标直方图'
+          text: titleText + '各地区疫情指标直方图'
         },
         dataset
       }, {
         dimensions: this.dimensions,
+        valueType: 'decimal',
+        valueUnit: ['人/百万人', '%'],
         legendRange: [0, this.dimensions.length]
       });
     });

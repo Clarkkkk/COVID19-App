@@ -55,7 +55,7 @@ echarts.use(
 );
 
 export default class BasicChart {
-  constructor(elem, {dimensions, valueType, legendRange}) {
+  constructor(elem, {dimensions, valueType, valueUnit, legendRange}) {
     // BasicChart is used as a basic class for MapChart etc
     if (new.target === BasicChart) {
       throw new Error('BasicChart is used as a basic class');
@@ -72,6 +72,7 @@ export default class BasicChart {
     this._chart = this._echarts.init(elem);
     this.dimensions = dimensions;
     this.valueType = valueType;
+    this.valueUnit = valueUnit;
     this.legendRange = legendRange;
     // eslint-disable-next-line max-len
     this.DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
@@ -164,7 +165,11 @@ export default class BasicChart {
     if (type === 'percentage') {
       return (value * 100).toFixed(2) + '%';
     } else if (type === 'decimal') {
-      return value.toFixed(2);
+      if (value === Math.floor(value)) {
+        return value;
+      } else {
+        return value.toFixed(2);
+      }
     } else {
       const valueAbs = Math.abs(value);
       if (valueAbs < 10000) {
@@ -182,8 +187,6 @@ export default class BasicChart {
     // title, color, toolbox, tooltip, legend are required components
     const basicOption = {
       title: {
-        subtext: '数据来自@BlankerL',
-        sublink: 'https://github.com/BlankerL/DXY-COVID-19-Crawler',
         left: 10,
         top: 10,
         itemGap: 5
@@ -216,7 +219,6 @@ export default class BasicChart {
         show: true,
         extraCssText: 'align-items: flex-start',
         formatter: (params) => {
-          //console.log(params);
           const {
             componentType,
             seriesName,
