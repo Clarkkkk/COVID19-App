@@ -1,10 +1,17 @@
 <template>
-  <div id="history-histogram" class="covid-flex-item"></div>
+  <app-chart-container
+    id="history-histogram"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import fetchJSON from '@/utils/fetchJSON';
 import HistogramChart from '@/utils/HistogramChart';
+import AppChartContainer from '@/components/AppChartContainer';
 import {
   isoCountryToEchartsName as isoToCountry,
   isoProvinceToEchartsName as isoToProvince,
@@ -12,7 +19,15 @@ import {
   provincePopulation
 } from '@/utils/mappings.js';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['area'],
+  components: {
+    AppChartContainer
+  },
   mounted() {
     this.chart;
     this.dimensions = ['感染密度', '累计死亡率'];
@@ -20,13 +35,14 @@ export default {
     fetchJSON('/latest').then((res) => {
       const dataset = this.createDataset(res);
       const titleText = this.area === 'China' ? '中国' : '全球';
-      this.chart = new HistogramChart(this.$el, {
+      this.chart = new HistogramChart(this.$refs.canvas, {
         title: {
           text: titleText + '各地区疫情指标直方图'
         },
         dataset
       }, {
         dimensions: this.dimensions,
+        fullscreen: this.fullscreen,
         valueType: 'decimal',
         valueUnit: ['人/百万人', '%'],
         legendRange: [0, this.dimensions.length]
@@ -79,5 +95,10 @@ export default {
 #history-histogram {
   min-width: 40vw;
   height: 80vmin;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>

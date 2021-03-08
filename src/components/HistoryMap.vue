@@ -1,12 +1,26 @@
 <template>
-  <div id="history-map" class="covid-flex-item"></div>
+  <app-chart-container
+    id="history-map"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import MapChart from '@/utils/MapChart';
+import AppChartContainer from '@/components/AppChartContainer';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['area', 'datasetArr', 'dimensions', 'dates'],
-
+  components: {
+    AppChartContainer
+  },
   created() {
     this.map;
   },
@@ -44,9 +58,10 @@ export default {
       if (this.map) {
         this.map.updateMap(basicOption, this.area);
       } else {
-        this.map = new MapChart(this.$el, basicOption, {
+        this.map = new MapChart(this.$refs.canvas, basicOption, {
           area: this.area,
-          dimensions: this.dimensions
+          dimensions: this.dimensions,
+          fullscreen: this.fullscreen
         });
       }
     }
@@ -62,6 +77,11 @@ export default {
   min-width: 80vw;
   height: 80vw;
   flex: 1 1 50vw;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 
 @media screen and (min-aspect-ratio: 4/3) {

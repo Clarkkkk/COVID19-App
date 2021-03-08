@@ -1,13 +1,26 @@
 <template>
-  <div id="today-scatter" class="covid-flex-item">
-    <div class="canvas" ref="canvas"></div>
-  </div>
+  <app-chart-container
+    id="today-scatter"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import ScatterChart from '@/utils/ScatterChart';
+import AppChartContainer from '@/components/AppChartContainer';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['dataset'],
+  components: {
+    AppChartContainer
+  },
   created() {
     this.chart;
     this.dimensions = [
@@ -27,7 +40,10 @@ export default {
           title: {text: '估计治疗率与各指标散点图'},
           dataset
         };
-        const config = {dimensions: this.dimensions};
+        const config = {
+          dimensions: this.dimensions,
+          fullscreen: this.fullscreen,
+        };
         this.chart = new ScatterChart(this.$refs.canvas, option, config);
       }
     }
@@ -80,7 +96,7 @@ export default {
 }
 
 .canvas {
-  min-width: 40vw;
-  height: 80vmin;
+  width: 100%;
+  height: 100%;
 }
 </style>

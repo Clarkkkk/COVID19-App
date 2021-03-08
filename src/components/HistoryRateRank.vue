@@ -1,12 +1,27 @@
 <template>
-  <div id="history-rate-rank" class="covid-flex-item"></div>
+  <app-chart-container
+    id="history-rate-rank"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import BarChart from '@/utils/BarChart';
+import AppChartContainer from '@/components/AppChartContainer';
 import {countryPopulation, provincePopulation} from '@/utils/mappings.js';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['area', 'datasetArr', 'dates'],
+  components: {
+    AppChartContainer
+  },
   created() {
     this.chart;
     this.dimensions = [
@@ -69,8 +84,9 @@ export default {
       if (this.chart) {
         this.chart.update(basicOption);
       } else {
-        this.chart = new BarChart(this.$el, basicOption, {
+        this.chart = new BarChart(this.$refs.canvas, basicOption, {
           dimensions: this.dimensions,
+          fullscreen: this.fullscreen,
           valueType:
             ['percentage', 'percentage', 'percentage', 'decimal', 'decimal'],
         });
@@ -159,5 +175,10 @@ export default {
 #history-rate-rank {
   min-width: 40vw;
   height: 80vmin;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>

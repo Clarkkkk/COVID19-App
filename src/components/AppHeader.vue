@@ -1,15 +1,17 @@
 <template>
   <div id="app-header">
-    <div class="title-container">
-      <span class="title">COVID-19疫情信息小站</span>
-      <span class="sub-title">
-        由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021
+    <div class="app-title-container">
+      <span class="app-title">COVID-19疫情信息小站</span>
+      <span class="app-sub-title">
+        疫情数据每天下午2:00更新 | 新闻每小时更新
+        <br>
+        数据来源：datahub.io、@nCoV2019 telegram频道
       </span>
     </div>
-    <div class="menu-container" ref="menu">
+    <div class="app-menu-container" ref="menu">
       <transition name="header">
-        <app-menu class="menu" v-if="showMenu"/>
-        <div class="page-title" v-else>{{ currentPage }}</div>
+        <app-menu class="app-menu" v-if="showMenu"/>
+        <div class="app-page-title" v-else>{{ currentPage }}</div>
       </transition>
     </div>
   </div>
@@ -92,47 +94,51 @@ export default {
   display: contents;
 }
 
-.title-container {
+.app-title-container {
   display: flex;
   flex-flow: column;
   align-items: flex-start;
   z-index: 10;
-  height: 6.5rem;
+  height: 7.5rem;
   width: 100%;
   box-sizing: border-box;
   padding: 1rem;
-  background-color: var(--app-color);
+  background-color: var(--app-color-alpha);
   color: white;
   letter-spacing: 0.5px;
 }
 
-.title {
+.app-title {
   font-size: 1.7rem;
+  white-space: nowrap;
   font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
-.sub-title {
+.app-sub-title {
   color: #eee;
   font-size: 0.8rem;
+  text-align: start;
 }
 
-.sub-title > a, a:link, a:visited {
+.app-sub-title > a, a:link, a:visited {
   color: #eee;
   border-bottom: solid 1px #eee;
 }
 
-.menu-container {
+.app-menu-container {
   position: sticky;
   top: 0;
   height: 3rem;
   width: 100%;
-  background-color: var(--app-color);
+  background-color: var(--app-color-alpha);
+  backdrop-filter: blur(10px);
   z-index: 10000;
   display: flex;
   align-items: center;
 }
 
-.page-title {
+.app-page-title {
   font-size: 1.1rem;
   font-weight: bold;
   letter-spacing: 0.5px;
@@ -144,11 +150,11 @@ export default {
   opacity: 0;
 }
 
-.page-title.header-enter, .page-title.header-leave-to {
+.app-page-title.header-enter, .app-page-title.header-leave-to {
   transform: translateY(3rem);
 }
 
-.menu.header-enter, .menu.header-leave-to {
+.app-menu.header-enter, .app-menu.header-leave-to {
   transform: translateY(-3rem);
 }
 

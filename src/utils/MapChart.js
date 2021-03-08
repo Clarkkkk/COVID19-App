@@ -14,13 +14,14 @@ export default class MapChart extends BasicChart {
 
     this._registerMap(config.area).then(() => {
       // initialize zoom level's value and dimensionNames
-      this.zoomLevelValue = 1;
+      this._zoomLevelValue = 1;
       // set zooming tool's callbacks and map legend symbol
       this._setZoomFeatures();
       // setSeries should be called before dimensions relavant functions
       this._setSeries(config.area);
       this._setMapLegendSymbol();
       this._setVisualMap();
+      this._setBasicToolbox();
 
       // when a different legend is selected
       // set the legend symbol accordingly
@@ -80,19 +81,19 @@ export default class MapChart extends BasicChart {
     // set zoom level when the argument is in range 1-3
     if (level <= 9 && level >= 1) {
       this._setZoomLevel(level);
-      this.zoomLevelValue = level;
+      this._zoomLevelValue = level;
     }
     // set the icon color to reflect if it is available
     // according to the zoom level
-    this._setIconColor('myZoomOut', this.zoomLevelValue > 1);
-    this._setIconColor('myZoomIn', this.zoomLevelValue < 9);
+    this._setIconColor('myZoomOut', this._zoomLevelValue > 1);
+    this._setIconColor('myZoomIn', this._zoomLevelValue < 9);
     // when zoom level is over 1, show the map label
-    this._setMapLabel(this.zoomLevelValue > 1);
+    this._setMapLabel(this._zoomLevelValue > 1);
     this._setMapLegendSymbol();
   }
 
   get zoomLevel() {
-    return this.zoomLevelValue;
+    return this._zoomLevelValue;
   }
 
   _setZoomFeatures() {

@@ -1,11 +1,26 @@
 <template>
-  <div id="today-map" class="covid-flex-item"></div>
+  <app-chart-container
+    id="today-map"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import MapChart from '@/utils/MapChart';
+import AppChartContainer from '@/components/AppChartContainer';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['dataset', 'area'],
+  components: {
+    AppChartContainer
+  },
 
   created() {
     this.map;
@@ -25,8 +40,9 @@ export default {
             title: {text: '今日疫情地图'},
             dataset: this.dataset
           };
-          this.map = new MapChart(this.$el, option, {
+          this.map = new MapChart(this.$refs.canvas, option, {
             dimensions: this.dimensions,
+            fullscreen: this.fullscreen,
             area: 'China'
           });
         });
@@ -40,10 +56,14 @@ export default {
 #today-map {
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
-  position: relative;
   min-width: 80vw;
   height: 80vw;
   flex: 1 1 60vw;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 
 @media screen and (min-aspect-ratio: 4/3) {

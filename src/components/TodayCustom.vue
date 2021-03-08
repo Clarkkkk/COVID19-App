@@ -1,6 +1,10 @@
 <template>
-  <div id="today-custom" class="covid-flex-item">
-    <div class="canvas" ref="canvas"></div>
+  <app-chart-container
+    id="today-custom"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
     <div class="btn-group">
       <button
         :class="{'active': chartType === 'bar'}"
@@ -11,18 +15,23 @@
         @click="onClick('pie')"
       >饼图</button>
     </div>
-  </div>
+  </app-chart-container>
 </template>
 
 <script>
 import CustomChart from '@/utils/CustomChart';
+import AppChartContainer from '@/components/AppChartContainer';
 export default {
   data() {
     return {
-      chartType: 'bar'
+      chartType: 'bar',
+      fullscreen: {value: false}
     };
   },
   props: ['dataset'],
+  components: {
+    AppChartContainer
+  },
 
   methods: {
     onClick(type) {
@@ -48,6 +57,7 @@ export default {
           };
           const config = {
             dimensions: this.dimensions,
+            fullscreen: this.fullscreen,
             chartTypes: [{
               name: 'bar',
               config: {isVertical: false, isInverse: true}
@@ -71,8 +81,8 @@ export default {
 }
 
 .canvas {
-  min-width: 40vw;
-  height: 80vmin;
+  width: 100%;
+  height: 100%;
 }
 
 .btn-group {

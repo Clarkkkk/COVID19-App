@@ -8,6 +8,7 @@ export default class HistogramChart extends BasicChart {
     option.dataset = this._transformDataset(option.dataset);
     this._setOption(option);
     this._setOption(this._createHistogramBasicOption(option));
+    this._setBasicToolbox();
     this._setSeries();
   }
 

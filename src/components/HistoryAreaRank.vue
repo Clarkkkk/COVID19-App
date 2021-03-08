@@ -1,11 +1,26 @@
 <template>
-  <div id="history-area-rank" class="covid-flex-item"></div>
+  <app-chart-container
+    id="history-area-rank"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import BarChart from '@/utils/BarChart';
+import AppChartContainer from '@/components/AppChartContainer';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['area', 'datasetArr', 'dimensions', 'dates'],
+  components: {
+    AppChartContainer
+  },
   methods: {
     createSortTransform(dimensions) {
       return dimensions.map((dimension, index) => {
@@ -70,9 +85,10 @@ export default {
         this.chart.update(basicOption);
       } else {
         this.chart =
-          new BarChart(this.$el, basicOption, {
+          new BarChart(this.$refs.canvas, basicOption, {
             valueType: 'integer',
-            dimensions: this.dimensions
+            dimensions: this.dimensions,
+            fullscreen: this.fullscreen,
           });
       }
     }
@@ -84,15 +100,14 @@ export default {
 #history-area-rank {
   min-width: 20rem;
   min-height: 32rem;
+  height: 32rem;
   flex: 1 1 18rem;
-  padding: 0.5rem;
-  box-sizing: border-box;
-  color: #222;
-  display: flex;
-  position: relative;
-  flex-flow: column nowrap;
-  align-items: end;
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>

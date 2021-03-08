@@ -5,6 +5,7 @@ export default class BarChart extends BasicChart {
     super(elem, basicConfig);
     this._setOption(option);
     this._setOption(this._createBarBasicOption(option));
+    this._setBasicToolbox();
     this._setSeries();
 
     // when a different legend is selected,

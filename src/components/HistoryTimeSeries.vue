@@ -1,12 +1,27 @@
 <template>
-  <div id="history-time-seires" class="covid-flex-item"></div>
+  <app-chart-container
+    id="history-time-seires"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import LineChart from '@/utils/LineChart';
+import AppChartContainer from '@/components/AppChartContainer';
 import fetchJSON from '@/utils/fetchJSON';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['area'],
+  components: {
+    AppChartContainer
+  },
 
   mounted() {
     this.chart;
@@ -17,7 +32,7 @@ export default {
       this.dataset = this.createDataset(data);
       return this.$nextTick();
     }).then(() => {
-      this.chart = new LineChart(this.$el, {
+      const option = {
         title: {text: `地区疫情时间线`},
         dataset: this.dataset,
         xAxis: {
@@ -32,9 +47,12 @@ export default {
             }
           }
         }
-      }, {
-        dimensions: this.dimensions
-      });
+      };
+      const config = {
+        dimensions: this.dimensions,
+        fullscreen: this.fullscreen
+      };
+      this.chart = new LineChart(this.$refs.canvas, option, config);
     });
   },
 
@@ -63,5 +81,10 @@ export default {
 #history-time-seires {
   width: 90vw;
   height: 80vmin;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>

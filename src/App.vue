@@ -2,6 +2,7 @@
   <div id="app">
     <app-header />
     <router-view />
+    <footer>由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021</footer>
   </div>
 </template>
 
@@ -21,8 +22,9 @@ body {
   padding: 0;
   font-size: 16px;
   --app-card-shadow: 0 0 3px #ccc;
-  --app-card-radius: 5px;
+  --app-card-radius: 15px;
   --app-color: #00a59d;
+  --app-color-alpha: #00a59dd0;
 }
 
 #app {
@@ -53,8 +55,6 @@ body {
 
 /* flex-item's universal style */
 .covid-flex-item {
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
   position: relative;
   margin: 0.5rem;
   background-color: #fff;
@@ -62,7 +62,7 @@ body {
 
 @media screen and (min-aspect-ratio: 4/3) {
   .covid-flex-item {
-    margin: 1.5rem;
+    margin: 15px;
   }
 }
 </style>

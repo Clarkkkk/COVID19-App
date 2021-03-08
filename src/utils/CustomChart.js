@@ -11,6 +11,7 @@ export default class CustomChart extends BasicChart {
     this.options = this._createOptions();
     this.frameCount = [];
     this._setOption(this.options[0]);
+    this._setBasicToolbox();
     this._chart.on('legendselectchanged', () => {
       console.log('legend changed');
       this.isLegendChanged = true;

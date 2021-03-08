@@ -55,7 +55,7 @@ echarts.use(
 );
 
 export default class BasicChart {
-  constructor(elem, {dimensions, valueType, valueUnit, legendRange}) {
+  constructor(elem, {dimensions, fullscreen, valueType, valueUnit, legendRange}) {
     // BasicChart is used as a basic class for MapChart etc
     if (new.target === BasicChart) {
       throw new Error('BasicChart is used as a basic class');
@@ -77,6 +77,7 @@ export default class BasicChart {
     // eslint-disable-next-line max-len
     this.DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
     // ['#EF6C00', '#C62828', '#0277BD', '#283593'];
+    this._fullscreen = fullscreen;
 
 
     // create a basic option object
@@ -182,9 +183,79 @@ export default class BasicChart {
     }
   }
 
+  // set the default toolbox after user defiend toolbox is set
+  // in order to place the default tools behind other tools
+  _setBasicToolbox() {
+    const toolbox = {
+      itemSize: 20,
+      itemGap: 20,
+      top: 10,
+      right: 15,
+      emphasis: {
+        iconStyle: {
+          shadowBlur: 5,
+          shadowColor: '#888',
+          borderColor: '#666'
+        }
+      },
+      feature: {
+        saveAsImage: {
+          pixelRatio: 2,
+          iconStyle: {
+            borderColor: '#666',
+            borderWidth: 2
+          }
+        },
+        myFullScreen: {
+          title: '全屏显示',
+          iconStyle: {
+            color: '#666',
+            borderWidth: 0.2
+          },
+          onclick: () => this.switchFullScreen(),
+          // eslint-disable-next-line max-len
+          icon: 'M20 3h2v6h-2V5h-4V3h4zM4 3h4v2H4v4H2V3h2zm16 16v-4h2v6h-6v-2h4zM4 19h4v2H2v-6h2v4z'
+        }
+      }
+    };
+    this._setOption({toolbox});
+  }
+
+  switchFullScreen() {
+    this.isFullScreen = !this.isFullScreen;
+    setTimeout(() => this._resize(), 1000);
+  }
+
+  get isFullScreen() {
+    return this._fullscreen.value;
+  }
+
+  set isFullScreen(is) {
+    this._fullscreen.value = is;
+    // eslint-disable-next-line max-len
+    const enterIcon = 'M20 3h2v6h-2V5h-4V3h4zM4 3h4v2H4v4H2V3h2zm16 16v-4h2v6h-6v-2h4zM4 19h4v2H2v-6h2v4z';
+    // eslint-disable-next-line max-len
+    const exitIcon = 'M18 7h4v2h-6V3h2v4zM8 9H2V7h4V3h2v6zm10 8v4h-2v-6h6v2h-4zM8 15v6H6v-4H2v-2h6z';
+    this._setOption({
+      toolbox: {
+        feature: {
+          myFullScreen: {
+            title: is ? '退出全屏' : '全屏显示',
+            icon: is ? exitIcon : enterIcon
+          }
+        }
+      }
+    });
+    if (is) {
+      this._chart.getDom().classList.add('full-screen');
+    } else {
+      this._chart.getDom().classList.remove('full-screen');
+    }
+  }
+
   // create a basic chart option
   _createBasicOption() {
-    // title, color, toolbox, tooltip, legend are required components
+    // title, color, tooltip, legend are required components
     const basicOption = {
       title: {
         left: 10,
@@ -192,28 +263,6 @@ export default class BasicChart {
         itemGap: 5
       },
       color: this.DIMENSION_COLOR,
-      toolbox: {
-        itemSize: 20,
-        itemGap: 20,
-        top: 10,
-        right: 15,
-        emphasis: {
-          iconStyle: {
-            shadowBlur: 5,
-            shadowColor: '#888',
-            borderColor: '#666'
-          }
-        },
-        feature: {
-          saveAsImage: {
-            pixelRatio: 2,
-            iconStyle: {
-              borderColor: '#666',
-              borderWidth: 2
-            }
-          }
-        }
-      },
       tooltip: {
         trigger: 'item',
         show: true,

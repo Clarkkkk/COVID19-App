@@ -1,11 +1,26 @@
 <template>
-  <div id="today-rate-rank" class="covid-flex-item"></div>
+  <app-chart-container
+    id="today-rate-rank"
+    class="covid-flex-item"
+    :fullscreen="fullscreen"
+  >
+    <div ref="canvas" class="canvas"></div>
+  </app-chart-container>
 </template>
 
 <script>
 import BarChart from '@/utils/BarChart';
+import AppChartContainer from '@/components/AppChartContainer';
 export default {
+  data() {
+    return {
+      fullscreen: {value: false}
+    };
+  },
   props: ['dataset'],
+  components: {
+    AppChartContainer
+  },
   created() {
     this.chart;
     this.dimensions = [
@@ -26,8 +41,9 @@ export default {
           title: {text: '治疗率与死亡率'},
           dataset
         };
-        this.chart = new BarChart(this.$el, option, {
+        this.chart = new BarChart(this.$refs.canvas, option, {
           dimensions: this.dimensions,
+          fullscreen: this.fullscreen,
           valueType: 'percentage'
         });
       }
@@ -95,5 +111,10 @@ export default {
 #today-rate-rank {
   min-width: 40vw;
   height: 80vmin;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>

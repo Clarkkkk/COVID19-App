@@ -5,6 +5,7 @@ export default class LineChart extends BasicChart {
     super(elem, basicConfig);
     this._setOption(option);
     this._setOption(this._createLineBasicOption(option));
+    this._setBasicToolbox();
     this._setSeries();
   }
 

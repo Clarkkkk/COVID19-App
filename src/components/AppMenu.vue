@@ -81,7 +81,6 @@ export default {
   width: 100%;
   display: flex;
   align-items: center;
-  background-color: var(--app-color);
   font-size: 1rem;
   font-weight: bold;
   letter-spacing: 0.5px;
@@ -104,7 +103,7 @@ export default {
   height: 0.5rem;
   position: absolute;
   left: 0;
-  top: 2.2rem;
+  top: 2.25rem;
   display: flex;
   align-items: flex-start;
 }
