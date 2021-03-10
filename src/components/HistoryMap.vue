@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="history-map"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -31,7 +30,10 @@ export default {
       const options = arr.map((item) => {
         const date = item.source[0][item.source[0].length - 1];
         return {
-          title: {text: '疫情地图 | ' + date},
+          title: {
+            text: '疫情地图',
+            subtext: date
+          },
           dataset: item
         };
       });
@@ -43,15 +45,9 @@ export default {
           label: {
             interval: 5,
           },
-          left: 10,
-          right: 0
-        },
-        legend: {
-          bottom: 50
         },
         visualMap: {
-          type: 'piecewise',
-          bottom: 50
+          type: 'piecewise'
         },
         options
       };
@@ -70,6 +66,7 @@ export default {
 </script>
 
 <style scoped>
+/*
 #history-map {
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
@@ -79,15 +76,16 @@ export default {
   flex: 1 1 50vw;
 }
 
-.canvas {
-  width: 100%;
-  height: 100%;
-}
-
 @media screen and (min-aspect-ratio: 4/3) {
   #history-map {
     min-width: 60vw;
     height: 50vw;
   }
+}
+*/
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>

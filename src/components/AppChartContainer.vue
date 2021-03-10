@@ -35,10 +35,15 @@ export default {
           const rect = this.$el.getBoundingClientRect();
           animated.classList.remove('fullscreen');
           animated.style = `
+            height: 100vh;
+            width: 100vw;
             transform: translate(${-rect.left}px, ${-rect.top}px);
           `;
 
           this._flush = document.body.offsetHeight;
+          animated.style = `
+            transform: translate(${-rect.left}px, ${-rect.top}px);
+          `;
           animated.classList.add('restore');
           animated.addEventListener('animationend', () => {
             animated.style = '';
@@ -128,6 +133,4 @@ export default {
     transform: translate(0px, 0px);
   }
 }
-
-
 </style>

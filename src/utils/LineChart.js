@@ -3,6 +3,11 @@ import BasicChart from '@/utils/BasicChart.js';
 export default class LineChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
+    const layoutConfig = this._getLayoutConfig(option);
+    layoutConfig.dataZoom = {
+      horizontal: true
+    };
+    this._setBasicOption(layoutConfig);
     this._setOption(option);
     this._setOption(this._createLineBasicOption(option));
     this._setBasicToolbox();
@@ -57,18 +62,6 @@ export default class LineChart extends BasicChart {
 
   _createLineBasicOption(userOption) {
     return {
-      legend: userOption.legend || {
-        orient: 'vertical',
-        selectedMode: 'multiple',
-        right: 10,
-        top: 50
-      },
-      grid: userOption.grid || [{
-        left: 50,
-        right: 30,
-        top: 80,
-        bottom: 70
-      }],
       xAxis: userOption.xAxis || {
         type: 'category',
       },
@@ -81,7 +74,6 @@ export default class LineChart extends BasicChart {
       dataZoom: userOption.dataZoom || {
         type: 'slider',
         orient: 'horizontal',
-        bottom: 10,
         zoomLock: false,
         brushSelect: false,
         startValue: 0,

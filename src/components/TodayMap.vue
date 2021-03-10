@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="today-map"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -37,7 +36,7 @@ export default {
       } else {
         this.$nextTick().then(() => {
           const option = {
-            title: {text: '今日疫情地图'},
+            title: {text: '疫情地图'},
             dataset: this.dataset
           };
           this.map = new MapChart(this.$refs.canvas, option, {
@@ -53,6 +52,7 @@ export default {
 </script>
 
 <style scoped>
+/*
 #today-map {
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
@@ -61,15 +61,16 @@ export default {
   flex: 1 1 60vw;
 }
 
-.canvas {
-  width: 100%;
-  height: 100%;
-}
-
 @media screen and (min-aspect-ratio: 4/3) {
   #today-map {
     min-width: 60vw;
     height: 40vw;
   }
+}
+*/
+
+.canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>

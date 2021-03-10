@@ -1,28 +1,30 @@
 <template>
-  <div id="today-news" class="covid-flex-item">
-    <div
-      v-for="news in newsData"
-      :key="news.articleId"
-    >
-      <article class="news-container">
-        <div class="update-time">
-          {{ news.pubDate }}
-        </div>
-        <h2 class="title">{{ news.title }}</h2>
-        <div class="tags">
-          <div
-            class="tag"
-            v-for="tag in news.tags"
-            :key="tag"
-          >
-            {{ tag }}
+  <div id="today-news">
+    <div class="content">
+      <div
+        v-for="news in newsData"
+        :key="news.articleId"
+      >
+        <article class="news-container">
+          <div class="update-time">
+            {{ news.pubDate }}
           </div>
-        </div>
-        <div class="description" v-html="news.description"></div>
-        <footer class="info-container">
-          <span class="source" v-html="news.source"></span>
-        </footer>
-      </article>
+          <h2 class="title">{{ news.title }}</h2>
+          <div class="tags">
+            <div
+              class="tag"
+              v-for="tag in news.tags"
+              :key="tag"
+            >
+              {{ tag }}
+            </div>
+          </div>
+          <div class="description" v-html="news.description"></div>
+          <footer class="info-container">
+            <span class="source" v-html="news.source"></span>
+          </footer>
+        </article>
+      </div>
     </div>
   </div>
 </template>
@@ -108,8 +110,26 @@ export default {
 </script>
 
 <style scoped>
+/*
 #today-news {
   padding: 1.5rem;
+  box-sizing: border-box;
+  box-shadow: var(--app-card-shadow);
+  border-radius: var(--app-card-radius);
+  background-color: white;
+  overflow: hidden;
+}
+*/
+
+.content {
+  height: 291.5vh;
+  width: 100%;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  box-shadow: var(--app-card-shadow);
+  border-radius: var(--app-card-radius);
+  background-color: white;
+  overflow: scroll;
 }
 
 .news-container {
@@ -173,6 +193,7 @@ export default {
 
 .description {
   margin: 0;
+  font-size: 0.9rem;
 }
 
 .description >>> p {

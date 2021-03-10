@@ -6,6 +6,11 @@ export default class HistogramChart extends BasicChart {
     super(elem, basicConfig);
     this._echarts.registerTransform(ecStat.transform.histogram);
     option.dataset = this._transformDataset(option.dataset);
+    const layoutConfig = this._getLayoutConfig(option);
+    layoutConfig.dataZoom = {
+      horizontal: true
+    };
+    this._setBasicOption(layoutConfig);
     this._setOption(option);
     this._setOption(this._createHistogramBasicOption(option));
     this._setBasicToolbox();
@@ -55,18 +60,6 @@ export default class HistogramChart extends BasicChart {
 
   _createHistogramBasicOption(userOption) {
     return {
-      legend: userOption.legend || {
-        orient: 'horizontal',
-        selectedMode: 'single',
-        right: 20,
-        top: 50
-      },
-      grid: userOption.grid || [{
-        left: 50,
-        right: 30,
-        top: 80,
-        bottom: 50
-      }],
       xAxis: userOption.xAxis || {
         type: 'value',
         scale: true,
@@ -199,7 +192,7 @@ export default class HistogramChart extends BasicChart {
               }
             },
             textConfig: {
-              // label position
+              // label position, x and y
               position: [-15, labelHeight]
             },
             style: {

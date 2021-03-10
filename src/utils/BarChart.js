@@ -3,6 +3,11 @@ import BasicChart from '@/utils/BasicChart.js';
 export default class BarChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
+    const layoutConfig = this._getLayoutConfig(option);
+    layoutConfig.dataZoom = {
+      vertical: true
+    };
+    this._setBasicOption(layoutConfig);
     this._setOption(option);
     this._setOption(this._createBarBasicOption(option));
     this._setBasicToolbox();
@@ -75,18 +80,6 @@ export default class BarChart extends BasicChart {
 
   _createBarBasicOption(userOption) {
     return {
-      legend: userOption.legend || {
-        orient: 'horizontal',
-        selectedMode: 'single',
-        right: 'center',
-        top: 20
-      },
-      grid: userOption.grid || [{
-        left: 110,
-        right: 120,
-        top: 80,
-        bottom: 50
-      }],
       xAxis: userOption.xAxis || {
         type: 'value',
         axisLabel: {
@@ -97,13 +90,12 @@ export default class BarChart extends BasicChart {
         type: 'category',
         inverse: true,
         axisLabel: {
-          interval: 0
+          show: false
         }
       },
       dataZoom: userOption.dataZoom || {
         type: 'slider',
         orient: 'vertical',
-        right: 20,
         zoomLock: true,
         brushSelect: false,
         startValue: 0,
@@ -119,11 +111,11 @@ export default class BarChart extends BasicChart {
       type: 'bar',
       label: {
         show: true,
-        position: 'right',
+        position: 'insideRight',
         formatter: (params) => {
           const index = params.dimensionNames.indexOf(params.seriesName);
           const value = params.value[index];
-          return params.value[0] + ': ' + this._valueFormatter(value, index);
+          return params.value[0]; // + ': ' + this._valueFormatter(value, index);
         }
       },
       emphasis: {

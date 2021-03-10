@@ -1,6 +1,6 @@
 <template>
-  <div id="history">
-    <div class="header">
+  <div id="history" class="columns is-multiline">
+    <div class="header column is-full">
       <span class="title">历史数据</span>
       <div class="select">
         <select :default-value="selectGroup[0]" @change="onChange">
@@ -11,26 +11,33 @@
       </div>
     </div>
     <history-map
+      class="column is-three-fifths"
       :area="currentArea"
       :dimensions="dimensions"
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
     <history-area-rank
+      class="column is-two-fifths"
       :area="currentArea"
       :dimensions="dimensions"
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
+
+    <history-time-series
+      class="column is-full"
+      :area="currentArea"
+    />
+
     <history-rate-rank
+      class="column is-half"
       :area="currentArea"
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
-    <history-time-series
-      :area="currentArea"
-    />
     <history-histogram
+      class="column is-half"
       :area="currentArea"
     />
   </div>
@@ -53,6 +60,8 @@ export default {
       // eslint-disable-next-line max-len
       selectGroup: ['中国', '世界'],
       currentArea: '',
+      dimensions: ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
+        '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'],
       currentDatasetArr: [],
       dates: []
     };
@@ -68,8 +77,6 @@ export default {
 
   created() {
     this.datasetArrays = {};
-    this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'];
     this.currentArea = 'China';
     this.initializeData('China');
   },
@@ -167,6 +174,7 @@ export default {
 </script>
 
 <style scoped>
+/*
 #history {
   width: 100%;
   min-height: 80vh;
@@ -184,11 +192,22 @@ export default {
     flex-flow: column nowrap;
   }
 }
+*/
+
+.columns {
+  width: 100%;
+}
+
+.column {
+  height: 80vh;
+  box-sizing: border-box;
+}
 
 .header {
   width: 100%;
   height: 3.5rem;
   padding: 0 1.5rem;
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;

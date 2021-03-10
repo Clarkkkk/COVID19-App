@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="history-area-rank"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -40,12 +39,18 @@ export default {
       const options = arr.map((item) => {
         const date = item.source[0][item.source[0].length - 1];
         return {
-          title: {text: '疫情地区排行 | ' + date},
+          title: {
+            text: '疫情地区排行',
+            subtext: date
+          },
           dataset: [item, ...this.createSortTransform(item.dimensions)]
         };
       });
       const basicOption = {
-        title: {text: '疫情地区排行'},
+        title: {
+          text: '疫情地区排行',
+          subtext: ''
+        },
         timeline: {
           data: this.dates,
           axisType: 'category',
@@ -53,26 +58,11 @@ export default {
           playInterval: 500,
           label: {
             interval: 5,
-          },
-          left: 10,
-          right: 0
-        },
-        legend: {
-          left: 0,
-          bottom: 50,
-          orient: 'horizontal',
-          selectedMode: 'single',
-        },
-        grid: {
-          left: 50,
-          right: 60,
-          top: 60,
-          bottom: 150
+          }
         },
         dataZoom: {
           type: 'slider',
           orient: 'vertical',
-          right: 0,
           brushSelect: false,
           startValue: 0,
           endValue: 19,
@@ -97,6 +87,7 @@ export default {
 </script>
 
 <style scoped>
+/*
 #history-area-rank {
   min-width: 20rem;
   min-height: 32rem;
@@ -105,6 +96,7 @@ export default {
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
 }
+*/
 
 .canvas {
   width: 100%;

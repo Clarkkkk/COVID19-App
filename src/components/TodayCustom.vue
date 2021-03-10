@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="today-custom"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -47,13 +46,41 @@ export default {
 
   watch: {
     dataset(newDataset) {
+      const dataset = [
+        newDataset,
+        {
+          id: '现存确诊',
+          transform: {
+            type: 'sort',
+            config: {dimension: '现存确诊', order: 'desc'}
+          }
+        }, {
+          id: '累计确诊',
+          transform: {
+            type: 'sort',
+            config: {dimension: '累计确诊', order: 'desc'}
+          }
+        }, {
+          id: '治愈',
+          transform: {
+            type: 'sort',
+            config: {dimension: '治愈', order: 'desc'}
+          }
+        }, {
+          id: '死亡',
+          transform: {
+            type: 'sort',
+            config: {dimension: '死亡', order: 'desc'}
+          }
+        }
+      ];
       if (this.chart) {
-        this.chart.update({dataset: newDataset});
+        this.chart.update(dataset);
       } else {
         this.$nextTick().then(() => {
           const option = {
             title: {text: '各地数据'},
-            dataset: this.dataset
+            dataset
           };
           const config = {
             dimensions: this.dimensions,
@@ -76,8 +103,10 @@ export default {
 <style scoped>
 #today-custom {
   position: relative;
+  /*
   min-width: 40vw;
   height: 80vmin;
+  */
 }
 
 .canvas {
@@ -95,6 +124,7 @@ export default {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
 button {
@@ -106,6 +136,7 @@ button {
   padding: 0 0.5rem;
   transition: all 200ms;
   cursor: pointer;
+  pointer-events: all;
 }
 
 button:first-child {

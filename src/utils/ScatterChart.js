@@ -4,7 +4,15 @@ export default class ScatterChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
     this._setOption(option);
+
+    const layoutConfig = this._getLayoutConfig(option);
+    layoutConfig.dataZoom = {
+      vertical: true,
+      horizontal: true
+    };
+    this._setBasicOption(layoutConfig);
     this._setOption(this._createScatterBasicOption(option));
+    this._setBasicToolbox();
     this._setSeries();
   }
 
@@ -28,18 +36,6 @@ export default class ScatterChart extends BasicChart {
 
   _createScatterBasicOption(userOption) {
     return {
-      legend: userOption.legend || {
-        orient: 'horizontal',
-        selectedMode: 'single',
-        right: 'center',
-        top: 20
-      },
-      grid: userOption.grid || [{
-        left: 110,
-        right: 120,
-        top: 80,
-        bottom: 50
-      }],
       xAxis: userOption.xAxis || {
         type: 'value',
         scale: true,
@@ -60,14 +56,12 @@ export default class ScatterChart extends BasicChart {
           formatter: (value, index) => this._valueFormatter(value)
         }
       },
-      dataZoom: userOption.dataZoom || [{
+      dataZoom: [{
         type: 'slider',
-        orient: 'vertical',
-        left: 20,
+        orient: 'vertical'
       }, {
         type: 'slider',
-        orient: 'horizontal',
-        bottom: 20,
+        orient: 'horizontal'
       }],
       tooltip: userOption.tooltip || {
         formatter: ({seriesName, dimensionNames, data, name}) => {

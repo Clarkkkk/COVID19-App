@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="today-rate-rank"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -34,6 +33,7 @@ export default {
   watch: {
     dataset(newDataset) {
       const dataset = this.convertDataset(newDataset);
+      console.log(newDataset);
       if (this.chart) {
         this.chart.update({dataset});
       } else {
@@ -78,28 +78,28 @@ export default {
         id: '估计治疗率',
         transform: [{
           type: 'sort',
-          config: {dimension: 1, order: 'desc'}
+          config: {dimension: '估计治疗率', order: 'desc'}
         }, {
           type: 'filter',
-          config: {dimension: 1, '>': 0}
+          config: {dimension: '估计治疗率', '>': 0}
         }]
       }, {
         id: '住院死亡率',
         transform: [{
           type: 'sort',
-          config: {dimension: 2, order: 'desc'}
+          config: {dimension: '住院死亡率', order: 'desc'}
         }, {
           type: 'filter',
-          config: {dimension: 2, '>': 0, '<': 1}
+          config: {dimension: '住院死亡率', '>': 0, '<': 1}
         }]
       }, {
         id: '累计死亡率',
         transform: [{
           type: 'sort',
-          config: {dimension: 3, order: 'desc'}
+          config: {dimension: '累计死亡率', order: 'desc'}
         }, {
           type: 'filter',
-          config: {dimension: 3, '>': 0, '<': 1}
+          config: {dimension: '累计死亡率', '>': 0, '<': 1}
         }]
       }];
     }
@@ -108,11 +108,12 @@ export default {
 </script>
 
 <style scoped>
+/*
 #today-rate-rank {
   min-width: 40vw;
   height: 80vmin;
 }
-
+*/
 .canvas {
   width: 100%;
   height: 100%;

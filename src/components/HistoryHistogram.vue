@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="history-histogram"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -92,10 +91,12 @@ export default {
 </script>
 
 <style scoped>
+/*
 #history-histogram {
   min-width: 40vw;
   height: 80vmin;
 }
+*/
 
 .canvas {
   width: 100%;

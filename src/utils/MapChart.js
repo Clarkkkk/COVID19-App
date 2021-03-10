@@ -6,6 +6,9 @@ export default class MapChart extends BasicChart {
   constructor(elem, option, config) {
     // initialize this._chart
     super(elem, config);
+    const layoutConfig = this._getLayoutConfig(option);
+    layoutConfig.visualMap = true;
+    this._setBasicOption(layoutConfig);
     this._setOption(option);
 
     if (!config.area) {
@@ -103,7 +106,7 @@ export default class MapChart extends BasicChart {
           myZoomIn: {
             title: '放大',
             iconStyle: {
-              color: '#666',
+              color: '#222',
               borderWidth: 0.2
             },
             onclick: () => this.zoomLevel *= 2,
@@ -113,7 +116,7 @@ export default class MapChart extends BasicChart {
           myZoomOut: {
             title: '缩小',
             iconStyle: {
-              color: '#666',
+              color: '#aaa',
               borderWidth: 0.2
             },
             onclick: () => this.zoomLevel /= 2,
@@ -127,7 +130,7 @@ export default class MapChart extends BasicChart {
 
   // set toolbox's icon color to indicate whether the feature is available
   _setIconColor(toolName, available) {
-    const color = available ? '#666' : '#aaa';
+    const color = available ? '#222' : '#aaa';
     this._setOption({
       toolbox: {
         feature: {
@@ -159,7 +162,9 @@ export default class MapChart extends BasicChart {
       item.label = {
         show: show,
         fontSize: 14,
-        color: '#444',
+        color: '#000',
+        textShadowColor: '#fff',
+        textShadowBlur: 2,
         formatter: '{b}'
       };
     });
@@ -225,13 +230,16 @@ export default class MapChart extends BasicChart {
     this._setOption({
       visualMap: {
         type: 'piecewise',
-        right: option?.visualMap[0]?.right || 10,
-        bottom: option?.visualMap[0]?.bottom || 10,
         pieces: pieces,
         dimension: index,
         inRange: {
           color: this.DIMENSION_COLOR[index - 1],
-          colorLightness: [1, 0.2]
+          colorLightness: [0.95, 0.2]
+        },
+        textStyle: {
+          color: '#000',
+          textShadowColor: '#fff',
+          textShadowBlur: 2,
         }
       }
     });

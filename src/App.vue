@@ -2,7 +2,7 @@
   <div id="app">
     <app-header />
     <router-view />
-    <footer>由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021</footer>
+    <footer class="is-size-7">-&nbsp;&nbsp;&nbsp;&nbsp;&#32;&#32;由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021&nbsp;&nbsp;- </footer>
   </div>
 </template>
 
@@ -16,12 +16,29 @@ export default {
 };
 </script>
 
-<style>
+<style lang='scss'>
+$radius-extreme-large: 15px;
+$input-radius: 10px;
+.select {
+  select {
+    border-color: transparent !important;
+  }
+}
+
+@import "bulma/sass/utilities/_all.sass";
+@import "bulma/sass/form/shared.sass";
+@import "bulma/sass/form/select.sass";
+@import "bulma/sass/grid/_all.sass";
+@import "bulma/sass/base/_all.sass";
+@import "bulma/sass/helpers/typography.sass";
+
+
+
 body {
   margin: 0;
   padding: 0;
   font-size: 16px;
-  --app-card-shadow: 0 0 3px #ccc;
+  --app-card-shadow: 0 0 12px #ededed;
   --app-card-radius: 15px;
   --app-color: #00a59d;
   --app-color-alpha: #00a59dd0;
@@ -32,8 +49,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  background-color: #fafafa;
   position: relative;
 }
 
@@ -64,5 +79,21 @@ body {
   .covid-flex-item {
     margin: 15px;
   }
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart {
+  height: 95vh;
+}
+
+#app > footer {
+  height: 10rem;
+  display: flex;
+  align-items: center;
 }
 </style>

@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="history-time-seires"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -78,10 +77,12 @@ export default {
 </script>
 
 <style scoped>
+/*
 #history-time-seires {
-  width: 90vw;
+  width: 100%;
   height: 80vmin;
 }
+*/
 
 .canvas {
   width: 100%;

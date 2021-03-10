@@ -3,6 +3,8 @@ import BasicChart from '@/utils/BasicChart.js';
 export default class CustomChart extends BasicChart {
   constructor(elem, option, config) {
     super(elem, config);
+    const layoutConfig = this._getLayoutConfig(option);
+    this._setBasicOption(layoutConfig);
     this._setOption(option);
     if (!config.chartTypes) {
       throw new Error('Chart types must be provided');
@@ -15,7 +17,7 @@ export default class CustomChart extends BasicChart {
     this._chart.on('legendselectchanged', () => {
       console.log('legend changed');
       this.isLegendChanged = true;
-      this._setOption({});
+      this._setDatasetIndex();
     });
   }
 
@@ -34,6 +36,44 @@ export default class CustomChart extends BasicChart {
     }
   }
 
+  // set dataset index
+  // if there is only one dataset, use it
+  // if there are more than one datasets,
+  // use one whose id matches the dimensionName,
+  // otherwise use the last one of them
+  // shoule be called after this._setSeries()
+  _setDatasetIndex() {
+    const dataset = this._getOption().dataset;
+    const selectedDimension = this._getSelected().dimension;
+    let datasetIndex = 0;
+    if (Array.isArray(dataset)) {
+      const datasetIds = dataset.map((entry) => entry.id);
+      if (datasetIds.includes(selectedDimension)) {
+        datasetIndex = datasetIds.indexOf(selectedDimension);
+      } else {
+        datasetIndex = dataset.length - 1;
+      }
+    }
+
+    const series = this._getLegendDimensions().map((dimension) => {
+      return {
+        name: dimension,
+        datasetIndex
+      };
+    });
+    this._setOption({series}, {lazyUpdate: false});
+    // update the order of axis's categories
+    this._updateAxis();
+  }
+
+  // set the axis with the same option to reflect the order change
+  // otherwise the order of axis's categories won't change
+  _updateAxis() {
+    const xAxis = this._getOption().xAxis;
+    const yAxis = this._getOption().yAxis;
+    this._setOption({xAxis, yAxis});
+  }
+
   _createOptions() {
     const options = [];
     for (const type of this.chartTypes) {
@@ -50,37 +90,29 @@ export default class CustomChart extends BasicChart {
     const option = {
       type: 'bar',
       xAxis: {
-        id: 'xAxis',
         show: true,
         type: isVertical ? 'category' : 'value',
         inverse: isVertical && isInverse
       },
       yAxis: {
-        id: 'yAxis',
-        show: true,
+        show: false,
         type: isVertical ? 'value' : 'category',
         inverse: !isVertical && isInverse
       },
       dataZoom: {
-        id: 'dataZoom',
         show: true,
         orient: isVertical ? 'horizontal' : 'vertical',
         startValue: 0,
       },
-      animationDuration: 1000,
-      legend: {
-        selectedMode: 'single',
-        orient: 'vertical',
-        left: 10,
-        bottom: 10
-      },
-      grid: [{
-        left: 110,
-        right: 120,
-        top: 80,
-        bottom: 50
-      }],
+      animationDuration: 1000
     };
+
+    this._setBasicOption({
+      dataZoom: {
+        horizontal: isVertical,
+        vertical: !isVertical
+      }
+    });
 
     option.series = [];
     // dimensions excluding area name and update time
@@ -93,13 +125,25 @@ export default class CustomChart extends BasicChart {
     });
 
     for (const dimension of legendDimensions) {
-      const dimensionIndex = this.dimensions.indexOf(dimension);
+      const dataset = this._getOption().dataset;
+      let datasetIndex = 0;
+      if (Array.isArray(dataset)) {
+        const datasetIds = dataset.map((entry) => entry.id);
+        if (datasetIds.includes(dimension)) {
+          datasetIndex = datasetIds.indexOf(dimension);
+        } else {
+          datasetIndex = dataset.length - 1;
+        }
+      }
+
       const seriesEntry = {
         type: 'custom',
         name: dimension,
-        animationDurationUpdate: 1000
+        datasetIndex,
+        animationDurationUpdate: 1000,
       };
 
+      const dimensionIndex = this.dimensions.indexOf(dimension);
       seriesEntry.encode = isVertical ?
         {x: 0, y: dimensionIndex} :
         {x: dimensionIndex, y: 0};
@@ -107,6 +151,8 @@ export default class CustomChart extends BasicChart {
       seriesEntry.renderItem = (params, api) => {
         const xValue = api.value(seriesEntry.encode.x);
         const yValue = api.value(seriesEntry.encode.y);
+        // inspired by echart source code
+        const ordinalYValue = api.ordinalRawValue(seriesEntry.encode.y);
         const [xCoord, yCoord] = api.coord([xValue, yValue]);
         const xAxisLength = params.coordSys.width;
         const yAxisLength = params.coordSys.height;
@@ -132,6 +178,15 @@ export default class CustomChart extends BasicChart {
             width: xCoord - gridX,
             height: gapWidth * 2
           }),
+          textContent: {
+            style: {
+              text: ordinalYValue
+            }
+          },
+          textConfig: {
+            // label position, x and y
+            position: 'insideRight'
+          },
           // animation for initial render, having 30 frames
           // not working for legend changing, need to be fixed
           during: (duringAPI) => {
@@ -177,31 +232,14 @@ export default class CustomChart extends BasicChart {
       type: 'pie',
       animationDuration: 1000,
       xAxis: {
-        id: 'xAxis',
         show: false
       },
       yAxis: {
-        id: 'yAxis',
         show: false,
       },
       dataZoom: {
-        id: 'dataZoom',
-        show: true,
-        orient: 'horizontal',
-        startValue: 0,
-      },
-      legend: {
-        selectedMode: 'single',
-        orient: 'vertical',
-        left: 10,
-        bottom: 10
-      },
-      grid: [{
-        left: 110,
-        right: 120,
-        top: 80,
-        bottom: 50
-      }],
+        show: false
+      }
     };
 
     option.series = [];
@@ -218,16 +256,38 @@ export default class CustomChart extends BasicChart {
 */
     for (const dimension of legendDimensions) {
       const dimensionIndex = this.dimensions.indexOf(dimension);
+      const dataset = this._getOption().dataset;
+      let datasetIndex = 0;
+      if (Array.isArray(dataset)) {
+        const datasetIds = dataset.map((entry) => entry.id);
+        if (datasetIds.includes(dimension)) {
+          datasetIndex = datasetIds.indexOf(dimension);
+        } else {
+          datasetIndex = dataset.length - 1;
+        }
+      }
       const seriesEntry = {
         type: 'custom',
         name: dimension,
+        datasetIndex,
         animationDurationUpdate: 1000
       };
 
-      const dimensionData = data.map((arr) => arr[dimensionIndex]);
-      const angles = this._createPieAngles(dimensionData);
+      const dataSum = data
+        .map((arr) => arr[dimensionIndex])
+        .reduce((prev, curr) => prev + curr, 0);
 
       seriesEntry.renderItem = (params, api) => {
+        if (!params.context.currentAngle) {
+          params.context.currentAngle = -Math.PI / 2;
+          console.log(params.context.currentAngle);
+        }
+        const value = api.value(dimensionIndex);
+        const angle = value / dataSum * Math.PI * 2;
+        params.context.currentAngle += angle;
+        console.log(api.style());
+        console.log(angle);
+        const ordinalYValue = api.ordinalRawValue(0);
         const width = this._chart.getWidth();
         const height = this._chart.getHeight();
         return {
@@ -237,9 +297,20 @@ export default class CustomChart extends BasicChart {
             cx: width / 2,
             cy: height / 2,
             r: Math.min(width, height) / 3,
-            startAngle: angles[params.dataIndex][0],
-            endAngle: angles[params.dataIndex][1],
-            clockwise: true
+            startAngle: params.context.currentAngle - angle,
+            endAngle: params.context.currentAngle,
+            clockwise: true,
+            // inspired by echart source code
+            cornerRadius: 5
+          },
+          textContent: {
+            style: {
+              text: ordinalYValue
+            }
+          },
+          textConfig: {
+            // label position, x and y
+            position: 'inside'
           },
           style: {
             fill: this._getSectorColor(params.dataIndex)
@@ -254,20 +325,5 @@ export default class CustomChart extends BasicChart {
 
   _getSectorColor(index) {
     return this.DIMENSION_COLOR[index % 9];
-  }
-
-  _createPieAngles(data) {
-    let sum = 0;
-    for (const item of data) {
-      sum += item;
-    }
-    const angles = [];
-    let currentAngle = -Math.PI / 2;
-    for (const item of data) {
-      const angle = item / sum * Math.PI * 2;
-      angles.push([currentAngle, angle + currentAngle]);
-      currentAngle += angle;
-    }
-    return angles;
   }
 }

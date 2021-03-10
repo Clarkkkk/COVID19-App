@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="history-rate-rank"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -40,12 +39,18 @@ export default {
       const options = converted.map((item) => {
         const date = item[0].source[0][item[0].source[0].length - 1];
         return {
-          title: {text: '治疗率、死亡率与疫情人口密度 | ' + date},
+          title: {
+            text: '治疗率、死亡率与疫情人口密度',
+            subtext: date
+          },
           dataset: item
         };
       });
       const basicOption = {
-        title: {text: '治疗率、死亡率与疫情人口密度'},
+        title: {
+          text: '治疗率、死亡率与疫情人口密度',
+          subtext: ''
+        },
         timeline: {
           data: this.dates,
           axisType: 'category',
@@ -53,26 +58,11 @@ export default {
           playInterval: 500,
           label: {
             interval: 5,
-          },
-          left: 10,
-          right: 0
-        },
-        legend: {
-          left: 0,
-          bottom: 50,
-          orient: 'horizontal',
-          selectedMode: 'single',
-        },
-        grid: {
-          left: 50,
-          right: 60,
-          top: 60,
-          bottom: 150
+          }
         },
         dataZoom: {
           type: 'slider',
           orient: 'vertical',
-          right: 0,
           brushSelect: false,
           startValue: 0,
           endValue: 19,
@@ -172,10 +162,12 @@ export default {
 </script>
 
 <style scoped>
+/*
 #history-rate-rank {
   min-width: 40vw;
   height: 80vmin;
 }
+*/
 
 .canvas {
   width: 100%;

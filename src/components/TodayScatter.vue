@@ -1,7 +1,6 @@
 <template>
   <app-chart-container
     id="today-scatter"
-    class="covid-flex-item"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -71,15 +70,15 @@ export default {
         ];
       });
       return [{
-        dimensions: this.imensions,
+        dimensions: this.dimensions,
         source: rateSource,
       }, {
         transform: {
           type: 'filter',
           config: {
             and: [
-              {dimension: 1, '>': 0},
-              {dimension: 2, '>': 0, '<': 1}
+              {dimension: '估计治疗率', '>': 0},
+              {dimension: '住院死亡率', '>': 0, '<': 1}
             ]
           },
         }
@@ -90,11 +89,12 @@ export default {
 </script>
 
 <style scoped>
+/*
 #today-scatter {
   min-width: 40vw;
   height: 80vmin;
 }
-
+*/
 .canvas {
   width: 100%;
   height: 100%;

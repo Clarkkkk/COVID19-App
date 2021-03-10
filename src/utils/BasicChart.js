@@ -79,11 +79,6 @@ export default class BasicChart {
     // ['#EF6C00', '#C62828', '#0277BD', '#283593'];
     this._fullscreen = fullscreen;
 
-
-    // create a basic option object
-    const basicOption = this._createBasicOption();
-    this._setOption(basicOption);
-
     // resize the map when window resizes
     let id = 0;
     window.addEventListener('resize', (event) => {
@@ -191,25 +186,29 @@ export default class BasicChart {
       itemGap: 20,
       top: 10,
       right: 15,
+      iconStyle: {
+        shadowBlur: 5,
+        shadowColor: '#fff'
+      },
       emphasis: {
         iconStyle: {
           shadowBlur: 5,
           shadowColor: '#888',
-          borderColor: '#666'
+          borderColor: '#222'
         }
       },
       feature: {
         saveAsImage: {
           pixelRatio: 2,
           iconStyle: {
-            borderColor: '#666',
+            borderColor: '#222',
             borderWidth: 2
           }
         },
         myFullScreen: {
           title: '全屏显示',
           iconStyle: {
-            color: '#666',
+            color: '#222',
             borderWidth: 0.2
           },
           onclick: () => this.switchFullScreen(),
@@ -253,16 +252,70 @@ export default class BasicChart {
     }
   }
 
+  _getLayoutConfig(userOption) {
+    const config = {};
+    if (userOption.dataZoom) {
+      config.dataZoom = {};
+      if (Array.isArray(userOption.dataZoom) && userOption.dataZoom.length === 2) {
+        config.dataZoom.vertical = true;
+        config.dataZoom.horizontal = true;
+      } else {
+        const orient =
+          userOption.dataZoom.orient || userOption.dataZoom[0].orient;
+        config.dataZoom.vertical = orient === 'vertical';
+        config.dataZoom.horizontal = orient === 'horizontal';
+      }
+    }
+
+    if (userOption.timeline) {
+      config.timeline = true;
+    }
+
+    if (userOption.title.subtext !== undefined) {
+      config.subtext = true;
+    }
+
+    if (userOption.visualMap) {
+      config.visualMap = true;
+    }
+
+    return config;
+  }
+
   // create a basic chart option
-  _createBasicOption() {
+  _setBasicOption(layoutConfig) {
     // title, color, tooltip, legend are required components
     const basicOption = {
       title: {
-        left: 10,
-        top: 10,
+        left: 15,
+        top: 15,
         itemGap: 5
       },
       color: this.DIMENSION_COLOR,
+      toolbox: {
+        itemSize: 20,
+        itemGap: 20,
+        top: 10,
+        right: 15,
+      },
+      legend: {
+        type: 'scroll',
+        selectedMode: 'single',
+        orient: 'horizontal',
+        left: 10,
+        bottom: 10,
+        textStyle: {
+          color: '#000',
+          textShadowColor: '#fff',
+          textShadowBlur: 2,
+        }
+      },
+      grid: {
+        left: 40,
+        right: 15,
+        top: 50,
+        bottom: 60
+      },
       tooltip: {
         trigger: 'item',
         show: true,
@@ -291,14 +344,55 @@ export default class BasicChart {
             return `${name} | 暂无数据`;
           }
         }
-      },
-      legend: {
-        selectedMode: 'single',
-        orient: 'vertical',
-        left: 10,
-        bottom: 10
       }
     };
+
+    const {dataZoom, timeline, visualMap, subtext} = layoutConfig;
+    console.log(layoutConfig);
+    if (subtext) {
+      basicOption.grid.top += 20;
+    }
+
+    if (visualMap) {
+      basicOption.visualMap = {
+        type: 'piecewise',
+        right: 10,
+        bottom: timeline ? 100 : 50,
+      };
+    }
+
+    if (dataZoom) {
+      basicOption.dataZoom = [];
+      if (dataZoom.vertical) {
+        basicOption.grid.left += 20;
+        basicOption.dataZoom.push({
+          type: 'slider',
+          orient: 'vertical',
+          left: 10,
+        });
+      }
+
+      if (dataZoom.horizontal) {
+        basicOption.grid.bottom += 50;
+        basicOption.dataZoom.push({
+          type: 'slider',
+          orient: 'horizontal',
+          bottom: 60,
+        });
+      }
+    }
+
+    if (timeline) {
+      basicOption.grid.bottom += 50;
+      basicOption.legend.bottom += 50;
+      basicOption.timeline = {
+        left: 10,
+        right: 0,
+        bottom: 10,
+      };
+    }
+
+    this._setOption(basicOption);
     return basicOption;
   }
 }
