@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <app-header />
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
     <footer class="is-size-7">-&nbsp;&nbsp;&nbsp;&nbsp;&#32;&#32;由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021&nbsp;&nbsp;- </footer>
   </div>
 </template>
@@ -33,7 +35,6 @@ $input-radius: 10px;
 @import "bulma/sass/helpers/typography.sass";
 
 
-
 body {
   margin: 0;
   padding: 0;
@@ -50,6 +51,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* global scrollbar style */
@@ -79,12 +83,6 @@ body {
   .covid-flex-item {
     margin: 15px;
   }
-}
-
-#app {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .chart {

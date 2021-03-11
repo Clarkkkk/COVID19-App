@@ -75,7 +75,7 @@ export default {
         }
       ];
       if (this.chart) {
-        this.chart.update(dataset);
+        this.chart.update({dataset});
       } else {
         this.$nextTick().then(() => {
           const option = {

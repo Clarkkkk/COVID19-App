@@ -22,18 +22,24 @@ export default {
     AppChartContainer
   },
 
+  watch: {
+    area(val) {
+      this.initializeData(val).then(() => {
+        this.chart.update({dataset: this.datasets[val]});
+      });
+    }
+  },
+
   mounted() {
     this.chart;
     this.dimensions = ['日期', '现存确诊', '累计确诊', '治愈', '死亡',
       '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡'];
+    this.datasets = {};
 
-    fetchJSON('/countries/' + this.area).then((data) => {
-      this.dataset = this.createDataset(data);
-      return this.$nextTick();
-    }).then(() => {
+    this.initializeData(this.area).then(() => {
       const option = {
         title: {text: `地区疫情时间线`},
-        dataset: this.dataset,
+        dataset: this.datasets[this.area],
         xAxis: {
           type: 'category',
           axisLabel: {
@@ -56,6 +62,16 @@ export default {
   },
 
   methods: {
+    initializeData(area) {
+      if (this.datasets[this.area]) {
+        return Promise.resolve(this.datasets[this.area]);
+      } else {
+        return fetchJSON('/countries/' + area).then((data) => {
+          this.datasets[this.area] = this.createDataset(data);
+        });
+      }
+    },
+
     createDataset(rawData) {
       return {
         dimensions: this.dimensions,

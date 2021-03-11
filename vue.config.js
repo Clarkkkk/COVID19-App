@@ -19,10 +19,10 @@ module.exports = {
         {
           // To match cross-origin requests, use a RegExp that matches
           // the start of the origin:
-          urlPattern: new RegExp(/^https?:\/\/.*isaaclin\.cn/),
+          urlPattern: new RegExp(/^https?:\/\/.*carllllo\.work/),
           handler: 'StaleWhileRevalidate',
           options: {
-            cacheName: 'isaaclinData',
+            cacheName: 'apiData',
             // Configure which responses are considered cacheable.
             cacheableResponse: {
               statuses: [200]
@@ -81,19 +81,5 @@ module.exports = {
       }
     };
   },
-  /*
-  configureWebpack: {
-    plugins: [
-      // copy sw.js path.resolve(__dirname, ‘sw.js所在路径’)
-      new CopyWebpackPlugin([
-        {
-          from: path.resolve(__dirname, './src/service-worker.js'),
-          to: path.resolve(__dirname, './dist'),
-          ignore: ['.*']
-        }
-      ])
-    ]
-  },
-  */
-  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
+  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/covid19/',
 };

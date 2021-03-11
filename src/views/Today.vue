@@ -112,6 +112,14 @@ export default {
       const source = [];
       console.log(rawData);
       for (const item of rawData) {
+        if (item.country === 'World') {
+          continue;
+        }
+        if (!(isoToCountry[item.iso] || isoToProvince[item.iso])) {
+          // The data of two cruise ships, MS Zaandam and Diamond Princess
+          // and the data of Holy See(VA) and Marshall Islands(MH)
+          continue;
+        }
         source.push([
           isoToCountry[item.iso] || isoToProvince[item.iso],
           item.data.CurrentConfirmed,

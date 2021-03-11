@@ -3,16 +3,15 @@ import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
 
-Vue.config.productionTip = false;
+Vue.prototype.$log = function(...input) {
+  if (process.env.NODE_ENV === 'development') {
+    for (const entry of input) {
+      console.log(entry);
+    }
+  }
+};
 
 new Vue({
   router,
-  render: (h) => h(App),
-  data: {
-    deviceAspectRatio: 0
-  },
-  created() {
-    this.deviceAspectRatio = window.screen.width / window.screen.height;
-    console.log('device ratio aspect: ' + this.deviceAspectRatio);
-  }
+  render: (h) => h(App)
 }).$mount('#app');

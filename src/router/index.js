@@ -23,7 +23,18 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
+  mode: 'history',
+  base: '/covid19/',
+});
+
+router.beforeEach((to, from, next) => {
+  console.log(to);
+  if (to.matched.length) {
+    next();
+  } else {
+    next('/');
+  }
 });
 
 export default router;

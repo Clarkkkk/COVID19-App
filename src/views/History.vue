@@ -3,7 +3,7 @@
     <div class="header column is-full">
       <span class="title">历史数据</span>
       <div class="select">
-        <select :default-value="selectGroup[0]" @change="onChange">
+        <select v-model="selected">
           <option v-for="option in selectGroup" :key="option">
             {{ option }}
           </option>
@@ -59,12 +59,26 @@ export default {
     return {
       // eslint-disable-next-line max-len
       selectGroup: ['中国', '世界'],
-      currentArea: '',
+      selected: '中国',
+      currentArea: 'China',
       dimensions: ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
         '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'],
       currentDatasetArr: [],
       dates: []
     };
+  },
+
+  watch: {
+    selected(area) {
+      // the currentArea is used in series's map name
+      if (area === '中国') {
+        this.currentArea = 'China';
+        this.initializeData('China');
+      } else if (area === '世界') {
+        this.currentArea = 'World';
+        this.initializeData('World');
+      }
+    }
   },
 
   components: {
@@ -76,16 +90,21 @@ export default {
   },
 
   created() {
+    this.timeoutId = 0;
     this.datasetArrays = {};
-    this.currentArea = 'China';
     this.initializeData('China');
   },
 
   methods: {
     async initializeData(area) {
+      if (this.datasetArrays[area]) {
+        return this.currentDatasetArr = this.datasetArrays[area];
+      }
+
       const limit = 30;
       let page = 0;
       let more = true;
+      let isFirstFetch = true;
       while (more) {
         // fetch data
         const rawData =
@@ -112,12 +131,27 @@ export default {
           thisArr[area] = Object.freeze(data);
         }
         if (this.currentArea === area) {
-          this.currentDatasetArr = thisArr[area];
+          // render the first page of data at first
+          if (isFirstFetch) {
+            this.currentDatasetArr = thisArr[area];
+            isFirstFetch = false;
+          } else {
+            this.updateCurrentDatasetArr(thisArr[area]);
+          }
         }
-        more = false;
-        //more = rawData.more;
+        more = rawData.more;
         page++;
       }
+    },
+
+    updateCurrentDatasetArr(arr) {
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+      }
+      this.timeoutId = setTimeout(() => {
+        this.currentDatasetArr = arr;
+        this.timeoutId = 0;
+      }, 500);
     },
 
     normalizeData(rawData) {
@@ -153,21 +187,6 @@ export default {
 
     createDates(rawData) {
       return rawData.data.map((item) => item.Date);
-    },
-
-    onChange(value) {
-      // the currentArea is used in series's map name
-      if (value === '中国') {
-        this.currentArea = 'China';
-        this.currentDatasetArr = this.datasetArrays['China'];
-      } else if (value === '世界') {
-        this.currentArea = 'World';
-        if (this.datasetArrays['World']) {
-          this.currentDatasetArr = this.datasetArrays['World'];
-        } else {
-          this.initializeData('World');
-        }
-      }
     }
   }
 };

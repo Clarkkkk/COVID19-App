@@ -102,7 +102,8 @@ export default class CustomChart extends BasicChart {
       dataZoom: {
         show: true,
         orient: isVertical ? 'horizontal' : 'vertical',
-        startValue: 0,
+        start: 0,
+        end: 35
       },
       animationDuration: 1000
     };

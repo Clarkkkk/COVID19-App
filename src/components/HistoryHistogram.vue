@@ -27,18 +27,33 @@ export default {
   components: {
     AppChartContainer
   },
+
+  watch: {
+    area(val) {
+      const titleText = this.area === 'China' ? '中国' : '全球';
+      this.initializeData(val).then(() => {
+        this.chart.update({
+          title: {
+            text: titleText + '各地区疫情指标直方图'
+          },
+          dataset: this.datasets[val]
+        });
+      });
+    }
+  },
+
   mounted() {
     this.chart;
     this.dimensions = ['感染密度', '累计死亡率'];
+    this.datasets = {};
 
-    fetchJSON('/latest').then((res) => {
-      const dataset = this.createDataset(res);
+    this.initializeData(this.area).then((res) => {
       const titleText = this.area === 'China' ? '中国' : '全球';
       this.chart = new HistogramChart(this.$refs.canvas, {
         title: {
           text: titleText + '各地区疫情指标直方图'
         },
-        dataset
+        dataset: this.datasets[this.area]
       }, {
         dimensions: this.dimensions,
         fullscreen: this.fullscreen,
@@ -50,6 +65,16 @@ export default {
   },
 
   methods: {
+    initializeData(area) {
+      if (this.datasets[this.area]) {
+        return Promise.resolve(this.datasets[this.area]);
+      } else {
+        return fetchJSON('/latest').then((res) => {
+          this.datasets[this.area] = this.createDataset(res);
+        });
+      }
+    },
+
     getPopulation(isoCode) {
       if (isoToCountry[isoCode]) {
         return countryPopulation[isoToCountry[isoCode]];

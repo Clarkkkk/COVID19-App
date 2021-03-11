@@ -2,10 +2,10 @@
   "short_name": "COVID-19疫情小站",
   "name": "COVID-19疫情小站",
   "description": "COVID-19疫情小站渐进式应用",
-  "start_url": "/index.html",
+  "start_url": "/covid19/index.html",
   "display": "standalone",
   "orientation": "natural",
-  "scope": "/",
+  "scope": "/covid19/",
   "theme_color": "#00a59d",
   "icons": [
     {
