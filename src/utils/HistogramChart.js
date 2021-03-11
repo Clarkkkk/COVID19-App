@@ -203,7 +203,6 @@ export default class HistogramChart extends BasicChart {
         }
       });
     }
-    console.log(series);
     return series;
   }
 

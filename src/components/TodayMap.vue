@@ -31,7 +31,6 @@ export default {
       if (this.map) {
         // if dataset is changed, this.area shoule have been changed
         const option = {dataset: newDataset};
-        console.log(newDataset);
         this.map.updateMap(option, this.area);
       } else {
         this.$nextTick().then(() => {

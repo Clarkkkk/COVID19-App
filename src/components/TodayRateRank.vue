@@ -33,7 +33,6 @@ export default {
   watch: {
     dataset(newDataset) {
       const dataset = this.convertDataset(newDataset);
-      console.log(newDataset);
       if (this.chart) {
         this.chart.update({dataset});
       } else {

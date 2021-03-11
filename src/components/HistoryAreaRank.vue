@@ -35,7 +35,6 @@ export default {
   },
   watch: {
     datasetArr(arr) {
-      console.log(arr);
       const options = arr.map((item) => {
         const date = item.source[0][item.source[0].length - 1];
         return {

@@ -30,6 +30,11 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   console.log(to);
+  console.log(from);
+  if (to.name === from.name) {
+    return;
+  }
+
   if (to.matched.length) {
     next();
   } else {

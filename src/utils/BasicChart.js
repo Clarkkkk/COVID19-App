@@ -348,7 +348,6 @@ export default class BasicChart {
     };
 
     const {dataZoom, timeline, visualMap, subtext} = layoutConfig;
-    console.log(layoutConfig);
     if (subtext) {
       basicOption.grid.top += 20;
     }

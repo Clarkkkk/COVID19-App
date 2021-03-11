@@ -212,8 +212,6 @@ export default class CustomChart extends BasicChart {
                 duringAPI.setShape('width', ((frameCount - 1) ** 3 + 1) * size);
               }
             }
-            // console.log(duringAPI.getShape('width'));
-            // console.log(++count);
           },
           style: api.style(),
           // focus is specified outside of emphasis
@@ -281,13 +279,10 @@ export default class CustomChart extends BasicChart {
       seriesEntry.renderItem = (params, api) => {
         if (!params.context.currentAngle) {
           params.context.currentAngle = -Math.PI / 2;
-          console.log(params.context.currentAngle);
         }
         const value = api.value(dimensionIndex);
         const angle = value / dataSum * Math.PI * 2;
         params.context.currentAngle += angle;
-        console.log(api.style());
-        console.log(angle);
         const ordinalYValue = api.ordinalRawValue(0);
         const width = this._chart.getWidth();
         const height = this._chart.getHeight();

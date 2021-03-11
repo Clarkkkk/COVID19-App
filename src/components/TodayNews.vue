@@ -86,7 +86,6 @@ export default {
   },
   created() {
     fetchJSON('/news').then((data) => {
-      console.log(data);
       const pinnedIndices = [];
       data.forEach((entry, index) => {
         if (this.isPinned(entry.title)) {

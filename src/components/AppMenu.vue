@@ -33,7 +33,6 @@ export default {
 
   watch: {
     currentPage(newPage, oldPage) {
-      console.log(oldPage);
       this.$nextTick().then(() => {
         this.moveIndicator(newPage);
       });
@@ -42,8 +41,9 @@ export default {
 
   methods: {
     onClick(route) {
-      console.log(route);
-      this.$router.push({name: route});
+      if (route !== this.$route.name) {
+        this.$router.push({name: route});
+      }
     },
 
     moveIndicator(moving) {

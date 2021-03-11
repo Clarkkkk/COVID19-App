@@ -1,9 +1,11 @@
 <template>
   <div id="app">
     <app-header />
-    <keep-alive>
-      <router-view />
-    </keep-alive>
+    <transition :name="pageTransition" mode="out-in" @enter="enter">
+      <keep-alive>
+        <router-view />
+      </keep-alive>
+    </transition>
     <footer class="is-size-7">-&nbsp;&nbsp;&nbsp;&nbsp;&#32;&#32;由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021&nbsp;&nbsp;- </footer>
   </div>
 </template>
@@ -12,8 +14,29 @@
 import AppHeader from '@/components/AppHeader';
 export default {
   name: 'app',
+  data() {
+    return {
+      pageTransition: ''
+    };
+  },
+  watch: {
+    '$route'(to, from) {
+      const routes = ['today', 'history', 'links'];
+      console.log(to);
+      console.log(from);
+      const toIndex = routes.indexOf(to.name);
+      const fromIndex = routes.indexOf(from.name) || 0;
+      this.pageTransition = fromIndex < toIndex ? 'left' : 'right';
+    }
+  },
   components: {
     AppHeader,
+  },
+  methods: {
+    enter() {
+      console.log('enter');
+      //debugger;
+    }
   }
 };
 </script>
@@ -93,5 +116,21 @@ body {
   height: 10rem;
   display: flex;
   align-items: center;
+}
+
+.left-enter-active, .left-leave-active, .right-enter-active, .right-leave-active {
+  transition: transform 300ms, opacity 300ms;
+}
+
+.left-enter, .left-leave-to, .right-enter, .right-leave-to {
+  opacity: 0;
+}
+
+.left-enter, .right-leave-to {
+  transform: translateX(100vw);
+}
+
+.left-leave-to, .right-enter {
+  transform: translateX(-100vw);
 }
 </style>

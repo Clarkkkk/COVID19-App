@@ -5,7 +5,7 @@
       <span class="app-sub-title">
         疫情数据每天下午2:00更新 | 新闻每小时更新
         <br>
-        数据来源：datahub.io、@nCoV2019 telegram频道
+        数据来源：<a href="https://github.com/datasets/covid-19" target="_blank" rel="noopener">datahub.io</a>、<a href="https://t.me/nCoV2019" target="_blank" rel="noopener">@nCoV2019 telegram频道</a>
       </span>
     </div>
     <div class="app-menu-container" ref="menu">
@@ -116,14 +116,13 @@ export default {
 }
 
 .app-sub-title {
-  color: #eee;
   font-size: 0.8rem;
   text-align: start;
 }
 
 .app-sub-title > a, a:link, a:visited {
-  color: #eee;
-  border-bottom: solid 1px #eee;
+  color: #fff;
+  border-bottom: solid 1px #fff;
 }
 
 .app-menu-container {

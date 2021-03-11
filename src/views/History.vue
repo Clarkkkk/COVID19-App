@@ -159,9 +159,16 @@ export default {
       for (const item of rawData.provinces) {
         const provinceData = item.data;
         provinceData.forEach((singleDayData, index, arr) => {
+          // The data of two cruise ships, MS Zaandam and Diamond Princess
+          // and the data of Holy See(VA) and Marshall Islands(MH)
+          if (!(isoToCountry[item.iso] || isoToProvince[item.iso])) {
+            return;
+          }
+
           if (!sources[index]) {
             sources[index] = [];
           }
+
           // the province's data in different days
           sources[index].push([
             isoToCountry[item.iso] || isoToProvince[item.iso],
