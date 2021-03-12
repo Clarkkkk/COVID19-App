@@ -54,10 +54,7 @@ export default {
           data: this.dates,
           axisType: 'category',
           loop: false,
-          playInterval: 500,
-          label: {
-            interval: 5,
-          }
+          playInterval: 500
         },
         dataZoom: {
           type: 'slider',
@@ -78,6 +75,7 @@ export default {
             valueType: 'integer',
             dimensions: this.dimensions,
             fullscreen: this.fullscreen,
+            priority: 8
           });
       }
     }

@@ -54,8 +54,19 @@ echarts.use(
   ]
 );
 
-export default class BasicChart {
-  constructor(elem, {dimensions, fullscreen, valueType, valueUnit, legendRange}) {
+import ExecuteQueue from '@/utils/ExecuteQueue';
+
+class BasicChart {
+  constructor(elem, basicConfig) {
+    const {
+      dimensions,
+      fullscreen,
+      valueType,
+      valueUnit,
+      legendRange,
+      priority = 0
+    } = basicConfig;
+
     // BasicChart is used as a basic class for MapChart etc
     if (new.target === BasicChart) {
       throw new Error('BasicChart is used as a basic class');
@@ -69,30 +80,64 @@ export default class BasicChart {
 
     // initialize echarts
     this._echarts = echarts;
-    this._chart = this._echarts.init(elem);
+    // null is necessary
+    this._chart = this._echarts.init(elem, null, {useDirtyRect: true});
+    // eslint-disable-next-line max-len
+    this.DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
     this.dimensions = dimensions;
     this.valueType = valueType;
     this.valueUnit = valueUnit;
     this.legendRange = legendRange;
-    // eslint-disable-next-line max-len
-    this.DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
-    // ['#EF6C00', '#C62828', '#0277BD', '#283593'];
+
+    // used in fullscreen switch
     this._fullscreen = fullscreen;
+
+    // used in render queue
+    this._renderCount = 0;
+    this._priority = priority;
 
     // resize the map when window resizes
     let id = 0;
     window.addEventListener('resize', (event) => {
-      if (id) {
-        clearTimeout(id);
-      }
+      id && clearTimeout(id);
       id = setTimeout(() => {
         this._resize();
         id = 0;
-      }, 350);
+      }, 200);
+    });
+
+    this._chart.on('finished', () => {
+      this._renderCount--;
+      // wait some time for browser to render
+      setTimeout(() => BasicChart.queue.next(), 100);
+    });
+
+    this._chart.on('rendered', () => {
+      this._renderCount++;
+      // some rendering won't fire 'finished' event
+      // call next manually to render the rest of queue
+      setTimeout(() => {
+        if (this._renderCount) {
+          this._renderCount = 0;
+          BasicChart.queue.next();
+        }
+      }, 600);
+      this._hideLoading();
     });
 
     // for test
     this._chart.on('dblclick', () => console.log(this._getOption()));
+  }
+
+  // push the update function into the queue
+  update(...args) {
+    if (this._update) {
+      BasicChart.queue.push(this._priority, () => {
+        this._update(...args);
+      });
+    } else {
+      throw new Error('"this._update" is not defined.');
+    }
   }
 
   // this._chart's methods
@@ -245,11 +290,6 @@ export default class BasicChart {
         }
       }
     });
-    if (is) {
-      this._chart.getDom().classList.add('full-screen');
-    } else {
-      this._chart.getDom().classList.remove('full-screen');
-    }
   }
 
   _getLayoutConfig(userOption) {
@@ -388,6 +428,11 @@ export default class BasicChart {
         left: 10,
         right: 0,
         bottom: 10,
+        label: {
+          formatter(value) {
+            return value.match(/[0-9]{2}-[0-9]{2}$/)
+          }
+        }
       };
     }
 
@@ -395,3 +440,7 @@ export default class BasicChart {
     return basicOption;
   }
 }
+
+BasicChart.queue = new ExecuteQueue();
+
+export default BasicChart;

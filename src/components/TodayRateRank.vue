@@ -43,6 +43,7 @@ export default {
         this.chart = new BarChart(this.$refs.canvas, option, {
           dimensions: this.dimensions,
           fullscreen: this.fullscreen,
+          priority: 5,
           valueType: 'percentage'
         });
       }

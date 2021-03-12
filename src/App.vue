@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <app-header />
-    <transition :name="pageTransition" mode="out-in" @enter="enter">
+    <transition :name="pageTransition" mode="out-in">
       <keep-alive>
         <router-view />
       </keep-alive>
@@ -31,12 +31,6 @@ export default {
   },
   components: {
     AppHeader,
-  },
-  methods: {
-    enter() {
-      console.log('enter');
-      //debugger;
-    }
   }
 };
 </script>

@@ -41,9 +41,8 @@ export default {
         timeline: {
           data: this.dates,
           axisType: 'category',
-          label: {
-            interval: 5,
-          },
+          loop: false,
+          playInterval: 500
         },
         visualMap: {
           type: 'piecewise'
@@ -51,12 +50,13 @@ export default {
         options
       };
       if (this.map) {
-        this.map.updateMap(basicOption, this.area);
+        this.map.update(basicOption, this.area);
       } else {
         this.map = new MapChart(this.$refs.canvas, basicOption, {
           area: this.area,
           dimensions: this.dimensions,
-          fullscreen: this.fullscreen
+          fullscreen: this.fullscreen,
+          priority: 10
         });
       }
     }

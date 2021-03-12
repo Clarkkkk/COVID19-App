@@ -55,10 +55,7 @@ export default {
           data: this.dates,
           axisType: 'category',
           loop: false,
-          playInterval: 500,
-          label: {
-            interval: 5,
-          }
+          playInterval: 500
         },
         dataZoom: {
           type: 'slider',

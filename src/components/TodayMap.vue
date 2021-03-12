@@ -31,7 +31,7 @@ export default {
       if (this.map) {
         // if dataset is changed, this.area shoule have been changed
         const option = {dataset: newDataset};
-        this.map.updateMap(option, this.area);
+        this.map.update(option, this.area);
       } else {
         this.$nextTick().then(() => {
           const option = {
@@ -41,6 +41,7 @@ export default {
           this.map = new MapChart(this.$refs.canvas, option, {
             dimensions: this.dimensions,
             fullscreen: this.fullscreen,
+            priority: 10,
             area: 'China'
           });
         });

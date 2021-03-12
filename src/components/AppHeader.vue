@@ -99,10 +99,11 @@ export default {
   flex-flow: column;
   align-items: flex-start;
   z-index: 10;
-  height: 7.5rem;
+  height: calc(7.5rem + env(safe-area-inset-top));
   width: 100%;
   box-sizing: border-box;
   padding: 1rem;
+  padding-top: calc(1rem + env(safe-area-inset-top));
   background-color: var(--app-color-alpha);
   color: white;
   letter-spacing: 0.5px;
@@ -128,7 +129,8 @@ export default {
 .app-menu-container {
   position: sticky;
   top: 0;
-  height: 3rem;
+  height: calc(3rem + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
   width: 100%;
   background-color: var(--app-color-alpha);
   backdrop-filter: blur(10px);

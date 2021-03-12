@@ -4,66 +4,50 @@ import {nameMap} from '@/utils/mappings';
 
 export default class MapChart extends BasicChart {
   constructor(elem, option, config) {
-    // initialize this._chart
-    super(elem, config);
-    const layoutConfig = this._getLayoutConfig(option);
-    layoutConfig.visualMap = true;
-    this._setBasicOption(layoutConfig);
-    this._setOption(option);
-
     if (!config.area) {
       throw new Error('Area must be provided.');
     }
 
-    this._registerMap(config.area).then(() => {
-      // initialize zoom level's value and dimensionNames
-      this._zoomLevelValue = 1;
-      // set zooming tool's callbacks and map legend symbol
-      this._setZoomFeatures();
-      // setSeries should be called before dimensions relavant functions
-      this._setSeries(config.area);
+    super(elem, config);
+
+    BasicChart.queue.push(this._priority, async () => {
+      await this._initialize(option, config);
+    });
+  }
+
+  async _initialize(option, config) {
+    await this._registerMap(config.area);
+    const layoutConfig = this._getLayoutConfig(option);
+    layoutConfig.visualMap = true;
+    this._setBasicOption(layoutConfig);
+    this._setOption(option);
+    // initialize zoom level's value and dimensionNames
+    this._zoomLevelValue = 1;
+    // set zooming tool's callbacks and map legend symbol
+    this._setZoomFeatures();
+    // setSeries should be called before dimensions relavant functions
+    this._setSeries(config.area);
+    this._setMapLegendSymbol();
+    this._setVisualMap();
+    this._setBasicToolbox();
+
+    // when a different legend is selected
+    // set the legend symbol accordingly
+    this._chart.on('legendselectchanged', (params) => {
       this._setMapLegendSymbol();
       this._setVisualMap();
-      this._setBasicToolbox();
-
-      // when a different legend is selected
-      // set the legend symbol accordingly
-      this._chart.on('legendselectchanged', (params) => {
-        this._setMapLegendSymbol();
-        this._setVisualMap();
-      });
     });
   }
 
   // register a new map and update it with the option
-  async updateMap(option, area) {
-    // hide loading anyway at first
-    this._hideLoading();
-    // if update time exceeds 350ms, show loading animation
-    let id = 0;
-    id = setTimeout(() => {
-      console.log('showloading');
-      this._showLoading();
-      id = 0;
-    }, 350);
-
+  async _update(option, area) {
     await this._registerMap(area);
-
     this._setSeries(area);
     this._setOption(option);
     this._setVisualMap();
     this._setMapLegendSymbol();
     this._resetSeriesCenter();
     this.zoomLevel = 1;
-
-    // hide loading or clear the timer to show loading
-    if (id) {
-      console.log('clear');
-      clearTimeout(id);
-      id = 0;
-    } else {
-      this._hideLoading();
-    }
   }
 
   // this._echarts's methods

@@ -1,13 +1,15 @@
 <template>
   <div id="app-menu">
-    <span
-      v-for="page in pages"
-      :key="page.name"
-      :class="['menu-item', {'active': currentPage === page.name}]"
-      @click="onClick(page.name)"
-    >
-      {{ page.title }}
-    </span>
+    <div class="text-container">
+      <span
+        v-for="page in pages"
+        :key="page.name"
+        :class="['menu-item', {'active': currentPage === page.name}]"
+        @click="onClick(page.name)"
+      >
+        {{ page.title }}
+      </span>
+    </div>
     <div class="indicator-container">
       <div
         :class="['indicator', {'moving': moving}]"
@@ -77,9 +79,10 @@ export default {
 
 <style scoped>
 #app-menu {
-  height: 2.8rem;
+  height: 3rem;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   font-size: 1rem;
   font-weight: bold;
@@ -87,8 +90,16 @@ export default {
   color: white;
 }
 
+.text-container {
+  flex: 1 1 2.5rem;
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
 @media not screen and (min-device-aspect-ratio: 3/4) {
-  #app-menu {
+  .text-container {
     justify-content: space-around;
   }
 }
@@ -99,11 +110,9 @@ export default {
 }
 
 .indicator-container {
+  flex: 1 1 1rem;
   width: 100%;
   height: 0.5rem;
-  position: absolute;
-  left: 0;
-  top: 2.25rem;
   display: flex;
   align-items: flex-start;
 }

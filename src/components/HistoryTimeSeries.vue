@@ -40,6 +40,9 @@ export default {
       const option = {
         title: {text: `地区疫情时间线`},
         dataset: this.datasets[this.area],
+        legend: {
+          selectedMode: 'multiple',
+        },
         xAxis: {
           type: 'category',
           axisLabel: {
@@ -55,7 +58,8 @@ export default {
       };
       const config = {
         dimensions: this.dimensions,
-        fullscreen: this.fullscreen
+        fullscreen: this.fullscreen,
+        priority: 5
       };
       this.chart = new LineChart(this.$refs.canvas, option, config);
     });

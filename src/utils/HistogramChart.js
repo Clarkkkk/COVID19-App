@@ -4,8 +4,17 @@ import * as ecStat from 'echarts-stat';
 export default class HistogramChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
+
+    // transform dataset for histogram
     this._echarts.registerTransform(ecStat.transform.histogram);
     option.dataset = this._transformDataset(option.dataset);
+
+    BasicChart.queue.push(this._priority, () => {
+      this._initialize(option);
+    });
+  }
+
+  _initialize(option) {
     const layoutConfig = this._getLayoutConfig(option);
     layoutConfig.dataZoom = {
       horizontal: true
@@ -17,7 +26,7 @@ export default class HistogramChart extends BasicChart {
     this._setSeries();
   }
 
-  update(option) {
+  _update(option) {
     this._setOption(option);
   }
 

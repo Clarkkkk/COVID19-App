@@ -85,6 +85,7 @@ export default {
           const config = {
             dimensions: this.dimensions,
             fullscreen: this.fullscreen,
+            priority: 8,
             chartTypes: [{
               name: 'bar',
               config: {isVertical: false, isInverse: true}

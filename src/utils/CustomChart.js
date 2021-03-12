@@ -2,13 +2,23 @@ import BasicChart from '@/utils/BasicChart.js';
 
 export default class CustomChart extends BasicChart {
   constructor(elem, option, config) {
-    super(elem, config);
-    const layoutConfig = this._getLayoutConfig(option);
-    this._setBasicOption(layoutConfig);
-    this._setOption(option);
     if (!config.chartTypes) {
       throw new Error('Chart types must be provided');
     }
+
+    super(elem, config);
+    // if update time exceeds 350ms, show loading animation
+    this._showLoading();
+
+    BasicChart.queue.push(this._priority, () => {
+      this._initialize(option, config);
+    });
+  }
+
+  _initialize(option, config) {
+    const layoutConfig = this._getLayoutConfig(option);
+    this._setBasicOption(layoutConfig);
+    this._setOption(option);
     this.chartTypes = config.chartTypes;
     this.options = this._createOptions();
     this.frameCount = [];

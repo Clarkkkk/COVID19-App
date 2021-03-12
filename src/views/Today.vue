@@ -26,6 +26,12 @@
     <div class="tile">
       <div class="graphs tile is-6 is-vertical">
         <div class="tile is-parent">
+          <today-custom
+            :dataset="currentDataset"
+            class="tile is-12 is-child chart"
+          />
+        </div>
+        <div class="tile is-parent">
           <today-rate-rank
             :dataset="currentDataset"
             class="tile is-12 is-child chart"
@@ -33,12 +39,6 @@
         </div>
         <div class="tile is-parent">
           <today-scatter
-            :dataset="currentDataset"
-            class="tile is-12 is-child chart"
-          />
-        </div>
-        <div class="tile is-parent">
-          <today-custom
             :dataset="currentDataset"
             class="tile is-12 is-child chart"
           />

@@ -3,6 +3,12 @@ import BasicChart from '@/utils/BasicChart.js';
 export default class LineChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
+    BasicChart.queue.push(this._priority, () => {
+      this._initialize(option);
+    });
+  }
+
+  _initialize(option) {
     const layoutConfig = this._getLayoutConfig(option);
     layoutConfig.dataZoom = {
       horizontal: true
@@ -14,7 +20,7 @@ export default class LineChart extends BasicChart {
     this._setSeries();
   }
 
-  update(option) {
+  _update(option) {
     this._setOption(option);
   }
 
