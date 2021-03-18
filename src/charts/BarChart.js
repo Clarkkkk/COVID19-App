@@ -3,9 +3,11 @@ import BasicChart from './BasicChart';
 export default class BarChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
-    //this.chartId = this._priority + 'bar' + Date.now();
+    // this.chartId = this._priority + '-bar';
+    this._showLoading();
     BasicChart.queue.push(this._priority, () => {
       this._initialize(option);
+      this._hideLoading();
     });
   }
 

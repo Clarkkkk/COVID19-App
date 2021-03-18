@@ -42,7 +42,6 @@ export default {
         options: this.createOptions(arr)
       };
       this.chart.update(option);
-      //this.chart.hideLoading();
     }
   },
 

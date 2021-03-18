@@ -31,6 +31,7 @@ module.exports = {
             }
           }
         }, {
+          // eslint-disable-next-line max-len
           urlPattern: new RegExp(/^https?:\/\/api\.carllllo\.work\/covid19\/maps/),
           handler: 'CacheFirst',
           options: {
@@ -40,6 +41,7 @@ module.exports = {
             }
           }
         }, {
+          // eslint-disable-next-line max-len
           urlPattern: new RegExp(/^https?:\/\/api\.carllllo\.work\/covid19\/(?!maps)/),
           handler: 'NetworkFirst',
           options: {

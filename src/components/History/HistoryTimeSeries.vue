@@ -59,10 +59,9 @@ export default {
 
   watch: {
     area(val) {
-      //this.chart.showLoading();
+      this.chart.showLoading();
       this.initializeData(val).then(() => {
         this.chart.update({dataset: this.datasets[val]});
-        //this.chart.hideLoading();
       });
     }
   },

@@ -53,7 +53,7 @@ export default {
   watch: {
     area(val) {
       const titleText = this.area === 'China' ? '中国' : '全球';
-      //this.chart.showLoading();
+      this.chart.showLoading();
       this.initializeData(val).then(() => {
         this.chart.update({
           title: {
@@ -61,7 +61,6 @@ export default {
           },
           dataset: this.datasets[val]
         });
-        //this.chart.hideLoading();
       });
     }
   },

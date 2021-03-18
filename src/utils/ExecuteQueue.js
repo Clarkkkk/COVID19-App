@@ -1,4 +1,5 @@
 import createDebounce from './createDebounce';
+const debounce = createDebounce(100);
 class ExecuteQueue {
   constructor() {
     this._queue = [];
@@ -13,8 +14,8 @@ class ExecuteQueue {
     });
     // wait for multiple pushes
     // and then trigger the first execution
-    ExecuteQueue.debounce(async () => await this._execute());
-    console.log('push finished');
+    debounce(async () => await this._execute());
+    // console.log('push finished');
   }
 
   // used for external asynchronous signal to trigger the next execution
@@ -49,10 +50,8 @@ class ExecuteQueue {
         return a.priority - b.priority;
       }
     });
-    console.log(JSON.stringify(this._queue));
+    // console.log(JSON.stringify(this._queue));
   }
 }
-
-ExecuteQueue.debounce = createDebounce(100);
 
 export default ExecuteQueue;

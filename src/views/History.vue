@@ -65,7 +65,6 @@ const debounce = createDebounce(6000);
 export default {
   data() {
     return {
-      // eslint-disable-next-line max-len
       selectGroup: ['中国', '世界'],
       selected: '中国',
       currentArea: 'China',
@@ -220,7 +219,7 @@ export default {
 }
 
 .column {
-  height: 80vh;
+  height: 30vh;
   box-sizing: border-box;
 }
 

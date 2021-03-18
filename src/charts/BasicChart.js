@@ -54,9 +54,15 @@ echarts.use(
   ]
 );
 
-import ExecuteQueue from '@/utils/ExecuteQueue';
-import createDebounce from '@/utils/createDebounce';
+import {
+  ExecuteQueue,
+  createDebounce,
+  createThrottle
+} from '../utils';
+
+// those functions is shared in charts due to the same closure
 const renderDebounce = createDebounce(1500);
+const renderThrottle = createThrottle(1000);
 
 class BasicChart {
   constructor(elem, basicConfig) {
@@ -98,39 +104,46 @@ class BasicChart {
     this._renderCount = 0;
     this._priority = priority;
 
-    this._setOption({title: {text: ''}});
-
-    // resize the map when window resizes
-    let id = 0;
-    window.addEventListener('resize', (event) => {
-      id && clearTimeout(id);
-      id = setTimeout(() => {
-        this._resize();
-        id = 0;
-      }, 200);
-    });
-
+    // when the chart finish rendering, call next to render next chart
     this._chart.on('finished', () => {
       // debugger;
       this._renderCount--;
-      console.log('finished: ' + this.chartId);
+      // console.log('finished: ' + this.chartId);
       BasicChart.queue.next();
     });
 
-
+    // some rendering won't fire 'finished' event
+    // call next manually in rendered event to render the rest of queue
     this._chart.on('rendered', () => {
-      // some rendering won't fire 'finished' event
-      // call next manually to render the rest of queue
-      console.log('rendered');
       if (this._renderCount) {
-        console.log('render debounce');
-        renderDebounce(() => {
-          console.log('render next');
-          this._loading ? this._renderCount = 0 : this._renderCount--;
-          BasicChart.queue.next();
-        });
+        if (this._loading) {
+          // while showing loading, rendered event is fired constantly,
+          // use throttle to call next
+          renderThrottle(() => {
+            // console.log('throttle: render next');
+            this._renderCount = 0;
+            BasicChart.queue.next();
+          });
+        } else {
+          // debounce the call of next,
+          // because there could be so many rendered event during rendering
+          renderDebounce(() => {
+            // console.log('debounce: render next');
+            this._renderCount--;
+            BasicChart.queue.next();
+          });
+        }
       }
-      this._loading ? this._renderCount = 0 : this._renderCount++;
+      this._renderCount++;
+    });
+
+    // initialize the canvas first, so that showLoading is available
+    this._setOption({title: {text: ''}});
+
+    // resize the map when window resizes
+    const resizeDebounce = createDebounce(200);
+    window.addEventListener('resize', () => {
+      resizeDebounce(() => this._resize());
     });
 
     // for test
@@ -145,6 +158,7 @@ class BasicChart {
     if (this._update) {
       BasicChart.queue.push(this._priority, async () => {
         await this._update(...args);
+        this._hideLoading();
       });
     } else {
       throw new Error('"this._update" is not defined.');
@@ -462,6 +476,6 @@ class BasicChart {
   }
 }
 
-const queue = BasicChart.queue = new ExecuteQueue();
+BasicChart.queue = new ExecuteQueue();
 
 export default BasicChart;

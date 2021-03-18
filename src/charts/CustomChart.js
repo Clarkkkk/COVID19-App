@@ -8,10 +8,11 @@ export default class CustomChart extends BasicChart {
 
     super(elem, config);
 
-    //this.chartId = this._priority + 'custom' + Date.now();
-
+    // this.chartId = this._priority + '-custom';
+    this._showLoading();
     BasicChart.queue.push(this._priority, () => {
       this._initialize(option, config);
+      this._hideLoading();
     });
   }
 

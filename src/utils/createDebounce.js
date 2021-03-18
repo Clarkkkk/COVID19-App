@@ -11,7 +11,7 @@ const createDebounce = (time = 500) => {
       fn = thisArg ? fn.bind(thisArg) : fn;
       await fn();
       id = 0;
-      console.log(`debuonce run after ${Date.now() - timestamp}ms.`);
+      // console.log(`debuonce run after ${Date.now() - timestamp}ms.`);
     }, time);
   };
 };

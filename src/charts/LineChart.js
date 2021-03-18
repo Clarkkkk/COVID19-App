@@ -3,9 +3,11 @@ import BasicChart from './BasicChart';
 export default class LineChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
-    //this.chartId = this._priority + 'line' + Date.now();
+    // this.chartId = this._priority + '-line';
+    setTimeout(() => this._showLoading(), 0);
     BasicChart.queue.push(this._priority, () => {
       this._initialize(option);
+      this._hideLoading();
     });
   }
 

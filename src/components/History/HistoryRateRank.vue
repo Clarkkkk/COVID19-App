@@ -37,7 +37,7 @@ export default {
 
   watch: {
     area() {
-      //this.chart.showLoading();
+      this.chart.showLoading();
     },
 
     datasetArr(arr) {
@@ -51,7 +51,6 @@ export default {
         options: this.createOptions(arr)
       };
       this.chart.update(option);
-      //this.chart.hideLoading();
     }
   },
 

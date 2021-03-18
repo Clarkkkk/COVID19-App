@@ -9,9 +9,11 @@ export default class MapChart extends BasicChart {
     }
 
     super(elem, config);
-    //this.chartId = this._priority + 'map' + Date.now();
+    this._showLoading();
+    // this.chartId = this._priority + '-map';
     BasicChart.queue.push(this._priority, async () => {
       await this._initialize(option, config);
+      this._hideLoading();
     });
   }
 
@@ -30,7 +32,9 @@ export default class MapChart extends BasicChart {
     this._setMapLegendSymbol();
     this._setVisualMap();
     this._setBasicToolbox();
-    setTimeout(() => this.zoomLevel = 1.01, 0);
+
+    // To fire a finished event
+    setTimeout(() => this.zoomLevel = 1.001, 0);
 
     // when a different legend is selected
     // set the legend symbol accordingly
@@ -42,7 +46,8 @@ export default class MapChart extends BasicChart {
 
   // register a new map and update it with the option
   async _update(option, area) {
-    this.zoomLevel = 1.01;
+    // To fire a finished event
+    this.zoomLevel = 1.001;
     await this._registerMap(area);
     this._setSeries(area);
     this._setOption(option);

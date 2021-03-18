@@ -28,7 +28,7 @@ export default {
 
   watch: {
     area() {
-      //this.map.showLoading();
+      this.map.showLoading();
     },
 
     datasetArr(arr) {
