@@ -17,7 +17,6 @@
         class="tile is-9 is-child is-parent chart"
         :dataset="currentDataset"
         :area="currentArea"
-        
       />
       <today-brief
         class="tile is-vertical is-3"
@@ -54,18 +53,20 @@
 </template>
 
 <script>
-import TodayMap from '@/components/TodayMap';
-import TodayBrief from '@/components/TodayBrief';
-import TodayRateRank from '@/components/TodayRateRank';
-import TodayScatter from '@/components/TodayScatter';
-import TodayCustom from '@/components/TodayCustom';
-import TodayNews from '@/components/TodayNews';
-import AppLoadingIcon from '@/components/AppLoadingIcon';
+import {
+  TodayMap,
+  TodayBrief,
+  TodayRateRank,
+  TodayScatter,
+  TodayCustom,
+  TodayNews
+} from '@/components/Today';
+import {AppLoadingIcon} from '@/components/App';
 import {
   isoCountryToEchartsName as isoToCountry,
-  isoProvinceToEchartsName as isoToProvince
-} from '@/utils/mappings.js';
-import fetchJSON from '@/utils/fetchJSON';
+  isoProvinceToEchartsName as isoToProvince,
+  fetchJSON
+} from '@/utils';
 export default {
   data() {
     return {
@@ -80,10 +81,12 @@ export default {
   },
 
   computed: {
+    /** @return { array } **/
     currentDataset() {
       return this.datasets[this.currentArea];
     },
 
+    /** @return { object } **/
     currentBriefData() {
       return this.briefData[this.currentArea];
     },

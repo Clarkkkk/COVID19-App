@@ -1,4 +1,4 @@
-import createDebounce from '@/utils/createDebounce';
+import createDebounce from './createDebounce';
 class ExecuteQueue {
   constructor() {
     this._queue = [];

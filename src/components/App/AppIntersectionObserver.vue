@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import AppLoadingIcon from '@/components/AppLoadingIcon.vue';
+import AppLoadingIcon from './AppLoadingIcon.vue';
 export default {
   components: {
     AppLoadingIcon

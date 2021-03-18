@@ -1,4 +1,4 @@
-import BasicChart from '@/utils/BasicChart.js';
+import BasicChart from './BasicChart';
 
 export default class ScatterChart extends BasicChart {
   constructor(elem, option, basicConfig) {

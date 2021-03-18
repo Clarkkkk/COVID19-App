@@ -1,6 +1,6 @@
 <template>
   <app-chart-container
-    id="history-map"
+    id="history-area-rank"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import MapChart from '@/utils/MapChart';
-import AppChartContainer from '@/components/AppChartContainer';
+import {BarChart} from '@/charts';
+import {AppChartContainer} from '@/components/App';
 export default {
   data() {
     return {
@@ -22,13 +22,13 @@ export default {
   },
 
   created() {
-    this.map;
+    this.chart;
     this.$nextTick().then(() => this.initializeChart());
   },
 
   watch: {
     area() {
-      //this.map.showLoading();
+      this.chart.showLoading();
     },
 
     datasetArr(arr) {
@@ -41,7 +41,8 @@ export default {
         timeline: {data: this.dates},
         options: this.createOptions(arr)
       };
-      this.map.update(option, this.area);
+      this.chart.update(option);
+      //this.chart.hideLoading();
     }
   },
 
@@ -49,25 +50,34 @@ export default {
     initializeChart() {
       const options = this.createOptions(this.datasetArr);
       const basicOption = {
-        title: {text: '疫情地图'},
+        title: {
+          text: '疫情地区排行',
+          subtext: ''
+        },
         timeline: {
           data: this.dates,
           axisType: 'category',
           loop: false,
           playInterval: 500
         },
-        visualMap: {
-          type: 'piecewise'
+        dataZoom: {
+          type: 'slider',
+          orient: 'vertical',
+          brushSelect: false,
+          startValue: 0,
+          endValue: 19,
+          zoomLock: false,
+          rangeMode: ['value', 'value']
         },
         options
       };
       const config = {
-        area: this.area,
+        valueType: 'integer',
         dimensions: this.dimensions,
         fullscreen: this.fullscreen,
-        priority: 10
+        priority: 8
       };
-      this.map = new MapChart(this.$refs.canvas, basicOption, config);
+      this.chart = new BarChart(this.$refs.canvas, basicOption, config);
     },
 
     createOptions(arr) {
@@ -75,10 +85,22 @@ export default {
         const date = item.source[0][item.source[0].length - 1];
         return {
           title: {
-            text: '疫情地图',
+            text: '疫情地区排行',
             subtext: date
           },
-          dataset: item
+          dataset: [item, ...this.createSortTransform(item.dimensions)]
+        };
+      });
+    },
+
+    createSortTransform(dimensions) {
+      return dimensions.map((dimension, index) => {
+        return {
+          id: dimension,
+          transform: {
+            type: 'sort',
+            config: {dimension: index, order: 'desc'}
+          }
         };
       });
     }
@@ -88,20 +110,13 @@ export default {
 
 <style scoped>
 /*
-#history-map {
+#history-area-rank {
+  min-width: 20rem;
+  min-height: 32rem;
+  height: 32rem;
+  flex: 1 1 18rem;
   box-shadow: var(--app-card-shadow);
   border-radius: var(--app-card-radius);
-  position: relative;
-  min-width: 80vw;
-  height: 80vw;
-  flex: 1 1 50vw;
-}
-
-@media screen and (min-aspect-ratio: 4/3) {
-  #history-map {
-    min-width: 60vw;
-    height: 50vw;
-  }
 }
 */
 

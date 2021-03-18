@@ -1,6 +1,6 @@
 <template>
   <app-chart-container
-    id="today-scatter"
+    id="today-rate-rank"
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import ScatterChart from '@/utils/ScatterChart';
-import AppChartContainer from '@/components/AppChartContainer';
+import {BarChart} from '@/charts';
+import {AppChartContainer} from '@/components/App';
 export default {
   data() {
     return {
@@ -27,6 +27,7 @@ export default {
       '地方名',
       '估计治疗率',
       '住院死亡率',
+      '累计死亡率',
       '更新时间'
     ];
     this.$nextTick().then(() => this.initializeChart());
@@ -43,15 +44,16 @@ export default {
   methods: {
     initializeChart() {
       const option = {
-        title: {text: '估计治疗率与各指标散点图'},
+        title: {text: '治疗率与死亡率'},
         dataset: this.convertDataset(this.dataset)
       };
       const config = {
         dimensions: this.dimensions,
         fullscreen: this.fullscreen,
+        priority: 5,
         valueType: 'percentage'
       };
-      this.chart = new ScatterChart(this.$refs.canvas, option, config);
+      this.chart = new BarChart(this.$refs.canvas, option, config);
     },
 
     convertDataset(dataset) {
@@ -78,15 +80,32 @@ export default {
         dimensions: this.dimensions,
         source: rateSource,
       }, {
-        transform: {
+        id: '估计治疗率',
+        transform: [{
+          type: 'sort',
+          config: {dimension: '估计治疗率', order: 'desc'}
+        }, {
           type: 'filter',
-          config: {
-            and: [
-              {dimension: '估计治疗率', '>': 0},
-              {dimension: '住院死亡率', '>': 0, '<': 1}
-            ]
-          },
-        }
+          config: {dimension: '估计治疗率', '>': 0}
+        }]
+      }, {
+        id: '住院死亡率',
+        transform: [{
+          type: 'sort',
+          config: {dimension: '住院死亡率', order: 'desc'}
+        }, {
+          type: 'filter',
+          config: {dimension: '住院死亡率', '>': 0, '<': 1}
+        }]
+      }, {
+        id: '累计死亡率',
+        transform: [{
+          type: 'sort',
+          config: {dimension: '累计死亡率', order: 'desc'}
+        }, {
+          type: 'filter',
+          config: {dimension: '累计死亡率', '>': 0, '<': 1}
+        }]
       }];
     }
   }
@@ -95,7 +114,7 @@ export default {
 
 <style scoped>
 /*
-#today-scatter {
+#today-rate-rank {
   min-width: 40vw;
   height: 80vmin;
 }

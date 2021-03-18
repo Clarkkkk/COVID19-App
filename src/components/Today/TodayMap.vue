@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import MapChart from '@/utils/MapChart';
-import AppChartContainer from '@/components/AppChartContainer';
+import {MapChart} from '@/charts';
+import {AppChartContainer} from '@/components/App';
 export default {
   data() {
     return {

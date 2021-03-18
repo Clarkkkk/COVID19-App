@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import LineChart from '@/utils/LineChart';
-import AppChartContainer from '@/components/AppChartContainer';
-import fetchJSON from '@/utils/fetchJSON';
+import {LineChart} from '@/charts';
+import {AppChartContainer} from '@/components/App';
+import {fetchJSON} from '@/utils';
 export default {
   data() {
     return {

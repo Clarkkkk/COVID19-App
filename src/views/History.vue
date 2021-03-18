@@ -47,18 +47,20 @@
 </template>
 
 <script>
-import HistoryMap from '@/components/HistoryMap';
-import HistoryAreaRank from '@/components/HistoryAreaRank';
-import HistoryRateRank from '@/components/HistoryRateRank';
-import HistoryTimeSeries from '@/components/HistoryTimeSeries';
-import HistoryHistogram from '@/components/HistoryHistogram';
-import AppLoadingIcon from '@/components/AppLoadingIcon';
+import {
+  HistoryMap,
+  HistoryAreaRank,
+  HistoryRateRank,
+  HistoryTimeSeries,
+  HistoryHistogram
+} from '@/components/History';
+import {AppLoadingIcon} from '@/components/App';
 import {
   isoCountryToEchartsName as isoToCountry,
-  isoProvinceToEchartsName as isoToProvince
-} from '@/utils/mappings.js';
-import fetchJSON from '@/utils/fetchJSON';
-import createDebounce from '@/utils/createDebounce';
+  isoProvinceToEchartsName as isoToProvince,
+  createDebounce,
+  fetchJSON
+} from '@/utils';
 const debounce = createDebounce(6000);
 export default {
   data() {
@@ -86,6 +88,7 @@ export default {
   },
 
   computed: {
+    /** @return { array } **/
     currentDatasetArr() {
       return this.datasetArrays[this.currentArea];
     }

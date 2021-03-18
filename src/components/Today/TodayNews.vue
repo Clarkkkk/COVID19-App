@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import fetchJSON from '@/utils/fetchJSON';
+import {fetchJSON} from '@/utils';
 export default {
   data() {
     return {

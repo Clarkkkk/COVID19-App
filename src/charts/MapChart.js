@@ -1,6 +1,6 @@
-import BasicChart from '@/utils/BasicChart.js';
-import fetchJSON from '@/utils/fetchJSON';
-import {nameMap} from '@/utils/mappings';
+import BasicChart from './BasicChart';
+import {fetchJSON} from '@/utils';
+import {nameMap} from '@/utils';
 
 export default class MapChart extends BasicChart {
   constructor(elem, option, config) {

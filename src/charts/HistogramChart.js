@@ -1,4 +1,4 @@
-import BasicChart from '@/utils/BasicChart.js';
+import BasicChart from './BasicChart';
 import * as ecStat from 'echarts-stat';
 
 export default class HistogramChart extends BasicChart {

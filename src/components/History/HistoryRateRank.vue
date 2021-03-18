@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import BarChart from '@/utils/BarChart';
-import AppChartContainer from '@/components/AppChartContainer';
-import {countryPopulation, provincePopulation} from '@/utils/mappings.js';
+import {BarChart} from '@/charts';
+import {AppChartContainer} from '@/components/App';
+import {countryPopulation, provincePopulation} from '@/utils';
 export default {
   data() {
     return {

@@ -8,15 +8,15 @@
 </template>
 
 <script>
-import fetchJSON from '@/utils/fetchJSON';
-import HistogramChart from '@/utils/HistogramChart';
-import AppChartContainer from '@/components/AppChartContainer';
+import {HistogramChart} from '@/charts';
+import {AppChartContainer} from '@/components/App';
 import {
+  fetchJSON,
   isoCountryToEchartsName as isoToCountry,
   isoProvinceToEchartsName as isoToProvince,
   countryPopulation,
   provincePopulation
-} from '@/utils/mappings.js';
+} from '@/utils';
 export default {
   data() {
     return {

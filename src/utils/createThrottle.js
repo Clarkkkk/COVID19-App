@@ -11,3 +11,5 @@ function createThrottle(time = 1000) {
     }
   };
 }
+
+export default createThrottle;

@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import CustomChart from '@/utils/CustomChart';
-import AppChartContainer from '@/components/AppChartContainer';
+import {CustomChart} from '@/charts';
+import {AppChartContainer} from '@/components/App';
 export default {
   data() {
     return {
