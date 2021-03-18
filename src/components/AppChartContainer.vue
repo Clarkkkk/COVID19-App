@@ -1,10 +1,12 @@
 <template>
-  <div class="app-chart-container">
-    <div :class="['fullscreen-background', {'fullscreen': fullscreen.value}]"></div>
-    <div class="animated-box" ref="animated">
-      <slot></slot>
+  <transition name="container" appear>
+    <div class="app-chart-container">
+      <div :class="['fullscreen-background', {'fullscreen': fullscreen.value}]"></div>
+      <div class="animated-box" ref="animated">
+        <slot></slot>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -132,5 +134,14 @@ export default {
   100% {
     transform: translate(0px, 0px);
   }
+}
+
+.container-enter-active {
+  transition: transform 300ms, opacity 300ms;
+}
+
+.container-enter {
+  transform: translateY(20px);
+  opacity: 0.5;
 }
 </style>

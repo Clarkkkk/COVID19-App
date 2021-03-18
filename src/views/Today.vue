@@ -1,5 +1,6 @@
 <template>
   <div id="today" class="tile is-ancestor is-vertical">
+    <template v-if="dataAvailable">
     <div class="header tile is-parent">
         <span class="title">今日疫情</span>
         <div class="select">
@@ -16,6 +17,7 @@
         class="tile is-9 is-child is-parent chart"
         :dataset="currentDataset"
         :area="currentArea"
+        
       />
       <today-brief
         class="tile is-vertical is-3"
@@ -46,6 +48,8 @@
       </div>
       <today-news class="news tile is-6 is-vertical is-parent"/>
     </div>
+    </template>
+    <app-loading-icon class="tile is-parent" v-else ref="map" />
   </div>
 </template>
 
@@ -56,6 +60,7 @@ import TodayRateRank from '@/components/TodayRateRank';
 import TodayScatter from '@/components/TodayScatter';
 import TodayCustom from '@/components/TodayCustom';
 import TodayNews from '@/components/TodayNews';
+import AppLoadingIcon from '@/components/AppLoadingIcon';
 import {
   isoCountryToEchartsName as isoToCountry,
   isoProvinceToEchartsName as isoToProvince
@@ -66,35 +71,22 @@ export default {
     return {
       // eslint-disable-next-line max-len
       selectGroup: ['中国', '世界'],
-      currentDataset: undefined,
+      selected: '中国',
       currentArea: 'China',
-      briefData: {
-        China: {},
-        World: {}
-      },
-      selected: '中国'
+      briefData: {},
+      datasets: {},
+      dataAvailable: false,
     };
   },
 
-  watch: {
-    selected(area) {
-      // the currentArea is used in series's map name
-      if (area === '中国') {
-        this.currentArea = 'China';
-        this.currentDataset = this.datasets['China'];
-      } else if (area === '世界') {
-        this.currentArea = 'World';
-        this.currentDataset = this.datasets['World'];
-      }
-    }
-  },
-
   computed: {
+    currentDataset() {
+      return this.datasets[this.currentArea];
+    },
+
     currentBriefData() {
-      console.log(this.currentArea);
-      console.log(this.briefData[this.currentArea]);
       return this.briefData[this.currentArea];
-    }
+    },
   },
 
   components: {
@@ -103,14 +95,47 @@ export default {
     TodayRateRank,
     TodayScatter,
     TodayCustom,
-    TodayNews
+    TodayNews,
+    AppLoadingIcon
+  },
+
+  watch: {
+    selected(area) {
+      // the currentArea is used in series's map name
+      if (area === '中国') {
+        this.currentArea = 'China';
+      } else if (area === '世界') {
+        this.currentArea = 'World';
+      }
+    }
+  },
+
+  created() {
+    this.defaultDimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡', '更新时间'];
+    // fetch and normalize data
+    fetchJSON('/latest').then((res) => {
+      this.datasets['World'] = this.createDataset(res);
+      for (const item of res) {
+        if (item.country === 'World') {
+          this.briefData['World'] = this.createBriefData(item.data);
+        } else if (item.country === 'China') {
+          this.datasets['China'] = this.createDataset(item.provinces);
+          this.briefData['China'] = this.createBriefData(item.data);
+        }
+      }
+      this.dataAvailable = true;
+    });
+  },
+
+  mounted() {
+    console.log(this.$refs.map);
+    this.$nextTick().then(() => console.log(this.$refs.map));
   },
 
   methods: {
     // normalize the source data to a dataset
-    normalizeData(rawData) {
+    createDataset(rawData) {
       const source = [];
-      console.log(rawData);
       for (const item of rawData) {
         if (item.country === 'World') {
           continue;
@@ -131,29 +156,16 @@ export default {
           item.data.updateTime
         ]);
       }
-      return {
-        dimensions: ['地方名', '现存确诊', '累计确诊', '治愈', '死亡', '更新时间'],
+      // the dataset need not to be reactive
+      return Object.freeze({
+        dimensions: this.defaultDimensions,
         source: source
-      };
-    }
-  },
+      });
+    },
 
-  created() {
-    // properties that don't need to be reactive
-    this.datasets = {};
-    // fetch and normalize data
-    fetchJSON('/latest').then((res) => {
-      this.datasets['World'] = this.normalizeData(res);
-      for (const item of res) {
-        if (item.country === 'World') {
-          this.briefData['World'] = item.data;
-        } else if (item.country === 'China') {
-          this.datasets['China'] = this.normalizeData(item.provinces);
-          this.briefData['China'] = item.data;
-        }
-      }
-      this.currentDataset = this.datasets['China'];
-    });
+    createBriefData(rawData) {
+      return Object.freeze(rawData);
+    }
   }
 };
 </script>

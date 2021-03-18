@@ -16,35 +16,39 @@ export default {
       fullscreen: {value: false}
     };
   },
-  props: ['area', 'datasetArr', 'dimensions', 'dates'],
+  props: ['area', 'dimensions', 'datasetArr', 'dates'],
   components: {
     AppChartContainer
   },
-  methods: {
-    createSortTransform(dimensions) {
-      return dimensions.map((dimension, index) => {
-        return {
-          id: dimension,
-          transform: {
-            type: 'sort',
-            config: {dimension: index, order: 'desc'}
-          }
-        };
-      });
+
+  created() {
+    this.chart;
+    this.$nextTick().then(() => this.initializeChart());
+  },
+
+  watch: {
+    area() {
+      this.chart.showLoading();
+    },
+
+    datasetArr(arr) {
+      // the data of the current area is not fetched yet
+      if (!arr) {
+        return;
+      }
+
+      const option = {
+        timeline: {data: this.dates},
+        options: this.createOptions(arr)
+      };
+      this.chart.update(option);
+      //this.chart.hideLoading();
     }
   },
-  watch: {
-    datasetArr(arr) {
-      const options = arr.map((item) => {
-        const date = item.source[0][item.source[0].length - 1];
-        return {
-          title: {
-            text: '疫情地区排行',
-            subtext: date
-          },
-          dataset: [item, ...this.createSortTransform(item.dimensions)]
-        };
-      });
+
+  methods: {
+    initializeChart() {
+      const options = this.createOptions(this.datasetArr);
       const basicOption = {
         title: {
           text: '疫情地区排行',
@@ -67,17 +71,38 @@ export default {
         },
         options
       };
-      if (this.chart) {
-        this.chart.update(basicOption);
-      } else {
-        this.chart =
-          new BarChart(this.$refs.canvas, basicOption, {
-            valueType: 'integer',
-            dimensions: this.dimensions,
-            fullscreen: this.fullscreen,
-            priority: 8
-          });
-      }
+      const config = {
+        valueType: 'integer',
+        dimensions: this.dimensions,
+        fullscreen: this.fullscreen,
+        priority: 8
+      };
+      this.chart = new BarChart(this.$refs.canvas, basicOption, config);
+    },
+
+    createOptions(arr) {
+      return arr.map((item) => {
+        const date = item.source[0][item.source[0].length - 1];
+        return {
+          title: {
+            text: '疫情地区排行',
+            subtext: date
+          },
+          dataset: [item, ...this.createSortTransform(item.dimensions)]
+        };
+      });
+    },
+
+    createSortTransform(dimensions) {
+      return dimensions.map((dimension, index) => {
+        return {
+          id: dimension,
+          transform: {
+            type: 'sort',
+            config: {dimension: index, order: 'desc'}
+          }
+        };
+      });
     }
   }
 };

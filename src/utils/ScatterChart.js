@@ -3,6 +3,7 @@ import BasicChart from '@/utils/BasicChart.js';
 export default class ScatterChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
+    //this.chartId = this._priority + 'scatter' + Date.now();
     BasicChart.queue.push(this._priority, () => {
       this._initialize(option);
     });

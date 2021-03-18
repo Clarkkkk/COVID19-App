@@ -7,6 +7,7 @@
   "orientation": "natural",
   "scope": "/covid19/",
   "theme_color": "#00a59d",
+  "background_color": "#00a59d",
   "icons": [
     {
       "src": "../img/icons/manifest-icon-192.png",

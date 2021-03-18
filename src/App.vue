@@ -127,4 +127,13 @@ body {
 .left-leave-to, .right-enter {
   transform: translateX(-100vw);
 }
+
+.container-enter-active {
+  transition: transform 300ms, opacity 300ms;
+}
+
+.container-enter {
+  transform: translateY(20px);
+  opacity: 0;
+}
 </style>

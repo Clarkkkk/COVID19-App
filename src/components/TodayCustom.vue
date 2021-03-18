@@ -8,11 +8,15 @@
       <button
         :class="{'active': chartType === 'bar'}"
         @click="onClick('bar')"
-      >柱状图</button>
+      >
+        柱状图
+      </button>
       <button
         :class="{'active': chartType === 'pie'}"
         @click="onClick('pie')"
-      >饼图</button>
+      >
+        饼图
+      </button>
     </div>
   </app-chart-container>
 </template>
@@ -32,70 +36,60 @@ export default {
     AppChartContainer
   },
 
-  methods: {
-    onClick(type) {
-      this.chartType = type;
-      this.chart.switchType(type);
-    }
-  },
-
   created() {
     this.chart;
     this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡', '更新时间'];
+    this.$nextTick().then(() => this.initializeChart());
   },
 
   watch: {
     dataset(newDataset) {
+      this.chart.update({dataset: newDataset});
+    }
+  },
+
+  methods: {
+    onClick(type) {
+      this.chartType = type;
+      this.chart && this.chart.switchType(type);
+    },
+
+    initializeChart() {
       const dataset = [
-        newDataset,
-        {
-          id: '现存确诊',
-          transform: {
-            type: 'sort',
-            config: {dimension: '现存确诊', order: 'desc'}
-          }
-        }, {
-          id: '累计确诊',
-          transform: {
-            type: 'sort',
-            config: {dimension: '累计确诊', order: 'desc'}
-          }
-        }, {
-          id: '治愈',
-          transform: {
-            type: 'sort',
-            config: {dimension: '治愈', order: 'desc'}
-          }
-        }, {
-          id: '死亡',
-          transform: {
-            type: 'sort',
-            config: {dimension: '死亡', order: 'desc'}
-          }
-        }
+        this.dataset,
+        ...this.createTransforms(['现存确诊', '累计确诊', '治愈', '死亡'])
       ];
-      if (this.chart) {
-        this.chart.update({dataset});
-      } else {
-        this.$nextTick().then(() => {
-          const option = {
-            title: {text: '各地数据'},
-            dataset
-          };
-          const config = {
-            dimensions: this.dimensions,
-            fullscreen: this.fullscreen,
-            priority: 8,
-            chartTypes: [{
-              name: 'bar',
-              config: {isVertical: false, isInverse: true}
-            }, {
-              name: 'pie',
-            }]
-          };
-          this.chart = new CustomChart(this.$refs.canvas, option, config);
-        });
-      }
+      const option = {
+        title: {text: '各地数据'},
+        dataset
+      };
+      const config = {
+        dimensions: this.dimensions,
+        fullscreen: this.fullscreen,
+        priority: 8,
+        chartTypes: [{
+          name: 'bar',
+          config: {isVertical: false, isInverse: true}
+        }, {
+          name: 'pie',
+        }]
+      };
+      this.chart = new CustomChart(this.$refs.canvas, option, config);
+    },
+
+    createTransforms(legendDimensions) {
+      return legendDimensions.map((dimension) => {
+        return {
+          id: dimension,
+          transform: {
+            type: 'sort',
+            config: {
+              dimension,
+              order: 'desc'
+            }
+          }
+        };
+      });
     }
   }
 };

@@ -55,6 +55,8 @@ echarts.use(
 );
 
 import ExecuteQueue from '@/utils/ExecuteQueue';
+import createDebounce from '@/utils/createDebounce';
+const renderDebounce = createDebounce(1500);
 
 class BasicChart {
   constructor(elem, basicConfig) {
@@ -96,6 +98,8 @@ class BasicChart {
     this._renderCount = 0;
     this._priority = priority;
 
+    this._setOption({title: {text: ''}});
+
     // resize the map when window resizes
     let id = 0;
     window.addEventListener('resize', (event) => {
@@ -107,37 +111,52 @@ class BasicChart {
     });
 
     this._chart.on('finished', () => {
+      // debugger;
       this._renderCount--;
-      // wait some time for browser to render
-      setTimeout(() => BasicChart.queue.next(), 100);
+      console.log('finished: ' + this.chartId);
+      BasicChart.queue.next();
     });
 
+
     this._chart.on('rendered', () => {
-      this._renderCount++;
       // some rendering won't fire 'finished' event
       // call next manually to render the rest of queue
-      setTimeout(() => {
-        if (this._renderCount) {
-          this._renderCount = 0;
+      console.log('rendered');
+      if (this._renderCount) {
+        console.log('render debounce');
+        renderDebounce(() => {
+          console.log('render next');
+          this._loading ? this._renderCount = 0 : this._renderCount--;
           BasicChart.queue.next();
-        }
-      }, 600);
-      this._hideLoading();
+        });
+      }
+      this._loading ? this._renderCount = 0 : this._renderCount++;
     });
 
     // for test
-    this._chart.on('dblclick', () => console.log(this._getOption()));
+    this._chart.on('dblclick', () => {
+      console.log(this._getOption());
+      console.log(this);
+    });
   }
 
   // push the update function into the queue
   update(...args) {
     if (this._update) {
-      BasicChart.queue.push(this._priority, () => {
-        this._update(...args);
+      BasicChart.queue.push(this._priority, async () => {
+        await this._update(...args);
       });
     } else {
       throw new Error('"this._update" is not defined.');
     }
+  }
+
+  showLoading() {
+    this._showLoading();
+  }
+
+  hideLoading() {
+    this._chart.hideLoading();
   }
 
   // this._chart's methods
@@ -154,10 +173,12 @@ class BasicChart {
   }
 
   _hideLoading() {
+    this._loading = false;
     this._chart.hideLoading();
   }
 
   _showLoading() {
+    this._loading = true;
     this._chart.showLoading();
   }
 
@@ -430,7 +451,7 @@ class BasicChart {
         bottom: 10,
         label: {
           formatter(value) {
-            return value.match(/[0-9]{2}-[0-9]{2}$/)
+            return value.match(/[0-9]{2}-[0-9]{2}$/);
           }
         }
       };
@@ -441,6 +462,6 @@ class BasicChart {
   }
 }
 
-BasicChart.queue = new ExecuteQueue();
+const queue = BasicChart.queue = new ExecuteQueue();
 
 export default BasicChart;

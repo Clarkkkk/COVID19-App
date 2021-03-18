@@ -9,7 +9,7 @@ export default class MapChart extends BasicChart {
     }
 
     super(elem, config);
-
+    //this.chartId = this._priority + 'map' + Date.now();
     BasicChart.queue.push(this._priority, async () => {
       await this._initialize(option, config);
     });
@@ -30,6 +30,7 @@ export default class MapChart extends BasicChart {
     this._setMapLegendSymbol();
     this._setVisualMap();
     this._setBasicToolbox();
+    setTimeout(() => this.zoomLevel = 1.01, 0);
 
     // when a different legend is selected
     // set the legend symbol accordingly
@@ -41,6 +42,7 @@ export default class MapChart extends BasicChart {
 
   // register a new map and update it with the option
   async _update(option, area) {
+    this.zoomLevel = 1.01;
     await this._registerMap(area);
     this._setSeries(area);
     this._setOption(option);
@@ -75,7 +77,7 @@ export default class MapChart extends BasicChart {
     this._setIconColor('myZoomOut', this._zoomLevelValue > 1);
     this._setIconColor('myZoomIn', this._zoomLevelValue < 9);
     // when zoom level is over 1, show the map label
-    this._setMapLabel(this._zoomLevelValue > 1);
+    this._setMapLabel(this._zoomLevelValue >= 2);
     this._setMapLegendSymbol();
   }
 

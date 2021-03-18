@@ -32,20 +32,32 @@ export default {
       '死亡密度',
       '日期'
     ];
+    this.$nextTick().then(() => this.initializeChart());
   },
+
   watch: {
+    area() {
+      //this.chart.showLoading();
+    },
+
     datasetArr(arr) {
-      const converted = this.convertDatasetArr(arr);
-      const options = converted.map((item) => {
-        const date = item[0].source[0][item[0].source[0].length - 1];
-        return {
-          title: {
-            text: '治疗率、死亡率与疫情人口密度',
-            subtext: date
-          },
-          dataset: item
-        };
-      });
+      // the data of the current area is not fetched yet
+      if (!arr) {
+        return;
+      }
+
+      const option = {
+        timeline: {data: this.dates},
+        options: this.createOptions(arr)
+      };
+      this.chart.update(option);
+      //this.chart.hideLoading();
+    }
+  },
+
+  methods: {
+    initializeChart() {
+      const options = this.createOptions(this.datasetArr);
       const basicOption = {
         title: {
           text: '治疗率、死亡率与疫情人口密度',
@@ -68,22 +80,20 @@ export default {
         },
         options
       };
-      if (this.chart) {
-        this.chart.update(basicOption);
-      } else {
-        this.chart = new BarChart(this.$refs.canvas, basicOption, {
-          dimensions: this.dimensions,
-          fullscreen: this.fullscreen,
-          valueType:
-            ['percentage', 'percentage', 'percentage', 'decimal', 'decimal'],
-        });
-      }
-    }
-  },
 
-  methods: {
-    convertDatasetArr(arr) {
-      return arr.map((dataset) => {
+      const config = {
+        dimensions: this.dimensions,
+        fullscreen: this.fullscreen,
+        priority: 3,
+        valueType:
+          ['percentage', 'percentage', 'percentage', 'decimal', 'decimal'],
+      };
+
+      this.chart = new BarChart(this.$refs.canvas, basicOption, config);
+    },
+
+    createOptions(arr) {
+      const datasetArr = arr.map((dataset) => {
         const {dimensions, source} = dataset;
         const confirmed = dimensions.indexOf('累计确诊');
         const cured = dimensions.indexOf('治愈');
@@ -109,6 +119,7 @@ export default {
             entry[entry.length - 1]
           ];
         });
+
         return [{
           dimensions: this.dimensions,
           source: rateSource,
@@ -152,6 +163,17 @@ export default {
             config: {dimension: 5, order: 'desc'}
           }]
         }];
+      });
+
+      return datasetArr.map((item) => {
+        const date = item[0].source[0][item[0].source[0].length - 1];
+        return {
+          title: {
+            text: '治疗率、死亡率与疫情人口密度',
+            subtext: date
+          },
+          dataset: item
+        };
       });
     }
   }

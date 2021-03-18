@@ -4,7 +4,7 @@ import * as ecStat from 'echarts-stat';
 export default class HistogramChart extends BasicChart {
   constructor(elem, option, basicConfig) {
     super(elem, basicConfig);
-
+    //this.chartId = this._priority + 'histogram' + Date.now();
     // transform dataset for histogram
     this._echarts.registerTransform(ecStat.transform.histogram);
     option.dataset = this._transformDataset(option.dataset);

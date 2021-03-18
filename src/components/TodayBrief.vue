@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <div class="tile is-parent">
+    <div class="tile is-parent" ref="map">
       <div class="content recovered">
         <div class="category">治愈</div>
         <div class="count">{{ data.Recovered }}</div>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+const ONE_DAY_SECONDS = 24 * 60 * 60;
 export default {
   props: ['data'],
   data() {
@@ -44,29 +45,38 @@ export default {
   },
 
   computed: {
+    /** @return { string } **/
     confirmedRateStr() {
       const incr = this.data.ConfirmedIncr;
-      if (incr / (24 * 60 * 60) < 1) {
-        const confirmedRate = ((24 * 60 * 60) / incr).toFixed(0);
+      if (incr / (ONE_DAY_SECONDS) < 1) {
+        const confirmedRate = ((ONE_DAY_SECONDS) / incr).toFixed(0);
         return `平均每 ${confirmedRate} 秒有 1 人确诊`;
       } else {
-        const confirmedRate = (incr / (24 * 60 * 60)).toFixed(1);
+        const confirmedRate = (incr / (ONE_DAY_SECONDS)).toFixed(1);
         return `平均每秒有 ${confirmedRate} 人确诊`;
       }
     }
   },
 
+  methods: {
+    getPassedRatio() {
+      const now = new Date(Date.now());
+      const todayStartUTC = Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate()
+      );
+      // getTimezoneOffset() is really weird!
+      // In UTC+8, it returns -480. Yes, in minutes, and negative...
+      const timezoneOffsetMs = now.getTimezoneOffset() * 60 * 1000;
+      const todayStartLocal = todayStartUTC + timezoneOffsetMs;
+      return (Date.now() - todayStartLocal) / (ONE_DAY_SECONDS * 1000);
+    }
+  },
+
   created() {
-    const now = new Date(Date.now());
-    let today = Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate()
-    );
-    today = today - (new Date(today)).getHours() * 60 * 60 * 1000;
     setInterval(() => {
-      const passedTime = (Date.now() - today) / (24 * 60 * 60 * 1000);
-      console.log((new Date(today)).getHours());
+      const passedTime = this.getPassedRatio();
       this.currentConfirmedCount =
         (this.data.Confirmed + this.data.ConfirmedIncr * passedTime).toFixed(1);
     }, 50);

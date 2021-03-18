@@ -20,6 +20,7 @@ export default {
   components: {
     AppChartContainer
   },
+
   created() {
     this.chart;
     this.dimensions = [
@@ -29,28 +30,32 @@ export default {
       '累计死亡率',
       '更新时间'
     ];
+    this.$nextTick().then(() => this.initializeChart());
   },
+
   watch: {
     dataset(newDataset) {
-      const dataset = this.convertDataset(newDataset);
-      if (this.chart) {
-        this.chart.update({dataset});
-      } else {
-        const option = {
-          title: {text: '治疗率与死亡率'},
-          dataset
-        };
-        this.chart = new BarChart(this.$refs.canvas, option, {
-          dimensions: this.dimensions,
-          fullscreen: this.fullscreen,
-          priority: 5,
-          valueType: 'percentage'
-        });
-      }
+      this.chart.update({
+        dataset: this.convertDataset(newDataset)
+      });
     }
   },
 
   methods: {
+    initializeChart() {
+      const option = {
+        title: {text: '治疗率与死亡率'},
+        dataset: this.convertDataset(this.dataset)
+      };
+      const config = {
+        dimensions: this.dimensions,
+        fullscreen: this.fullscreen,
+        priority: 5,
+        valueType: 'percentage'
+      };
+      this.chart = new BarChart(this.$refs.canvas, option, config);
+    },
+
     convertDataset(dataset) {
       const {dimensions, source} = dataset;
       const confirmed = dimensions.indexOf('累计确诊');

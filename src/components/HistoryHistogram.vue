@@ -28,21 +28,7 @@ export default {
     AppChartContainer
   },
 
-  watch: {
-    area(val) {
-      const titleText = this.area === 'China' ? '中国' : '全球';
-      this.initializeData(val).then(() => {
-        this.chart.update({
-          title: {
-            text: titleText + '各地区疫情指标直方图'
-          },
-          dataset: this.datasets[val]
-        });
-      });
-    }
-  },
-
-  mounted() {
+  created() {
     this.chart;
     this.dimensions = ['感染密度', '累计死亡率'];
     this.datasets = {};
@@ -62,6 +48,22 @@ export default {
         legendRange: [0, this.dimensions.length]
       });
     });
+  },
+
+  watch: {
+    area(val) {
+      const titleText = this.area === 'China' ? '中国' : '全球';
+      //this.chart.showLoading();
+      this.initializeData(val).then(() => {
+        this.chart.update({
+          title: {
+            text: titleText + '各地区疫情指标直方图'
+          },
+          dataset: this.datasets[val]
+        });
+        //this.chart.hideLoading();
+      });
+    }
   },
 
   methods: {

@@ -16,26 +16,38 @@ export default {
       fullscreen: {value: false}
     };
   },
-  props: ['area', 'datasetArr', 'dimensions', 'dates'],
+  props: ['area', 'dimensions', 'datasetArr', 'dates'],
   components: {
     AppChartContainer
   },
+
   created() {
     this.map;
+    this.$nextTick().then(() => this.initializeChart());
   },
 
   watch: {
+    area() {
+      //this.map.showLoading();
+    },
+
     datasetArr(arr) {
-      const options = arr.map((item) => {
-        const date = item.source[0][item.source[0].length - 1];
-        return {
-          title: {
-            text: '疫情地图',
-            subtext: date
-          },
-          dataset: item
-        };
-      });
+      // the data of the current area is not fetched yet
+      if (!arr) {
+        return;
+      }
+
+      const option = {
+        timeline: {data: this.dates},
+        options: this.createOptions(arr)
+      };
+      this.map.update(option, this.area);
+    }
+  },
+
+  methods: {
+    initializeChart() {
+      const options = this.createOptions(this.datasetArr);
       const basicOption = {
         title: {text: '疫情地图'},
         timeline: {
@@ -49,16 +61,26 @@ export default {
         },
         options
       };
-      if (this.map) {
-        this.map.update(basicOption, this.area);
-      } else {
-        this.map = new MapChart(this.$refs.canvas, basicOption, {
-          area: this.area,
-          dimensions: this.dimensions,
-          fullscreen: this.fullscreen,
-          priority: 10
-        });
-      }
+      const config = {
+        area: this.area,
+        dimensions: this.dimensions,
+        fullscreen: this.fullscreen,
+        priority: 10
+      };
+      this.map = new MapChart(this.$refs.canvas, basicOption, config);
+    },
+
+    createOptions(arr) {
+      return arr.map((item) => {
+        const date = item.source[0][item.source[0].length - 1];
+        return {
+          title: {
+            text: '疫情地图',
+            subtext: date
+          },
+          dataset: item
+        };
+      });
     }
   }
 };

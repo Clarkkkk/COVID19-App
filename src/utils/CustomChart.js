@@ -7,8 +7,8 @@ export default class CustomChart extends BasicChart {
     }
 
     super(elem, config);
-    // if update time exceeds 350ms, show loading animation
-    this._showLoading();
+
+    //this.chartId = this._priority + 'custom' + Date.now();
 
     BasicChart.queue.push(this._priority, () => {
       this._initialize(option, config);

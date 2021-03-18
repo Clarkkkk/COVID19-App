@@ -1,5 +1,6 @@
 <template>
   <div id="history" class="columns is-multiline">
+    <template v-if="dataAvailable">
     <div class="header column is-full">
       <span class="title">历史数据</span>
       <div class="select">
@@ -13,14 +14,14 @@
     <history-map
       class="column is-three-fifths"
       :area="currentArea"
-      :dimensions="dimensions"
+      :dimensions="defaultDimensions"
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
     <history-area-rank
       class="column is-two-fifths"
       :area="currentArea"
-      :dimensions="dimensions"
+      :dimensions="defaultDimensions"
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
@@ -40,6 +41,8 @@
       class="column is-half"
       :area="currentArea"
     />
+    </template>
+    <app-loading-icon class="tile is-parent" v-else ref="map" />
   </div>
 </template>
 
@@ -49,11 +52,14 @@ import HistoryAreaRank from '@/components/HistoryAreaRank';
 import HistoryRateRank from '@/components/HistoryRateRank';
 import HistoryTimeSeries from '@/components/HistoryTimeSeries';
 import HistoryHistogram from '@/components/HistoryHistogram';
+import AppLoadingIcon from '@/components/AppLoadingIcon';
 import {
   isoCountryToEchartsName as isoToCountry,
   isoProvinceToEchartsName as isoToProvince
 } from '@/utils/mappings.js';
 import fetchJSON from '@/utils/fetchJSON';
+import createDebounce from '@/utils/createDebounce';
+const debounce = createDebounce(6000);
 export default {
   data() {
     return {
@@ -61,24 +67,13 @@ export default {
       selectGroup: ['中国', '世界'],
       selected: '中国',
       currentArea: 'China',
-      dimensions: ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-        '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'],
-      currentDatasetArr: [],
-      dates: []
+      datasetArrays: {
+        China: undefined,
+        World: undefined
+      },
+      dates: [],
+      dataAvailable: false
     };
-  },
-
-  watch: {
-    selected(area) {
-      // the currentArea is used in series's map name
-      if (area === '中国') {
-        this.currentArea = 'China';
-        this.initializeData('China');
-      } else if (area === '世界') {
-        this.currentArea = 'World';
-        this.initializeData('World');
-      }
-    }
   },
 
   components: {
@@ -86,57 +81,67 @@ export default {
     HistoryAreaRank,
     HistoryRateRank,
     HistoryTimeSeries,
-    HistoryHistogram
+    HistoryHistogram,
+    AppLoadingIcon
+  },
+
+  computed: {
+    currentDatasetArr() {
+      return this.datasetArrays[this.currentArea];
+    }
   },
 
   created() {
-    this.timeoutId = 0;
-    this.datasetArrays = {};
-    this.initializeData('China');
+    this.initializeData(this.currentArea);
+    this.defaultDimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
+      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'];
+  },
+
+  watch: {
+    selected(area) {
+      // the currentArea is used in series's map name
+      if (area === '中国') {
+        this.currentArea = 'China';
+      } else if (area === '世界') {
+        this.currentArea = 'World';
+      }
+
+      if (!this.datasetArrays[this.currentArea]) {
+        this.initializeData(this.currentArea);
+      }
+    }
   },
 
   methods: {
     async initializeData(area) {
-      if (this.datasetArrays[area]) {
-        return this.currentDatasetArr = this.datasetArrays[area];
-      }
-
       const limit = 30;
       let page = 0;
       let more = true;
       let isFirstFetch = true;
+      let areaDataArr;
       while (more) {
-        // fetch data
+        // fetch and normalize data
         const rawData =
           await fetchJSON(`/countries/${area}/all`, {limit, page});
-
-        if (this.dates) {
-          // if this.dates exists, append the new data to it
-          this.dates = [...this.dates, ...this.createDates(rawData)];
-        } else {
-          // initialize this.dates
-          this.dates = this.createDates(rawData);
-        }
-
-        // normalize data
         const data = this.normalizeData(rawData);
+        const dates = rawData.data.map((item) => item.Date);
 
         const thisArr = this.datasetArrays;
-        // the data should be frozen to avoid reactivity in Vue
-        if (thisArr[area]) {
-          // if thisArr[area] exists, append the new data to it
-          thisArr[area] = Object.freeze([...thisArr[area], ...data]);
+        if (isFirstFetch) {
+          // use the first page of data to render the chart
+          this.dates = dates;
+          this.dataAvailable = true;
+          thisArr[area] = areaDataArr = Object.freeze(data);
+          isFirstFetch = false;
         } else {
-          // initialize thisArr[area]
-          thisArr[area] = Object.freeze(data);
-        }
-        if (this.currentArea === area) {
-          // render the first page of data at first
-          if (isFirstFetch) {
-            this.currentDatasetArr = thisArr[area];
-            isFirstFetch = false;
+          this.dates = [...this.dates, ...dates];
+          // append new data and save it to the array
+          areaDataArr = Object.freeze([...areaDataArr, ...data]);
+          if (this.currentArea === area) {
+            // debounce the assignment to reduce re-render
+            debounce(() => thisArr[area] = areaDataArr);
           } else {
-            this.updateCurrentDatasetArr(thisArr[area]);
+            thisArr[area] = areaDataArr;
           }
         }
         more = rawData.more;
@@ -144,27 +149,18 @@ export default {
       }
     },
 
-    updateCurrentDatasetArr(arr) {
-      if (this.timeoutId) {
-        clearTimeout(this.timeoutId);
-      }
-      this.timeoutId = setTimeout(() => {
-        this.currentDatasetArr = arr;
-        this.timeoutId = 0;
-      }, 500);
-    },
-
     normalizeData(rawData) {
       const sources = [];
       for (const item of rawData.provinces) {
         const provinceData = item.data;
-        provinceData.forEach((singleDayData, index, arr) => {
+        provinceData.forEach((singleDayData, index) => {
           // The data of two cruise ships, MS Zaandam and Diamond Princess
           // and the data of Holy See(VA) and Marshall Islands(MH)
           if (!(isoToCountry[item.iso] || isoToProvince[item.iso])) {
             return;
           }
 
+          // initialize sources[index]
           if (!sources[index]) {
             sources[index] = [];
           }
@@ -186,14 +182,10 @@ export default {
       }
       return sources.map((source) => {
         return {
-          dimensions: this.dimensions,
+          dimensions: this.defaultDimensions,
           source
         };
       });
-    },
-
-    createDates(rawData) {
-      return rawData.data.map((item) => item.Date);
     }
   }
 };

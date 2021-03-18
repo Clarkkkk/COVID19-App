@@ -25,6 +25,7 @@
 #loading-spinner {
   width: 100%;
   height: calc(var(--basic-length) * 20);
+  margin: 1rem 0;
   display: grid;
   place-items: center;
 }

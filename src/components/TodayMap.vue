@@ -24,28 +24,32 @@ export default {
   created() {
     this.map;
     this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡', '更新时间'];
+    this.$nextTick().then(() => this.initializeChart());
   },
 
   watch: {
     dataset(newDataset) {
-      if (this.map) {
-        // if dataset is changed, this.area shoule have been changed
-        const option = {dataset: newDataset};
-        this.map.update(option, this.area);
-      } else {
-        this.$nextTick().then(() => {
-          const option = {
-            title: {text: '疫情地图'},
-            dataset: this.dataset
-          };
-          this.map = new MapChart(this.$refs.canvas, option, {
-            dimensions: this.dimensions,
-            fullscreen: this.fullscreen,
-            priority: 10,
-            area: 'China'
-          });
-        });
-      }
+      // if dataset is changed, this.area shoule have been changed
+      const option = {dataset: newDataset};
+      this.map.showLoading();
+      this.map.update(option, this.area);
+    }
+  },
+
+  methods: {
+    initializeChart() {
+      console.log(this.dataset);
+      console.log(this);
+      const option = {
+        title: {text: '疫情地图'},
+        dataset: this.dataset
+      };
+      this.map = new MapChart(this.$refs.canvas, option, {
+        dimensions: this.dimensions,
+        fullscreen: this.fullscreen,
+        priority: 10,
+        area: 'China'
+      });
     }
   }
 };

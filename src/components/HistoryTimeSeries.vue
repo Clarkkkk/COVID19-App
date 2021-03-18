@@ -22,15 +22,7 @@ export default {
     AppChartContainer
   },
 
-  watch: {
-    area(val) {
-      this.initializeData(val).then(() => {
-        this.chart.update({dataset: this.datasets[val]});
-      });
-    }
-  },
-
-  mounted() {
+  created() {
     this.chart;
     this.dimensions = ['日期', '现存确诊', '累计确诊', '治愈', '死亡',
       '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡'];
@@ -63,6 +55,16 @@ export default {
       };
       this.chart = new LineChart(this.$refs.canvas, option, config);
     });
+  },
+
+  watch: {
+    area(val) {
+      //this.chart.showLoading();
+      this.initializeData(val).then(() => {
+        this.chart.update({dataset: this.datasets[val]});
+        //this.chart.hideLoading();
+      });
+    }
   },
 
   methods: {
