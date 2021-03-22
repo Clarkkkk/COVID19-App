@@ -84,24 +84,7 @@ export default {
 };
 </script>
 
-<style scoped>
-/*
-#today-brief {
-  min-width: 18rem;
-  min-height: 22rem;
-  flex: 1 1 18rem;
-  padding: 2rem;
-  box-sizing: border-box;
-  color: #222;
-  display: flex;
-  position: relative;
-  flex-flow: column nowrap;
-  align-items: end;
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-}
-*/
-
+<style lang="scss" scoped>
 @media not screen and  (min-aspect-ratio: 4/3) {
    #today-brief {
      display: flex;
@@ -115,43 +98,32 @@ export default {
 }
 
 .content {
-  width: 100%;
-  height: 100%;
+  @extend %container;
+  @extend %full-size;
   padding: 1rem 1.5rem;
-  box-sizing: border-box;
-  background: white;
   color: #fff;
   display: flex;
-  position: relative;
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: center;
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-}
+  background-color: var(--container-background-color);
 
-.count {
-  font-weight: bold;
-  font-size: 2rem;
-  color: var(--app-color);
-}
+  > .count {
+    font-weight: bold;
+    font-size: 2rem;
+    color: var(--app-color);
+  }
 
-.category {
-  color: #666;
-  font-size: 0.8rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-}
+  > .category {
+    color: var(--app-sub-text-color);
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
 
-.comment {
-  color: #666;
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-.title {
-  padding: 0 0 1rem;
-  font-size: 2rem;
-  font-weight: bold;
+  > .comment {
+    color: var(--app-sub-text-color);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
 }
 </style>

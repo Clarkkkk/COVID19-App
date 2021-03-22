@@ -116,6 +116,8 @@ export default class LineChart extends BasicChart {
   _createSeriesBasicOption() {
     return {
       type: 'line',
+      symbol: 'circle',
+      symbolSize: 7,
       smooth: true,
       //sampling: 'lttb',
       //showSymbol: false,

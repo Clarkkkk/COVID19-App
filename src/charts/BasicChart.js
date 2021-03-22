@@ -89,13 +89,13 @@ class BasicChart {
     // initialize echarts
     this._echarts = echarts;
     // null is necessary
-    this._chart = this._echarts.init(elem, null, {useDirtyRect: true});
-    // eslint-disable-next-line max-len
-    this.DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
+    this._chart = this._echarts.init(elem, {useDirtyRect: true});
     this.dimensions = dimensions;
     this.valueType = valueType;
     this.valueUnit = valueUnit;
     this.legendRange = legendRange;
+
+    this._initializeTimelineTooltip();
 
     // used in fullscreen switch
     this._fullscreen = fullscreen;
@@ -106,9 +106,7 @@ class BasicChart {
 
     // when the chart finish rendering, call next to render next chart
     this._chart.on('finished', () => {
-      // debugger;
       this._renderCount--;
-      // console.log('finished: ' + this.chartId);
       BasicChart.queue.next();
     });
 
@@ -137,7 +135,16 @@ class BasicChart {
       this._renderCount++;
     });
 
-    // initialize the canvas first, so that showLoading is available
+    const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
+    console.log(mediaQueryList);
+    this.isDark = mediaQueryList.matches;
+    mediaQueryList.addEventListener('change', (e) => {
+      console.log(e);
+      this.isDark = e.matches;
+      this._switchDarkMode();
+    });
+
+    // initialize an empty canvas, so that showLoading is available
     this._setOption({title: {text: ''}});
 
     // resize the map when window resizes
@@ -155,22 +162,18 @@ class BasicChart {
 
   // push the update function into the queue
   update(...args) {
-    if (this._update) {
-      BasicChart.queue.push(this._priority, async () => {
-        await this._update(...args);
-        this._hideLoading();
-      });
-    } else {
+    if (!this._update) {
       throw new Error('"this._update" is not defined.');
     }
+
+    BasicChart.queue.push(this._priority, async () => {
+      await this._update(...args);
+      this._hideLoading();
+    });
   }
 
   showLoading() {
     this._showLoading();
-  }
-
-  hideLoading() {
-    this._chart.hideLoading();
   }
 
   // this._chart's methods
@@ -198,6 +201,84 @@ class BasicChart {
 
   _resize() {
     this._chart.resize();
+  }
+
+  _getColors() {
+    // basic colors
+    // eslint-disable-next-line max-len
+    const DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
+    const BACKGROUND_COLOR = '#ffffff';
+    const FOREGROUND_COLOR = '#000';
+    const UNAVAILABLE_COLOR = '#aaa';
+    const APP_COLOR = '#00a59d';
+    const APP_COLOR_LIGHTER = '#00a59d';
+    const APP_COLOR_DARKER = '#00666d';
+    const UNDERLINE_COLOR = APP_COLOR_LIGHTER;
+    // dark colors
+    // eslint-disable-next-line max-len
+    const DIMENSION_COLOR_DARK = ['#4992ff', '#7cffb2', '#fddd60', '#ff6e76', '#58d9f9', '#05c091', '#ff8a45', '#8d48e3', '#dd79ff'];
+    const BACKGROUND_COLOR_DARK = '#181818';
+    const FOREGROUND_COLOR_DARK = '#fff';
+    const UNAVAILABLE_COLOR_DARK = '#555';
+    const UNDERLINE_COLOR_DARK = APP_COLOR;
+    return {
+      colorSet: this.isDark ? DIMENSION_COLOR_DARK : DIMENSION_COLOR,
+      foregroundColor: this.isDark ? FOREGROUND_COLOR_DARK : FOREGROUND_COLOR,
+      backgroundColor: this.isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
+      shadowColor: this.isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
+      unavailableColor: this.isDark ? UNAVAILABLE_COLOR_DARK : UNAVAILABLE_COLOR,
+      underlineColor: this.isDark ? UNDERLINE_COLOR_DARK : UNDERLINE_COLOR
+    };
+  }
+
+  _switchDarkMode() {
+    const {
+      colorSet,
+      foregroundColor,
+      backgroundColor,
+      shadowColor,
+      underlineColor
+    } = this._getColors();
+
+    this._setOption({
+      backgroundColor,
+      color: colorSet,
+      title: {
+        backgroundColor,
+        textStyle: {
+          rich: {
+            underline: {
+              color: foregroundColor,
+              backgroundColor,
+              shadowColor: underlineColor
+            }
+          }
+        },
+      },
+      legend: {
+        textStyle: {
+          color: foregroundColor,
+          textShadowColor: shadowColor
+        }
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {
+            iconStyle: {
+              borderColor: foregroundColor,
+              shadowColor: shadowColor
+            }
+          },
+          myFullScreen: {
+            iconStyle: {
+              color: foregroundColor,
+              borderColor: foregroundColor,
+              shadowColor: shadowColor
+            }
+          }
+        }
+      }
+    });
   }
 
   // find the currently selected legend
@@ -258,37 +339,84 @@ class BasicChart {
     }
   }
 
+  _initializeTimelineTooltip() {
+    this._chart.on('timelineplaychanged', (e) => {
+      // set triggerOn to 'none' while playing
+      // to prevent tooltipView._keepShow() from showing the wrong tip
+      // (https://github.com/apache/echarts/blob/master/src/component/tooltip/TooltipView.ts)
+      let triggerOn;
+      if (e.playState) {
+        triggerOn = 'none';
+      } else {
+        triggerOn = 'mousemove|click';
+      }
+      // timeline.tooltip is not configurable
+      // set the global tooltip instead
+      this._setOption({
+        tooltip: {
+          triggerOn
+        }
+      });
+    });
+
+    // when timeline changed, show the relative tooltip for it
+    this._chart.on('timelinechanged', (e) => {
+      // calculate all the config used in timelinechanged
+      const timelineOption = this._getOption().timeline[0];
+      const startLeft = 30;
+      const endLeft = this._chart.getWidth() - 130;
+      const dates = timelineOption.data;
+      const top = this._chart.getHeight() - timelineOption.bottom - 120;
+      const step = (endLeft - startLeft) / timelineOption.data.length;
+
+      const index = e.currentIndex;
+
+      // use the second 'if' of manuallyShowTip()
+      // (https://github.com/apache/echarts/blob/master/src/component/tooltip/TooltipView.ts)
+      this._chart.dispatchAction({
+        type: 'showTip',
+        x: startLeft + step * index,
+        y: top,
+        tooltip: {
+          content: '',
+          formatterParams: {
+            componentType: 'timeline',
+            name: dates[index],
+            $vars: ['name']
+          }
+        }
+      });
+    });
+  }
+
   // set the default toolbox after user defiend toolbox is set
   // in order to place the default tools behind other tools
   _setBasicToolbox() {
+    const {shadowColor, foregroundColor} = this._getColors();
     const toolbox = {
-      itemSize: 20,
-      itemGap: 20,
-      top: 10,
-      right: 15,
       iconStyle: {
         shadowBlur: 5,
-        shadowColor: '#fff'
+        shadowColor: shadowColor
       },
       emphasis: {
         iconStyle: {
           shadowBlur: 5,
           shadowColor: '#888',
-          borderColor: '#222'
+          borderColor: foregroundColor
         }
       },
       feature: {
         saveAsImage: {
           pixelRatio: 2,
           iconStyle: {
-            borderColor: '#222',
+            borderColor: foregroundColor,
             borderWidth: 2
           }
         },
         myFullScreen: {
           title: '全屏显示',
           iconStyle: {
-            color: '#222',
+            color: foregroundColor,
             borderWidth: 0.2
           },
           onclick: () => this.switchFullScreen(),
@@ -331,6 +459,7 @@ class BasicChart {
     const config = {};
     if (userOption.dataZoom) {
       config.dataZoom = {};
+      // eslint-disable-next-line max-len
       if (Array.isArray(userOption.dataZoom) && userOption.dataZoom.length === 2) {
         config.dataZoom.vertical = true;
         config.dataZoom.horizontal = true;
@@ -359,41 +488,94 @@ class BasicChart {
 
   // create a basic chart option
   _setBasicOption(layoutConfig) {
+    const {
+      shadowColor,
+      backgroundColor,
+      foregroundColor,
+      colorSet,
+      underlineColor
+    } = this._getColors();
+    this.isNarrow = window.screen.width <= 1024;
+    const padding = this.isNarrow ? 0 : 15;
     // title, color, tooltip, legend are required components
     const basicOption = {
       title: {
-        left: 15,
-        top: 15,
-        itemGap: 5
+        left: 15 + padding,
+        top: 20 + padding,
+        itemGap: 5,
+        textStyle: {
+          fontSize: 21,
+          rich: {
+            underline: {
+              fontSize: 20,
+              align: 'center',
+              color: foregroundColor,
+              fontWeight: 'bolder',
+              padding: -5,
+              backgroundColor,
+              shadowColor: underlineColor,
+              shadowOffsetY: 5
+            }
+          }
+        }
       },
-      color: this.DIMENSION_COLOR,
+      color: colorSet,
+      backgroundColor,
       toolbox: {
         itemSize: 20,
         itemGap: 20,
-        top: 10,
-        right: 15,
+        top: 10 + padding,
+        right: 15 + padding,
       },
       legend: {
         type: 'scroll',
         selectedMode: 'single',
         orient: 'horizontal',
-        left: 10,
-        bottom: 10,
+        left: 10 + padding,
+        bottom: 10 + padding,
         textStyle: {
-          color: '#000',
-          textShadowColor: '#fff',
+          color: foregroundColor,
+          textShadowColor: shadowColor,
           textShadowBlur: 2,
+          textAlign: 'left'
+        },
+        tooltip: {
+          show: true,
+          formatter: (params) => {
+            const name = params.name;
+            switch (name) {
+              case '现存确诊':
+                return '现存确诊 = 累计确诊 - 治愈 - 死亡<br>由于各个地区统计口径不一，<br>该数据未必能准确表示现存的确诊人数';
+              case '治愈':
+                return '各个地区统计口径不一<br>或不算入自愈人群，或仅记录住院治疗后痊愈的人数';
+              case '死亡':
+                return '各个地区统计口径不一<br>或仅记录住院治疗后死亡的人数';
+              case '估计治疗率':
+                return '估计治疗率 =（治愈 + 死亡）/ 累计确诊<br>由于各个地区统计口径不一，<br>该数据未必有意义';
+              case '住院死亡率':
+                return '住院死亡率 = 死亡 /（治愈 + 死亡）<br>由于各个地区统计口径不一，<br>该数据未必有意义';
+              case '累计死亡率':
+                return '累计死亡率 = 死亡 / 累计确诊';
+              case '感染密度':
+                return '每百万人中的确诊人数';
+              case '死亡密度':
+                return '每百万人中的因新冠肺炎而死亡的人数';
+              default:
+                return name;
+            }
+          }
         }
       },
       grid: {
-        left: 40,
-        right: 15,
-        top: 50,
-        bottom: 60
+        left: 40 + padding * 3,
+        right: 15 + padding * 3,
+        top: 50 + padding * 3,
+        bottom: 60 + padding * 3
       },
       tooltip: {
         trigger: 'item',
         show: true,
+        hideDelay: 800,
         extraCssText: 'align-items: flex-start',
         formatter: (params) => {
           const {
@@ -404,17 +586,15 @@ class BasicChart {
             name
           } = params;
 
-          if (data) {
-            if (componentType === 'series') {
-              const province = data[0];
-              const index = dimensionNames.indexOf(seriesName);
-              const value = this._valueFormatter(data[index], index);
-              const updateTime = data[data.length - 1];
-              const formatTime = (new Date(updateTime)).toLocaleString();
-              return `${province} | ${seriesName}：${value} <br> ${formatTime}`;
-            } else if (componentType === 'timeline') {
-              return name;
-            }
+          if (data && componentType === 'series') {
+            const province = data[0];
+            const index = dimensionNames.indexOf(seriesName);
+            const value = this._valueFormatter(data[index], index);
+            const updateTime = data[data.length - 1];
+            const formatTime = (new Date(updateTime)).toLocaleString();
+            return `${province} | ${seriesName}：${value} <br> ${formatTime}`;
+          } else if (componentType === 'timeline') {
+            return name;
           } else {
             return `${name} | 暂无数据`;
           }
@@ -430,8 +610,8 @@ class BasicChart {
     if (visualMap) {
       basicOption.visualMap = {
         type: 'piecewise',
-        right: 10,
-        bottom: timeline ? 100 : 50,
+        right: 10 + padding,
+        bottom: (timeline ? 100 : 50) + padding,
       };
     }
 
@@ -442,7 +622,7 @@ class BasicChart {
         basicOption.dataZoom.push({
           type: 'slider',
           orient: 'vertical',
-          left: 10,
+          left: 10 + padding * 2,
         });
       }
 
@@ -451,7 +631,7 @@ class BasicChart {
         basicOption.dataZoom.push({
           type: 'slider',
           orient: 'horizontal',
-          bottom: 60,
+          bottom: 60 + padding * 2,
         });
       }
     }
@@ -462,7 +642,7 @@ class BasicChart {
       basicOption.timeline = {
         left: 10,
         right: 0,
-        bottom: 10,
+        bottom: 10 + padding,
         label: {
           formatter(value) {
             return value.match(/[0-9]{2}-[0-9]{2}$/);

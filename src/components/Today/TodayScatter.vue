@@ -43,7 +43,7 @@ export default {
   methods: {
     initializeChart() {
       const option = {
-        title: {text: '估计治疗率与各指标散点图'},
+        title: {text: '{underline|各指标相关散点图}'},
         dataset: this.convertDataset(this.dataset)
       };
       const config = {
@@ -93,15 +93,8 @@ export default {
 };
 </script>
 
-<style scoped>
-/*
-#today-scatter {
-  min-width: 40vw;
-  height: 80vmin;
-}
-*/
+<style lang="scss" scoped>
 .canvas {
-  width: 100%;
-  height: 100%;
+  @extend %full-size;
 }
 </style>

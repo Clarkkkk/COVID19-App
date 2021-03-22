@@ -41,7 +41,7 @@ export default {
       console.log(this.dataset);
       console.log(this);
       const option = {
-        title: {text: '疫情地图'},
+        title: {text: '{underline|疫情地图}'},
         dataset: this.dataset
       };
       this.map = new MapChart(this.$refs.canvas, option, {
@@ -55,26 +55,8 @@ export default {
 };
 </script>
 
-<style scoped>
-/*
-#today-map {
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-  min-width: 80vw;
-  height: 80vw;
-  flex: 1 1 60vw;
-}
-
-@media screen and (min-aspect-ratio: 4/3) {
-  #today-map {
-    min-width: 60vw;
-    height: 40vw;
-  }
-}
-*/
-
+<style lang="scss" scoped>
 .canvas {
-  width: 100%;
-  height: 100%;
+  @extend %full-size;
 }
 </style>

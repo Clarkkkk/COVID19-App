@@ -37,7 +37,7 @@ export default {
       const titleText = this.area === 'China' ? '中国' : '全球';
       this.chart = new HistogramChart(this.$refs.canvas, {
         title: {
-          text: titleText + '各地区疫情指标直方图'
+          text: `{underline|${titleText}各地区疫情指标直方图}`
         },
         dataset: this.datasets[this.area]
       }, {
@@ -57,7 +57,7 @@ export default {
       this.initializeData(val).then(() => {
         this.chart.update({
           title: {
-            text: titleText + '各地区疫情指标直方图'
+            text: `{underline|${titleText}各地区疫情指标直方图}`
           },
           dataset: this.datasets[val]
         });

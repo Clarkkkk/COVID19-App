@@ -5,24 +5,26 @@
         v-for="news in newsData"
         :key="news.articleId"
       >
-        <article class="news-container">
-          <div class="update-time">
+        <article class="timeline">
+          <div class="timeline-time">
             {{ news.pubDate }}
           </div>
-          <h2 class="title">{{ news.title }}</h2>
-          <div class="tags">
-            <div
-              class="tag"
-              v-for="tag in news.tags"
-              :key="tag"
-            >
-              {{ tag }}
+          <h2 class="timeline-title">{{ news.title }}</h2>
+          <div class="timeline-content">
+            <div class="tags">
+              <div
+                class="tag"
+                v-for="tag in news.tags"
+                :key="tag"
+              >
+                {{ tag }}
+              </div>
             </div>
+            <div class="description" v-html="news.description"></div>
+            <footer class="info-container">
+              <span class="source" v-html="news.source"></span>
+            </footer>
           </div>
-          <div class="description" v-html="news.description"></div>
-          <footer class="info-container">
-            <span class="source" v-html="news.source"></span>
-          </footer>
         </article>
       </div>
     </div>
@@ -54,6 +56,7 @@ export default {
       const iterator = str.matchAll(sources);
       const result = [];
       for (const item of iterator) {
+        item[2] = item[2].replace(/<a href="/, `<a target="_blank" rel="noopener" href="`);
         result.push(item[2] + item[4] + item[5] +item[6]);
       }
       return '来源：' + result.join('、');
@@ -108,103 +111,64 @@ export default {
 };
 </script>
 
-<style scoped>
-/*
-#today-news {
-  padding: 1.5rem;
-  box-sizing: border-box;
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-  background-color: white;
-  overflow: hidden;
-}
-*/
-
+<style lang="scss" scoped>
 .content {
+  @extend %container;
   height: 291.5vh;
   width: 100%;
   padding: 1.5rem;
   box-sizing: border-box;
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-  background-color: white;
   overflow: scroll;
+  background-color: var(--container-background-color);
 }
 
-.news-container {
-  padding-left: 1.5rem;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: flex-start;
-  text-align: left;
-  border-left: 1px solid #ccc;
+@include desktop {
+  .content {
+    padding: 3rem;
+  }
 }
 
-.update-time {
-  height: 1rem;
-  font-size: 0.8rem;
-  margin-bottom: 1rem;
-  margin-top: -0.5rem;
-  margin-left: -1.75rem;
-  display: flex;
-  align-items: center;
-}
+.timeline {
+  .tags {
+    min-height: 2rem;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    margin-bottom: 0.5rem;
 
-.update-time::before {
-  content: '';
-  height: 0.5rem;
-  width: 0.5rem;
-  margin-right: 0.5rem;
-  border-radius: 1rem;
-  background-color: #74cfcb;
-  display: inline-block;
-}
+    > .tag {
+      height: 1.2rem;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 0 0.6rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.3rem;
+      color: white;
+      background-color: var(--app-color-darker);
+      font-size: $font-size-small;
+      letter-spacing: 1px;
+      border-radius: 1rem;
+    }
+  }
 
-.title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
-}
+  .description {
+    margin: 0;
+    font-size: $font-size-normal;
+    line-height: $font-size-normal * 1.5;
+  }
 
-.tags {
-  min-height: 2rem;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
+  .description::v-deep p {
+    margin: 0;
+    margin-bottom: 0.6rem;
+    padding: 0;
+  }
 
-.tag {
-  height: 1.2rem;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 0 0.6rem;
-  margin-right: 0.5rem;
-  margin-bottom: 0.3rem;
-  color: white;
-  background-color: #00666d;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  border-radius: 1rem;
-}
-
-.description {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.description >>> p {
-  margin: 0;
-  margin-bottom: 0.6rem;
-  padding: 0;
-}
-
-.info-container {
-  align-self: flex-end;
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
-  margin-bottom: 3rem;
+  footer {
+    align-self: flex-end;
+    font-size: $font-size-small;
+    margin-top: 0.5rem;
+    margin-bottom: 3rem;
+  }
 }
 </style>

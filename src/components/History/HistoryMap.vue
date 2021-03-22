@@ -49,7 +49,9 @@ export default {
     initializeChart() {
       const options = this.createOptions(this.datasetArr);
       const basicOption = {
-        title: {text: '疫情地图'},
+        title: {
+          text: '{underline|疫情地图}'
+        },
         timeline: {
           data: this.dates,
           axisType: 'category',
@@ -72,11 +74,9 @@ export default {
 
     createOptions(arr) {
       return arr.map((item) => {
-        const date = item.source[0][item.source[0].length - 1];
         return {
           title: {
-            text: '疫情地图',
-            subtext: date
+            text: '{underline|疫情地图}'
           },
           dataset: item
         };

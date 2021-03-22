@@ -72,7 +72,10 @@ module.exports = {
       css: {
         // 这里的选项会传递给 css-loader
         esModule: false
-      }
+      },
+      sass: {
+        additionalData: `@import '@/styles/base';`
+      },
     }
   },
   configureWebpack: (config) => {

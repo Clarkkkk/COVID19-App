@@ -44,7 +44,7 @@ export default {
   methods: {
     initializeChart() {
       const option = {
-        title: {text: '治疗率与死亡率'},
+        title: {text: '{underline|治疗率与死亡率}'},
         dataset: this.convertDataset(this.dataset)
       };
       const config = {
@@ -112,15 +112,8 @@ export default {
 };
 </script>
 
-<style scoped>
-/*
-#today-rate-rank {
-  min-width: 40vw;
-  height: 80vmin;
-}
-*/
+<style lang="scss" scoped>
 .canvas {
-  width: 100%;
-  height: 100%;
+  @extend %full-size;
 }
 </style>

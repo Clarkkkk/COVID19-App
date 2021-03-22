@@ -59,10 +59,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .fullscreen-background {
-  width: 90vw;
-  height: 90vw;
+  width: 100vw;
+  height: 100vw;
   position: fixed;
   top: 0;
   left: 0;
@@ -78,11 +78,8 @@ export default {
 }
 
 .animated-box {
-  height: 100%;
-  width: 100%;
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-  background-color: white;
+  @extend %full-size;
+  @extend %container;
   overflow: hidden;
 }
 

@@ -69,19 +69,21 @@ export default class MapChart extends BasicChart {
       this._echarts.registerMap(area, mapJson);
     }
   }
+
   // create a zoom proxy
   // when the zoom level changes, change other relavant options accordingly
+  // the zoom level could be 1.001, see _update() and _initialize()
   set zoomLevel(level) {
-    // set zoom level when the argument is in range 1-3
+    // set zoom level when the argument is in range 1-9
     if (level <= 9 && level >= 1) {
       this._setZoomLevel(level);
       this._zoomLevelValue = level;
     }
     // set the icon color to reflect if it is available
     // according to the zoom level
-    this._setIconColor('myZoomOut', this._zoomLevelValue > 1);
+    this._setIconColor('myZoomOut', this._zoomLevelValue >= 2);
     this._setIconColor('myZoomIn', this._zoomLevelValue < 9);
-    // when zoom level is over 1, show the map label
+    // when zoom level is 2 and above, show the map label
     this._setMapLabel(this._zoomLevelValue >= 2);
     this._setMapLegendSymbol();
   }
@@ -90,14 +92,23 @@ export default class MapChart extends BasicChart {
     return this._zoomLevelValue;
   }
 
+  _switchDarkMode() {
+    super._switchDarkMode();
+    // set icon color for zoom in and zoom out
+    this.zoomLevel = this.zoomLevel + 0;
+    this._setVisualMap();
+  }
+
   _setZoomFeatures() {
+    const {foregroundColor, unavailableColor} = this._getColors();
     this._setOption({
       toolbox: {
         feature: {
           myZoomIn: {
             title: '放大',
             iconStyle: {
-              color: '#222',
+              color: foregroundColor,
+              borderColor: foregroundColor,
               borderWidth: 0.2
             },
             onclick: () => this.zoomLevel *= 2,
@@ -107,7 +118,9 @@ export default class MapChart extends BasicChart {
           myZoomOut: {
             title: '缩小',
             iconStyle: {
-              color: '#aaa',
+              color: unavailableColor,
+              borderColor: unavailableColor,
+              shadowColor: 'transparent',
               borderWidth: 0.2
             },
             onclick: () => this.zoomLevel /= 2,
@@ -121,13 +134,17 @@ export default class MapChart extends BasicChart {
 
   // set toolbox's icon color to indicate whether the feature is available
   _setIconColor(toolName, available) {
-    const color = available ? '#222' : '#aaa';
+    const {foregroundColor, unavailableColor, backgroundColor} = this._getColors();
+    const color = available ? foregroundColor : unavailableColor;
+    const shadowColor = available ? backgroundColor : 'transparent';
     this._setOption({
       toolbox: {
         feature: {
           [toolName]: {
             iconStyle: {
-              color: color
+              color: color,
+              borderColor: color,
+              shadowColor: shadowColor
             }
           }
         }
@@ -185,6 +202,7 @@ export default class MapChart extends BasicChart {
 
   // set pieces for visualMap
   _setVisualMap() {
+    const {colorSet, shadowColor, foregroundColor} = this._getColors();
     const option = this._getOption();
     const index = this._getSelected().index;
     const source = option.dataset[0].source;
@@ -224,12 +242,12 @@ export default class MapChart extends BasicChart {
         pieces: pieces,
         dimension: index,
         inRange: {
-          color: this.DIMENSION_COLOR[index - 1],
-          colorLightness: [0.95, 0.2]
+          color: colorSet[index - 1],
+          colorLightness: [this.isDark ? 0.8 : 0.95, 0.2]
         },
         textStyle: {
-          color: '#000',
-          textShadowColor: '#fff',
+          color: foregroundColor,
+          textShadowColor: shadowColor,
           textShadowBlur: 2,
         }
       }

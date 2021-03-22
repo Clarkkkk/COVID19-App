@@ -4,19 +4,22 @@
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
-    <div class="btn-group">
-      <button
-        :class="{'active': chartType === 'bar'}"
-        @click="onClick('bar')"
-      >
-        柱状图
-      </button>
-      <button
-        :class="{'active': chartType === 'pie'}"
-        @click="onClick('pie')"
-      >
-        饼图
-      </button>
+    <div class="button-container">
+      <div class="buttons has-addons">
+        <button
+          :class="['button', {'active': chartType === 'bar'}]"
+          @click="onClick('bar')"
+        >
+          柱状图
+        </button>
+
+        <button
+          :class="['button', {'active': chartType === 'pie'}]"
+          @click="onClick('pie')"
+        >
+          饼图
+        </button>
+      </div>
     </div>
   </app-chart-container>
 </template>
@@ -60,7 +63,7 @@ export default {
         ...this.createTransforms(['现存确诊', '累计确诊', '治愈', '死亡'])
       ];
       const option = {
-        title: {text: '各地数据'},
+        title: {text: '{underline|各地数据}'},
         dataset
       };
       const config = {
@@ -95,21 +98,18 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss">
+@import "bulma/sass/elements/button.sass";
+
 #today-custom {
   position: relative;
-  /*
-  min-width: 40vw;
-  height: 80vmin;
-  */
 }
 
 .canvas {
-  width: 100%;
-  height: 100%;
+  @extend %full-size;
 }
 
-.btn-group {
+.button-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -122,6 +122,12 @@ export default {
   pointer-events: none;
 }
 
+@include desktop {
+  .button-container {
+    height: 5.5rem;
+  }
+}
+
 button {
   border: 1px solid var(--app-color);
   border-right: none;
@@ -132,8 +138,15 @@ button {
   transition: all 200ms;
   cursor: pointer;
   pointer-events: all;
+  font-size: $font-size-small !important;
 }
 
+.button.active {
+  background-color: var(--app-color);
+  color: var(--app-background-color);
+}
+
+/*
 button:first-child {
   border-radius: 0.3rem 0 0 0.3rem;
 }
@@ -156,4 +169,5 @@ button.active {
   background-color: var(--app-color);
   color: white;
 }
+*/
 </style>

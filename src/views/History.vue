@@ -2,7 +2,6 @@
   <div id="history" class="columns is-multiline">
     <template v-if="dataAvailable">
     <div class="header column is-full">
-      <span class="title">历史数据</span>
       <div class="select">
         <select v-model="selected">
           <option v-for="option in selectGroup" :key="option">
@@ -194,42 +193,23 @@ export default {
 </script>
 
 <style scoped>
-/*
-#history {
-  width: 100%;
-  min-height: 80vh;
-  display: flex;
-}
-
-@media screen and (min-aspect-ratio: 4/3) {
-  #history {
-    flex-flow: row wrap;
-  }
-}
-
-@media not screen and (min-aspect-ratio: 4/3) {
-  #history {
-    flex-flow: column nowrap;
-  }
-}
-*/
-
 .columns {
   width: 100%;
 }
 
 .column {
-  height: 30vh;
+  height: 80vh;
   box-sizing: border-box;
 }
 
 .header {
   width: 100%;
-  height: 3.5rem;
-  padding: 0 1.5rem;
+  height: 5rem;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
   box-sizing: border-box;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: flex-end;
 }
 

@@ -1,0 +1,172 @@
+@use "sass:color";
+@import "bulma/sass/utilities/_all.sass";
+
+// initial variables
+$radius-extreme-large: 15px;
+
+$shadow-small: 0 0 6px var(--shadow-color);
+$shadow-large: 3px 3px 20px var(--shadow-color);
+
+$font-size-small: 0.8rem;
+$font-size-normal: 0.9rem;
+$font-size-big: 1rem;
+$font-size-bigger: 1.1rem;
+$font-size-biggest: 1.7rem;
+
+
+
+
+$duration-normal: 300ms;
+
+/* rewrite bulma default values */
+$text-strong: var(--app-text-color);
+
+
+$grey-lighter: #ccc;
+
+$link: var(--app-color);
+$link-focus-border: var(--app-color);
+$link-hover-border: var(--app-color);
+$link-active-border: var(--app-color-darker);
+
+$button-border-color: var(--app-color);
+$button-background-color: var(--container-background-color);
+
+$input-focus-box-shadow-size: 0 0 12px;
+$input-focus-box-shadow-color: var(--shadow-color-colored);
+
+$input-background-color: var(--container-background-color);
+$input-color: var(--app-text-color);
+
+
+// custom select
+$input-radius: 10px;
+.select {
+  select {
+    border-color: transparent !important;
+    box-shadow: $shadow-large;
+  }
+}
+
+/* rewrite bulma default values */
+
+// timeline component
+.timeline {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  text-align: left;
+  border-left: 1px solid $grey-lighter;
+  color: var(--app-text-color);
+
+  &-time {
+    height: 1rem;
+    font-size: $font-size-small;
+    margin-bottom: 1rem;
+    margin-top: -0.5rem;
+    margin-left: -1.75rem;
+    display: flex;
+    align-items: center;
+
+    &::before {
+      $diameter: 0.5rem;
+      content: '';
+      height: $diameter;
+      width: $diameter;
+      margin-right: $diameter;
+      border-radius: $diameter;
+      background-color: var(--app-color-lighter);
+      display: inline-block;
+    }
+  }
+
+  &-title {
+    font-size: $font-size-big;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3rem;
+  }
+}
+
+body {
+  letter-spacing: 0.5px;
+}
+
+$app-color: #00a59d;
+$app-color-lighter: 00a59d;
+$app-color-darker: #00666d;
+
+// colors in light mode and dark mode
+:root {
+  // basic colors
+  --app-color: #{$app-color};
+  --app-color-lighter: #{$app-color-lighter};
+  --app-color-darker: #{$app-color-darker};
+  --app-text-color: #{$black};
+  --app-sub-text-color: #666;
+  --app-text-color-in-dark: #{$white};
+  --app-background-color: #{$white};
+  --container-background-color: #{$white};
+
+
+  --shadow-color: #{$grey-lightest};
+  --shadow-color-colored: #{$app-color};
+  --scrollbar-color: #{$grey-lighter};
+  --scrollbar-background: #{$white};
+  --header-color: #{color.change($app-color, $alpha: 0.8125)};
+}
+
+.dark-mode {
+  // used when switch to dark mode manully
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    // basic colors
+    --app-color: #{$app-color};
+    --app-color-lighter: #{$app-color-lighter};
+    --app-color-darker: #{$app-color-darker};
+    --app-text-color: #{$white};
+    --app-sub-text-color: #ccc;
+    --app-text-color-in-dark: #{$white};
+    --app-background-color: #{$black-bis};
+    --container-background-color: #181818; // #091a20;
+
+
+    --shadow-color: #000;
+    --shadow-color-colored: #000;
+    --scrollbar-color: #{$grey-darker};
+    --scrollbar-background: #{$grey-darker};
+    --header-color: #{color.change($app-color, $alpha: 0.8125)};
+  }
+}
+
+%container {
+  box-shadow: $shadow-large;
+  border-radius: $radius-extreme-large;
+  background: var(--app-background-color);
+}
+
+%full-size {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+@import "bulma/sass/form/shared.sass";
+@import "bulma/sass/form/select.sass";
+@import "bulma/sass/grid/_all.sass";
+@import "bulma/sass/base/_all.sass";
+@import "bulma/sass/helpers/typography.sass";
+
+body {
+  background-color: var(--app-background-color);
+}
+

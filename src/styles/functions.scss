@@ -1,0 +1,7 @@
+@function add-safe($dir, $size: '') {
+  @if $size == ''{
+    @return env(safe-area-inset-#{$dir});
+  } @else {
+    @return calc(#{$size} + env(safe-area-inset-#{$dir}));
+  }
+}

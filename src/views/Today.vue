@@ -2,7 +2,6 @@
   <div id="today" class="tile is-ancestor is-vertical">
     <template v-if="dataAvailable">
     <div class="header tile is-parent">
-        <span class="title">今日疫情</span>
         <div class="select">
           <select v-model="selected">
             <option v-for="option in selectGroup" :key="option">
@@ -173,27 +172,7 @@ export default {
 };
 </script>
 
-<style scoped>
-/*
-#today {
-  width: 100%;
-  min-height: 80vh;
-  display: flex;
-}
-
-@media screen and (min-aspect-ratio: 4/3) {
-  #today {
-    flex-flow: row wrap;
-  }
-}
-
-@media not screen and (min-aspect-ratio: 4/3) {
-  #today {
-    flex-flow: column nowrap;
-  }
-}
-*/
-
+<style lang="scss" scoped>
 #today {
   width: 100%;
 }
@@ -202,10 +181,10 @@ export default {
   width: 100%;
   height: 5rem;
   flex: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem;
   margin-top: 0.75rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: flex-end;
 }
 

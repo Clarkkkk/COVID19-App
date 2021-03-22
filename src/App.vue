@@ -36,34 +36,9 @@ export default {
 </script>
 
 <style lang='scss'>
-$radius-extreme-large: 15px;
-$input-radius: 10px;
-.select {
-  select {
-    border-color: transparent !important;
-  }
-}
-
-@import "bulma/sass/utilities/_all.sass";
-@import "bulma/sass/form/shared.sass";
-@import "bulma/sass/form/select.sass";
-@import "bulma/sass/grid/_all.sass";
-@import "bulma/sass/base/_all.sass";
-@import "bulma/sass/helpers/typography.sass";
-
-
-body {
-  margin: 0;
-  padding: 0;
-  font-size: 16px;
-  --app-card-shadow: 0 0 12px #ededed;
-  --app-card-radius: 15px;
-  --app-color: #00a59d;
-  --app-color-alpha: #00a59dd0;
-}
-
+@import './styles/mixins';
 #app {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -71,35 +46,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* global scrollbar style */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #ccc;    /* color of the scroll thumb */
-  border-radius: 8px;       /* roundness of the scroll thumb */
-  border: 2px solid #fff;  /* creates padding around scroll thumb */
-}
-
-:root, body * {
-  scrollbar-width: thin;          /* "auto" or "thin" */
-  scrollbar-color: #ccc #fff;   /* scroll thumb and track */
-}
-
-/* flex-item's universal style */
-.covid-flex-item {
-  position: relative;
-  margin: 0.5rem;
-  background-color: #fff;
-}
-
-@media screen and (min-aspect-ratio: 4/3) {
-  .covid-flex-item {
-    margin: 15px;
-  }
 }
 
 .chart {
@@ -110,30 +56,43 @@ body {
   height: 10rem;
   display: flex;
   align-items: center;
+  color: var(--app-sub-text-color);
 }
 
-.left-enter-active, .left-leave-active, .right-enter-active, .right-leave-active {
-  transition: transform 300ms, opacity 300ms;
+:root, :root * {
+  @include scrollbar;
 }
 
-.left-enter, .left-leave-to, .right-enter, .right-leave-to {
-  opacity: 0;
+@mixin slide($dir) {
+  $factor: 1;
+  @if $dir!=left {
+    $factor: -1;
+  }
+
+  @include active;
+  @include enter {
+    opacity: 0;
+    transform: translateX($factor * 100vw);
+  }
+  @include leave-to {
+    opacity: 0;
+    transform: translateX($factor * (-100vw));
+  }
 }
 
-.left-enter, .right-leave-to {
-  transform: translateX(100vw);
+.left {
+  @include slide('left');
 }
 
-.left-leave-to, .right-enter {
-  transform: translateX(-100vw);
+.right {
+  @include slide('right');
 }
 
-.container-enter-active {
-  transition: transform 300ms, opacity 300ms;
-}
-
-.container-enter {
-  transform: translateY(20px);
-  opacity: 0;
+.container {
+  @include active;
+  @include enter {
+    transform: translateY(20px);
+    opacity: 0;
+  }
 }
 </style>

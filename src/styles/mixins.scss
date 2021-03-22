@@ -1,0 +1,60 @@
+@use 'base';
+@use "sass:color";
+@mixin scrollbar {
+  // scroll bar
+  $scrollbar-width: thin;
+  $scrollbar-width-webkit: 12px;
+  $scrollbar-color: var(--scrollbar-color);
+  $scrollbar-background: var(--scrollbar-background);
+  $scrollbar-border: 2px solid $scrollbar-background;
+  $scrollbar-radius: base.$radius-rounded;
+
+  // for webkit
+  &::-webkit-scrollbar {
+    width: $scrollbar-width-webkit;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scrollbar-color; // color of the scroll thumb
+    border-radius: $scrollbar-radius; // roundness of the scroll thumb
+    border: $scrollbar-border; // creates padding around scroll thumb
+  }
+
+  // for firefox
+  scrollbar-width: $scrollbar-width;
+  // scroll thumb and track
+  scrollbar-color: $scrollbar-color $scrollbar-background;
+}
+
+@mixin backdrop-blur($background, $alpha: 0.8, $blur-radius: 10px) {
+  background-color: $background;
+  @supports (backdrop-filter: blur(10px)) {
+    background-color: color.change($background, $alpha: $alpha);
+    backdrop-filter: blur($blur-radius);
+  }
+}
+
+@mixin active {
+  &-enter-active, &-leave-active {
+    transition: transform base.$duration-normal, opacity base.$duration-normal;
+    @content;
+  }
+}
+
+@mixin leave-active {
+  &-leave-active {
+    @content;
+  }
+}
+
+@mixin enter {
+  &-enter {
+    @content;
+  }
+}
+
+@mixin leave-to {
+  &-leave-to {
+    @content;
+  }
+}

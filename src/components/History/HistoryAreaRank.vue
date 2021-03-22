@@ -50,8 +50,7 @@ export default {
       const options = this.createOptions(this.datasetArr);
       const basicOption = {
         title: {
-          text: '疫情地区排行',
-          subtext: ''
+          text: '{underline|疫情地区排行}'
         },
         timeline: {
           data: this.dates,
@@ -81,11 +80,9 @@ export default {
 
     createOptions(arr) {
       return arr.map((item) => {
-        const date = item.source[0][item.source[0].length - 1];
         return {
           title: {
-            text: '疫情地区排行',
-            subtext: date
+            text: '{underline|疫情地区排行}'
           },
           dataset: [item, ...this.createSortTransform(item.dimensions)]
         };

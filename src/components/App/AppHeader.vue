@@ -87,7 +87,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/styles/functions';
+@import '@/styles/mixins';
 /* Use inline or contents(if supported) to avoid being the scrolling container */
 #app-header {
   display: inline;
@@ -95,75 +97,87 @@ export default {
 }
 
 .app-title-container {
+  padding: 1rem;
+  padding-top: add-safe(top, 1rem);
+  box-sizing: border-box;
   display: flex;
   flex-flow: column;
   align-items: flex-start;
   z-index: 10;
-  height: calc(7.5rem + env(safe-area-inset-top));
+  height: add-safe(top, 7.5rem);
   width: 100%;
-  box-sizing: border-box;
-  padding: 1rem;
-  padding-top: calc(1rem + env(safe-area-inset-top));
-  background-color: var(--app-color-alpha);
-  color: white;
-  letter-spacing: 0.5px;
-}
+  @include backdrop-blur($app-color);
+  color: var(--app-text-color-in-dark);
 
-.app-title {
-  font-size: 1.7rem;
-  white-space: nowrap;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
+  .app-title {
+    font-size: $font-size-biggest;
+    white-space: nowrap;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
 
-.app-sub-title {
-  font-size: 0.8rem;
-  text-align: start;
-}
+  .app-sub-title {
+    font-size: $font-size-small;
+    text-align: start;
+  }
 
-.app-sub-title > a, a:link, a:visited {
-  color: #fff;
-  border-bottom: solid 1px #fff;
+  a, a:link, a:visited {
+    color: var(--app-text-color-in-dark);
+    border-bottom: solid 1px var(--app-text-color-in-dark);
+  }
 }
 
 .app-menu-container {
   position: sticky;
   top: 0;
-  height: calc(3rem + env(safe-area-inset-top));
-  padding-top: env(safe-area-inset-top);
+  height: add-safe(top, 3rem);
+  padding-top: add-safe(top);
   width: 100%;
-  background-color: var(--app-color-alpha);
-  backdrop-filter: blur(10px);
+  @include backdrop-blur($app-color);
   z-index: 10000;
   display: flex;
   align-items: center;
+
+  .app-page-title {
+    font-size: $font-size-big;
+    font-weight: bold;
+    color: var(--app-text-color-in-dark);
+    width: 6rem;
+  }
+}
+
+.header {
+  @include active;
+  @include leave-active {
+    position: absolute;
+  }
+  @include enter {
+    opacity: 0;
+  }
+  @include leave-to {
+    opacity: 0;
+  }
 }
 
 .app-page-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  color: white;
-  width: 6rem;
+  &.header {
+    @include enter {
+      transform: translateY(3rem);
+    }
+    @include leave-to {
+      transform: translateY(3rem);
+    }
+  }
 }
 
-.header-enter, .header-leave-to {
-  opacity: 0;
-}
-
-.app-page-title.header-enter, .app-page-title.header-leave-to {
-  transform: translateY(3rem);
-}
-
-.app-menu.header-enter, .app-menu.header-leave-to {
-  transform: translateY(-3rem);
-}
-
-.header-enter-active, .header-leave-active {
-  transition: all 300ms;
-}
-
-.header-leave-active {
-  position: absolute;
+.app-menu {
+  &.header {
+    @include enter {
+      transform: translateY(-3rem);
+    }
+    @include leave-to {
+      transform: translateY(-3rem);
+    }
+  }
 }
 </style>

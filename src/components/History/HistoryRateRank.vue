@@ -59,8 +59,7 @@ export default {
       const options = this.createOptions(this.datasetArr);
       const basicOption = {
         title: {
-          text: '治疗率、死亡率与疫情人口密度',
-          subtext: ''
+          text: '{underline|治疗率、死亡率与疫情人口密度}'
         },
         timeline: {
           data: this.dates,
@@ -168,8 +167,7 @@ export default {
         const date = item[0].source[0][item[0].source[0].length - 1];
         return {
           title: {
-            text: '治疗率、死亡率与疫情人口密度',
-            subtext: date
+            text: '{underline|治疗率、死亡率与疫情人口密度}'
           },
           dataset: item
         };

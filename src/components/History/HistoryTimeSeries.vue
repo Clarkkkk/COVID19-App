@@ -30,7 +30,9 @@ export default {
 
     this.initializeData(this.area).then(() => {
       const option = {
-        title: {text: `地区疫情时间线`},
+        title: {
+          text: '{underline|地区疫情时间线}'
+          },
         dataset: this.datasets[this.area],
         legend: {
           selectedMode: 'multiple',
