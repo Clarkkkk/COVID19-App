@@ -80,7 +80,6 @@ export default {
         // need to change until the scroll direction changes again
         this.showMenu = this.reversalTop - offsetTop > 0;
         this.reversalTop = 0;
-        console.log(this.showMenu);
       }
     });
   }
@@ -90,6 +89,8 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/functions';
 @import '@/styles/mixins';
+@import '@/styles/variables';
+@import "bulma/sass/utilities/mixins";
 /* Use inline or contents(if supported) to avoid being the scrolling container */
 #app-header {
   display: inline;
@@ -97,14 +98,14 @@ export default {
 }
 
 .app-title-container {
-  padding: 1rem;
-  padding-top: add-safe(top, 1rem);
+  padding: $padding-smaller;
+  padding-top: add-safe(top, $padding-smaller);
   box-sizing: border-box;
   display: flex;
   flex-flow: column;
   align-items: flex-start;
   z-index: 10;
-  height: add-safe(top, 7.5rem);
+  height: add-safe(top, 8rem + $padding-smaller);
   width: 100%;
   @include backdrop-blur($app-color);
   color: var(--app-text-color-in-dark);
@@ -131,6 +132,7 @@ export default {
   position: sticky;
   top: 0;
   height: add-safe(top, 3rem);
+  padding: 0;
   padding-top: add-safe(top);
   width: 100%;
   @include backdrop-blur($app-color);
@@ -143,6 +145,18 @@ export default {
     font-weight: bold;
     color: var(--app-text-color-in-dark);
     width: 6rem;
+  }
+}
+
+@include desktop {
+  .app-title-container {
+    padding: $padding-small;
+    padding-top: add-safe(top, $padding-small);
+    height: add-safe(top, 8rem + $padding-small);
+  }
+
+  .app-menu-container {
+    padding: 0 $padding-smaller;
   }
 }
 

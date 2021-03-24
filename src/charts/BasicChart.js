@@ -208,7 +208,7 @@ class BasicChart {
     // eslint-disable-next-line max-len
     const DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
     const BACKGROUND_COLOR = '#ffffff';
-    const FOREGROUND_COLOR = '#000';
+    const FOREGROUND_COLOR = '#333';
     const UNAVAILABLE_COLOR = '#aaa';
     const APP_COLOR = '#00a59d';
     const APP_COLOR_LIGHTER = '#00a59d';

@@ -1,0 +1,45 @@
+@use "sass:color";
+// colors in light mode and dark mode
+:root {
+  // basic colors
+  --app-color: #{$app-color};
+  --app-color-lighter: #{$app-color-lighter};
+  --app-color-darker: #{$app-color-darker};
+  --app-text-color: #333;
+  --app-sub-text-color: #666;
+  --app-text-color-in-dark: #{$white};
+  --app-background-color: #{$white};
+  --container-background-color: #{$white};
+
+
+  --shadow-color: #{$grey-lightest};
+  --shadow-color-colored: #{$app-color};
+  --scrollbar-color: #{$grey-lighter};
+  --scrollbar-background: #{$white};
+  --header-color: #{color.change($app-color, $alpha: 0.8125)};
+}
+
+.dark-mode {
+  // used when switch to dark mode manully
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    // basic colors
+    --app-color: #{$app-color};
+    --app-color-lighter: #{$app-color-lighter};
+    --app-color-darker: #{$app-color-darker};
+    --app-text-color: #{$white};
+    --app-sub-text-color: #ccc;
+    --app-text-color-in-dark: #{$white};
+    --app-background-color: #{$black-bis};
+    --container-background-color: #181818; // #091a20;
+
+
+    --shadow-color: #000;
+    --shadow-color-colored: #000;
+    --scrollbar-color: #{$grey-darker};
+    --scrollbar-background: #{$grey-darker};
+    --header-color: #{color.change($app-color, $alpha: 0.8125)};
+  }
+}

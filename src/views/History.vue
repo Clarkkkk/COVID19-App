@@ -131,9 +131,10 @@ export default {
         if (isFirstFetch) {
           // use the first page of data to render the chart
           this.dates = dates;
-          this.dataAvailable = true;
           thisArr[area] = areaDataArr = Object.freeze(data);
           isFirstFetch = false;
+          // wait for the router change animation
+          setTimeout(() => this.dataAvailable = true, 500);
         } else {
           this.dates = [...this.dates, ...dates];
           // append new data and save it to the array

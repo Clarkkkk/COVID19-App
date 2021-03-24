@@ -6,7 +6,7 @@
         <router-view />
       </keep-alive>
     </transition>
-    <footer class="is-size-7">-&nbsp;&nbsp;&nbsp;&nbsp;&#32;&#32;由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021&nbsp;&nbsp;- </footer>
+    <footer> -&nbsp;&nbsp;&nbsp;&nbsp;&#32;&#32;由 <a href="mailto://clark1729@outlook.com">卡罗</a> 设计并开发 | 2021&nbsp;&nbsp;- </footer>
   </div>
 </template>
 
@@ -36,7 +36,9 @@ export default {
 </script>
 
 <style lang='scss'>
+@import './styles/global';
 @import './styles/mixins';
+
 #app {
   font-family: Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -57,6 +59,7 @@ export default {
   display: flex;
   align-items: center;
   color: var(--app-sub-text-color);
+  font-size: $font-size-small;
 }
 
 :root, :root * {

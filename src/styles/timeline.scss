@@ -1,0 +1,45 @@
+@import 'variables';
+
+.timeline {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  text-align: left;
+  border-left: 1px solid $grey-lighter;
+  color: var(--app-text-color);
+
+  &-time {
+    height: 1rem;
+    font-size: $font-size-small;
+    margin-bottom: 1rem;
+    margin-top: -0.5rem;
+    margin-left: -1.75rem;
+    display: flex;
+    align-items: center;
+
+    &::before {
+      $diameter: 0.5rem;
+      content: '';
+      height: $diameter;
+      width: $diameter;
+      margin-right: $diameter;
+      border-radius: $diameter;
+      background-color: var(--app-color-lighter);
+      display: inline-block;
+    }
+  }
+
+  &-title {
+    font-size: $font-size-big;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3rem;
+  }
+}

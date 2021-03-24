@@ -331,6 +331,6 @@ export default class CustomChart extends BasicChart {
   }
 
   _getSectorColor(index) {
-    return this.DIMENSION_COLOR[index % 9];
+    return this._getColors().colorSet[index % 9];
   }
 }

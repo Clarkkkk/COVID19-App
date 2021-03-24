@@ -4,39 +4,25 @@
     :fullscreen="fullscreen"
   >
     <div ref="canvas" class="canvas"></div>
-    <div class="button-container">
-      <div class="buttons has-addons">
-        <button
-          :class="['button', {'active': chartType === 'bar'}]"
-          @click="onClick('bar')"
-        >
-          柱状图
-        </button>
-
-        <button
-          :class="['button', {'active': chartType === 'pie'}]"
-          @click="onClick('pie')"
-        >
-          饼图
-        </button>
-      </div>
-    </div>
+    <app-selector :options="['柱状图', '饼图']" :selected.sync="selected" />
   </app-chart-container>
 </template>
 
 <script>
 import {CustomChart} from '@/charts';
-import {AppChartContainer} from '@/components/App';
+import {AppChartContainer, AppSelector} from '@/components/App';
 export default {
   data() {
     return {
       chartType: 'bar',
-      fullscreen: {value: false}
+      fullscreen: {value: false},
+      selected: '柱状图'
     };
   },
   props: ['dataset'],
   components: {
-    AppChartContainer
+    AppChartContainer,
+    AppSelector
   },
 
   created() {
@@ -48,15 +34,18 @@ export default {
   watch: {
     dataset(newDataset) {
       this.chart.update({dataset: newDataset});
+    },
+
+    selected(type) {
+      if (type === '柱状图') {
+        this.chart && this.chart.switchType('bar');
+      } else if (type === '饼图') {
+        this.chart && this.chart.switchType('pie');
+      }
     }
   },
 
   methods: {
-    onClick(type) {
-      this.chartType = type;
-      this.chart && this.chart.switchType(type);
-    },
-
     initializeChart() {
       const dataset = [
         this.dataset,
@@ -99,75 +88,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "bulma/sass/elements/button.sass";
-
 #today-custom {
   position: relative;
 }
-
-.canvas {
-  @extend %full-size;
-}
-
-.button-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3rem;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-@include desktop {
-  .button-container {
-    height: 5.5rem;
-  }
-}
-
-button {
-  border: 1px solid var(--app-color);
-  border-right: none;
-  background-color: white;
-  height: 2rem;
-  box-sizing: border-box;
-  padding: 0 0.5rem;
-  transition: all 200ms;
-  cursor: pointer;
-  pointer-events: all;
-  font-size: $font-size-small !important;
-}
-
-.button.active {
-  background-color: var(--app-color);
-  color: var(--app-background-color);
-}
-
-/*
-button:first-child {
-  border-radius: 0.3rem 0 0 0.3rem;
-}
-
-button:last-child {
-  border-right: 1px solid var(--app-color);
-  border-radius: 0 0.3rem 0.3rem 0;
-}
-
-button:focus {
-  outline: none;
-}
-
-button:active {
-  outline: none;
-  box-shadow: 0 0 5px var(--app-color);
-}
-
-button.active {
-  background-color: var(--app-color);
-  color: white;
-}
-*/
 </style>

@@ -1,0 +1,27 @@
+@use "sass:color";
+
+@import 'variables';
+@import 'css-variables';
+
+@import "bulma/sass/utilities/controls.sass";
+@import "bulma/sass/utilities/extends.sass";
+@import "bulma/sass/utilities/mixins.sass";
+
+@import 'custom-select';
+
+@import "bulma/sass/grid/_all.sass";
+@import "bulma/sass/base/_all.sass";
+
+@import 'timeline';
+@import 'extends';
+
+.canvas {
+  @extend %full-size;
+}
+
+body {
+  letter-spacing: 0.5px;
+  background-color: var(--app-background-color);
+}
+
+

@@ -1,0 +1,10 @@
+.select {
+  select {
+    border-color: transparent !important;
+    box-shadow: $shadow-large;
+    --app-color: $app-color;
+  }
+}
+
+@import "bulma/sass/form/shared.sass";
+@import "bulma/sass/form/select.sass";

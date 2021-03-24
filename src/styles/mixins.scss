@@ -1,4 +1,4 @@
-@use 'base';
+@use 'variables';
 @use "sass:color";
 @mixin scrollbar {
   // scroll bar
@@ -7,7 +7,7 @@
   $scrollbar-color: var(--scrollbar-color);
   $scrollbar-background: var(--scrollbar-background);
   $scrollbar-border: 2px solid $scrollbar-background;
-  $scrollbar-radius: base.$radius-rounded;
+  $scrollbar-radius: $radius-rounded;
 
   // for webkit
   &::-webkit-scrollbar {
@@ -36,7 +36,7 @@
 
 @mixin active {
   &-enter-active, &-leave-active {
-    transition: transform base.$duration-normal, opacity base.$duration-normal;
+    transition: transform $duration-normal, opacity $duration-normal;
     @content;
   }
 }

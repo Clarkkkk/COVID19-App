@@ -85,6 +85,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/extends';
 @media not screen and  (min-aspect-ratio: 4/3) {
    #today-brief {
      display: flex;

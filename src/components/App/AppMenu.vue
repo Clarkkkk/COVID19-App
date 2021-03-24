@@ -36,7 +36,7 @@ export default {
   watch: {
     currentPage(newPage, oldPage) {
       this.$nextTick().then(() => {
-        this.moveIndicator(newPage);
+        this.moveIndicator(newPage !== oldPage);
       });
     }
   },
@@ -49,12 +49,12 @@ export default {
     },
 
     moveIndicator(moving) {
-      const routeElem =
-        document.querySelector('.menu-item.active') ||
-        document.querySelector('.menu-item');
+      const index =
+        this.pages.findIndex((page) => page.name === this.currentPage);
+      const routeElem = document.querySelector('.menu-item');
       const indicator = this.$refs.indicator;
       // eslint-disable-next-line max-len
-      const offset = routeElem.offsetLeft + routeElem.offsetWidth / 2 - indicator.offsetWidth / 2;
+      const offset = routeElem.offsetWidth / 2 - indicator.offsetWidth / 2 + routeElem.offsetWidth * index;
       indicator.style = `transform: translateX(${offset}px)`;
       this.moving = moving;
     }
@@ -78,6 +78,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables';
+
 #app-menu {
   height: 3rem;
   width: 100%;

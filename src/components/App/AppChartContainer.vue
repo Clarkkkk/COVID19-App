@@ -60,6 +60,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/extends';
 .fullscreen-background {
   width: 100vw;
   height: 100vw;

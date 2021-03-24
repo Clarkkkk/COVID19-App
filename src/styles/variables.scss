@@ -1,0 +1,55 @@
+@use "sass:color";
+
+// my variables
+$radius-extreme-large: 15px;
+
+$shadow-small: 0 0 6px var(--shadow-color);
+$shadow-large: 3px 3px 20px var(--shadow-color);
+
+$font-size-small: 0.8rem;
+$font-size-normal: 0.9rem;
+$font-size-big: 1rem;
+$font-size-bigger: 1.1rem;
+$font-size-biggest: 1.7rem;
+
+
+$padding-normal: 3rem;
+$padding-small: 1.5rem;
+$padding-smaller: 0.75rem;
+
+$duration-normal: 300ms;
+
+
+$app-color: #00a59d;
+$app-color-lighter: #00a59d;
+$app-color-darker: #00666d;
+
+// override bulma defaults
+$grey-lighter: #ccc;
+// custom link color
+$link: var(--app-color);
+$link-focus-border: var(--app-color);
+$link-hover-border: var(--app-color);
+$link-active-border: var(--app-color-darker);
+
+$text-strong: var(--app-text-color);
+
+$border: var(--app-color);
+$button-border-color: var(--app-color);
+$button-background-color: var(--container-background-color);
+
+// box shadow
+$input-focus-box-shadow-size: 0 0 6px;
+$input-focus-box-shadow-color: var(--shadow-color-colored);
+
+// front- and background color
+$input-background-color: var(--container-background-color);
+$input-color: var(--app-text-color);
+
+// custom select
+$input-radius: 10px;
+
+@import "bulma/sass/utilities/initial-variables.sass";
+@import "bulma/sass/utilities/derived-variables.sass";
+
+

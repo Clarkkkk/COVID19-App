@@ -134,7 +134,11 @@ export default class MapChart extends BasicChart {
 
   // set toolbox's icon color to indicate whether the feature is available
   _setIconColor(toolName, available) {
-    const {foregroundColor, unavailableColor, backgroundColor} = this._getColors();
+    const {
+      foregroundColor,
+      unavailableColor,
+      backgroundColor
+    } = this._getColors();
     const color = available ? foregroundColor : unavailableColor;
     const shadowColor = available ? backgroundColor : 'transparent';
     this._setOption({

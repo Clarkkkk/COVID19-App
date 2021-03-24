@@ -112,11 +112,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/extends';
+@import '@/styles/variables';
+@import "bulma/sass/utilities/mixins";
+
 .content {
   @extend %container;
   height: 291.5vh;
   width: 100%;
-  padding: 1.5rem;
+  padding: $padding-small;
   box-sizing: border-box;
   overflow: scroll;
   background-color: var(--container-background-color);
@@ -124,7 +128,7 @@ export default {
 
 @include desktop {
   .content {
-    padding: 3rem;
+    padding: $padding-normal;
   }
 }
 
