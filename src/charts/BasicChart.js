@@ -94,15 +94,97 @@ class BasicChart {
     this.valueType = valueType;
     this.valueUnit = valueUnit;
     this.legendRange = legendRange;
-
-    this._initializeTimelineTooltip();
-
     // used in fullscreen switch
     this._fullscreen = fullscreen;
+    this._isNarrow = window.screen.width <= 1024;
 
+    this._initializeTimelineTooltip();
+    this._priority = priority;
+    this._initializeRenderStrategy();
+    this._initializeColorMode();
+
+    // initialize an empty canvas, so that showLoading is available
+    this._setOption({title: {text: ''}});
+
+    // resize the map when window resizes
+    const resizeDebounce = createDebounce(200);
+    window.addEventListener('resize', () => {
+      resizeDebounce(() => this._resize());
+    });
+
+    // for test
+    this._chart.on('dblclick', () => {
+      console.log(this._getOption());
+      console.log(this);
+    });
+  }
+
+
+  /* Initialization */
+  _initializeColorMode() {
+    const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
+    console.log(mediaQueryList);
+    this._isDark = mediaQueryList.matches;
+    mediaQueryList.addEventListener('change', (e) => {
+      console.log(e);
+      this._isDark = e.matches;
+      this._switchDarkMode();
+    });
+  }
+
+  _initializeTimelineTooltip() {
+    this._chart.on('timelineplaychanged', (e) => {
+      // set triggerOn to 'none' while playing
+      // to prevent tooltipView._keepShow() from showing the wrong tip
+      // (https://github.com/apache/echarts/blob/master/src/component/tooltip/TooltipView.ts)
+      let triggerOn;
+      if (e.playState) {
+        triggerOn = 'none';
+      } else {
+        triggerOn = 'mousemove|click';
+      }
+      // timeline.tooltip is not configurable
+      // set the global tooltip instead
+      this._setOption({
+        tooltip: {
+          triggerOn
+        }
+      });
+    });
+
+    // when timeline changed, show the relative tooltip for it
+    this._chart.on('timelinechanged', (e) => {
+      // calculate all the config used in timelinechanged
+      const timelineOption = this._getOption().timeline[0];
+      const startLeft = 30;
+      const endLeft = this._chart.getWidth() - 130;
+      const dates = timelineOption.data;
+      const top = this._chart.getHeight() - timelineOption.bottom - 120;
+      const step = (endLeft - startLeft) / timelineOption.data.length;
+
+      const index = e.currentIndex;
+
+      // use the second 'if' of manuallyShowTip()
+      // (https://github.com/apache/echarts/blob/master/src/component/tooltip/TooltipView.ts)
+      this._chart.dispatchAction({
+        type: 'showTip',
+        x: startLeft + step * index,
+        y: top,
+        tooltip: {
+          content: '',
+          formatterParams: {
+            componentType: 'timeline',
+            name: dates[index],
+            $vars: ['name']
+          }
+        }
+      });
+    });
+  }
+
+  _initializeRenderStrategy() {
     // used in render queue
     this._renderCount = 0;
-    this._priority = priority;
 
     // when the chart finish rendering, call next to render next chart
     this._chart.on('finished', () => {
@@ -134,32 +216,11 @@ class BasicChart {
       }
       this._renderCount++;
     });
-
-    const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
-    console.log(mediaQueryList);
-    this.isDark = mediaQueryList.matches;
-    mediaQueryList.addEventListener('change', (e) => {
-      console.log(e);
-      this.isDark = e.matches;
-      this._switchDarkMode();
-    });
-
-    // initialize an empty canvas, so that showLoading is available
-    this._setOption({title: {text: ''}});
-
-    // resize the map when window resizes
-    const resizeDebounce = createDebounce(200);
-    window.addEventListener('resize', () => {
-      resizeDebounce(() => this._resize());
-    });
-
-    // for test
-    this._chart.on('dblclick', () => {
-      console.log(this._getOption());
-      console.log(this);
-    });
   }
+  /* Initialization */
 
+
+  /* Public methods */
   // push the update function into the queue
   update(...args) {
     if (!this._update) {
@@ -175,8 +236,10 @@ class BasicChart {
   showLoading() {
     this._showLoading();
   }
+  /* Public methods */
 
-  // this._chart's methods
+
+  /* Echarts instance method */
   _setOption(option, config) {
     config = config || {};
     if (config.lazyUpdate === undefined) {
@@ -202,7 +265,10 @@ class BasicChart {
   _resize() {
     this._chart.resize();
   }
+  /* Echarts instance method */
 
+
+  /* Color mode methods */
   _getColors() {
     // basic colors
     // eslint-disable-next-line max-len
@@ -222,12 +288,12 @@ class BasicChart {
     const UNAVAILABLE_COLOR_DARK = '#555';
     const UNDERLINE_COLOR_DARK = APP_COLOR;
     return {
-      colorSet: this.isDark ? DIMENSION_COLOR_DARK : DIMENSION_COLOR,
-      foregroundColor: this.isDark ? FOREGROUND_COLOR_DARK : FOREGROUND_COLOR,
-      backgroundColor: this.isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
-      shadowColor: this.isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
-      unavailableColor: this.isDark ? UNAVAILABLE_COLOR_DARK : UNAVAILABLE_COLOR,
-      underlineColor: this.isDark ? UNDERLINE_COLOR_DARK : UNDERLINE_COLOR
+      colorSet: this._isDark ? DIMENSION_COLOR_DARK : DIMENSION_COLOR,
+      foregroundColor: this._isDark ? FOREGROUND_COLOR_DARK : FOREGROUND_COLOR,
+      backgroundColor: this._isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
+      shadowColor: this._isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
+      unavailableColor: this._isDark ? UNAVAILABLE_COLOR_DARK : UNAVAILABLE_COLOR,
+      underlineColor: this._isDark ? UNDERLINE_COLOR_DARK : UNDERLINE_COLOR
     };
   }
 
@@ -280,7 +346,40 @@ class BasicChart {
       }
     });
   }
+  /* Color mode methods */
 
+
+  /* Fullsreen methods */
+  switchFullScreen() {
+    this.isFullScreen = !this.isFullScreen;
+    setTimeout(() => this._resize(), 1000);
+  }
+
+  get isFullScreen() {
+    return this._fullscreen.value;
+  }
+
+  set isFullScreen(is) {
+    this._fullscreen.value = is;
+    // eslint-disable-next-line max-len
+    const enterIcon = 'M20 3h2v6h-2V5h-4V3h4zM4 3h4v2H4v4H2V3h2zm16 16v-4h2v6h-6v-2h4zM4 19h4v2H2v-6h2v4z';
+    // eslint-disable-next-line max-len
+    const exitIcon = 'M18 7h4v2h-6V3h2v4zM8 9H2V7h4V3h2v6zm10 8v4h-2v-6h6v2h-4zM8 15v6H6v-4H2v-2h6z';
+    this._setOption({
+      toolbox: {
+        feature: {
+          myFullScreen: {
+            title: is ? '退出全屏' : '全屏显示',
+            icon: is ? exitIcon : enterIcon
+          }
+        }
+      }
+    });
+  }
+  /* Fullsreen methods */
+
+
+  /* Tool methods */
   // find the currently selected legend
   // return dimension name and dimension index
   _getSelected() {
@@ -339,56 +438,6 @@ class BasicChart {
     }
   }
 
-  _initializeTimelineTooltip() {
-    this._chart.on('timelineplaychanged', (e) => {
-      // set triggerOn to 'none' while playing
-      // to prevent tooltipView._keepShow() from showing the wrong tip
-      // (https://github.com/apache/echarts/blob/master/src/component/tooltip/TooltipView.ts)
-      let triggerOn;
-      if (e.playState) {
-        triggerOn = 'none';
-      } else {
-        triggerOn = 'mousemove|click';
-      }
-      // timeline.tooltip is not configurable
-      // set the global tooltip instead
-      this._setOption({
-        tooltip: {
-          triggerOn
-        }
-      });
-    });
-
-    // when timeline changed, show the relative tooltip for it
-    this._chart.on('timelinechanged', (e) => {
-      // calculate all the config used in timelinechanged
-      const timelineOption = this._getOption().timeline[0];
-      const startLeft = 30;
-      const endLeft = this._chart.getWidth() - 130;
-      const dates = timelineOption.data;
-      const top = this._chart.getHeight() - timelineOption.bottom - 120;
-      const step = (endLeft - startLeft) / timelineOption.data.length;
-
-      const index = e.currentIndex;
-
-      // use the second 'if' of manuallyShowTip()
-      // (https://github.com/apache/echarts/blob/master/src/component/tooltip/TooltipView.ts)
-      this._chart.dispatchAction({
-        type: 'showTip',
-        x: startLeft + step * index,
-        y: top,
-        tooltip: {
-          content: '',
-          formatterParams: {
-            componentType: 'timeline',
-            name: dates[index],
-            $vars: ['name']
-          }
-        }
-      });
-    });
-  }
-
   // set the default toolbox after user defiend toolbox is set
   // in order to place the default tools behind other tools
   _setBasicToolbox() {
@@ -426,33 +475,6 @@ class BasicChart {
       }
     };
     this._setOption({toolbox});
-  }
-
-  switchFullScreen() {
-    this.isFullScreen = !this.isFullScreen;
-    setTimeout(() => this._resize(), 1000);
-  }
-
-  get isFullScreen() {
-    return this._fullscreen.value;
-  }
-
-  set isFullScreen(is) {
-    this._fullscreen.value = is;
-    // eslint-disable-next-line max-len
-    const enterIcon = 'M20 3h2v6h-2V5h-4V3h4zM4 3h4v2H4v4H2V3h2zm16 16v-4h2v6h-6v-2h4zM4 19h4v2H2v-6h2v4z';
-    // eslint-disable-next-line max-len
-    const exitIcon = 'M18 7h4v2h-6V3h2v4zM8 9H2V7h4V3h2v6zm10 8v4h-2v-6h6v2h-4zM8 15v6H6v-4H2v-2h6z';
-    this._setOption({
-      toolbox: {
-        feature: {
-          myFullScreen: {
-            title: is ? '退出全屏' : '全屏显示',
-            icon: is ? exitIcon : enterIcon
-          }
-        }
-      }
-    });
   }
 
   _getLayoutConfig(userOption) {
@@ -495,8 +517,7 @@ class BasicChart {
       colorSet,
       underlineColor
     } = this._getColors();
-    this.isNarrow = window.screen.width <= 1024;
-    const padding = this.isNarrow ? 0 : 15;
+    const padding = this._isNarrow ? 0 : 15;
     // title, color, tooltip, legend are required components
     const basicOption = {
       title: {
@@ -543,19 +564,20 @@ class BasicChart {
           show: true,
           formatter: (params) => {
             const name = params.name;
+            /* eslint-disable max-len */
             switch (name) {
               case '现存确诊':
-                return '现存确诊 = 累计确诊 - 治愈 - 死亡<br>由于各个地区统计口径不一，<br>该数据未必能准确表示现存的确诊人数';
+                return '<b>现存确诊</b> = 累计确诊 - 治愈 - 死亡<br><small>由于各个地区统计口径不一，<br>该数据未必能准确表示现存的确诊人数</small>';
               case '治愈':
-                return '各个地区统计口径不一<br>或不算入自愈人群，或仅记录住院治疗后痊愈的人数';
+                return '<small>各个地区统计口径不一<br>或不算入自愈人群，或仅记<br>录住院治疗后痊愈的人数</small>';
               case '死亡':
-                return '各个地区统计口径不一<br>或仅记录住院治疗后死亡的人数';
+                return '<small>各个地区统计口径不一<br>或仅记录住院治疗后死亡的人数</small>';
               case '估计治疗率':
-                return '估计治疗率 =（治愈 + 死亡）/ 累计确诊<br>由于各个地区统计口径不一，<br>该数据未必有意义';
+                return '<b>估计治疗率</b> =（治愈 + 死亡）/ 累计确诊<br><small>由于各个地区统计口径不一，<br>该数据未必有意义</small>';
               case '住院死亡率':
-                return '住院死亡率 = 死亡 /（治愈 + 死亡）<br>由于各个地区统计口径不一，<br>该数据未必有意义';
+                return '<b>住院死亡率</b> = 死亡 /（治愈 + 死亡）<br><small>由于各个地区统计口径不一，<br>该数据未必有意义</small>';
               case '累计死亡率':
-                return '累计死亡率 = 死亡 / 累计确诊';
+                return '<b>累计死亡率</b> = 死亡 / 累计确诊';
               case '感染密度':
                 return '每百万人中的确诊人数';
               case '死亡密度':
@@ -563,6 +585,7 @@ class BasicChart {
               default:
                 return name;
             }
+            /* eslint-disable max-len */
           }
         }
       },
@@ -576,7 +599,34 @@ class BasicChart {
         trigger: 'item',
         show: true,
         hideDelay: 800,
-        extraCssText: 'align-items: flex-start',
+        className: 'tooltip',
+        extraCssText: `
+          border: none;
+          background-color: #ffffffb0;
+          backdrop-filter: blur(6px);
+          text-align: left;
+          max-width: ${this._isNarrow ? 300 : 500}px;
+          white-space: nowrap;
+        `,
+        position: (point, params, dom, rect, size) => {
+          const [contentWidth, contentHeight] = size.contentSize;
+          const [viewWidth, viewHeight] = size.viewSize;
+          const [pointerX, pointerY] = point;
+          const pos = {};
+          if (pointerY + contentHeight + 15 > viewHeight) {
+            pos.top = pointerY - contentHeight - 15;
+          } else {
+            pos.top = pointerY + 15;
+          }
+
+          if (pointerX + contentWidth > viewWidth) {
+            pos.left = viewWidth - contentWidth;
+          } else {
+            pos.left = pointerX;
+          }
+
+          return pos;
+        },
         formatter: (params) => {
           const {
             componentType,
@@ -654,6 +704,7 @@ class BasicChart {
     this._setOption(basicOption);
     return basicOption;
   }
+  /* Tool methods */
 }
 
 BasicChart.queue = new ExecuteQueue();

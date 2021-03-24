@@ -49,12 +49,14 @@ export default {
     },
 
     moveIndicator(moving) {
-      const index =
-        this.pages.findIndex((page) => page.name === this.currentPage);
-      const routeElem = document.querySelector('.menu-item');
+      // const index = this.pages.findIndex((page) => page.name === this.currentPage);
+      const routeElem = document.querySelector('.menu-item.active') ||
+        document.querySelector('.menu-item');
+        //console.log(routeElem.offsetParent);
+        //console.log(routeElem.offsetLeft);
       const indicator = this.$refs.indicator;
       // eslint-disable-next-line max-len
-      const offset = routeElem.offsetWidth / 2 - indicator.offsetWidth / 2 + routeElem.offsetWidth * index;
+      const offset = routeElem.offsetWidth / 2 - indicator.offsetWidth / 2 + routeElem.offsetLeft;// routeElem.offsetWidth * index;
       indicator.style = `transform: translateX(${offset}px)`;
       this.moving = moving;
     }
@@ -97,6 +99,7 @@ export default {
   font-size: $font-size-big;
   font-weight: bold;
   color: var(--app-text-color-in-dark);
+  position: relative;
   .menu-item {
     cursor: pointer;
     width: 6rem;

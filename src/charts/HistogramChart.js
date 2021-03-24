@@ -91,7 +91,6 @@ export default class HistogramChart extends BasicChart {
       tooltip: {
         trigger: 'item',
         show: true,
-        extraCssText: 'align-items: flex-start',
         formatter: (params) => {
           const {
             seriesType,

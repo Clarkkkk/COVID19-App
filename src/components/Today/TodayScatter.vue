@@ -27,6 +27,7 @@ export default {
       '地方名',
       '估计治疗率',
       '住院死亡率',
+      '累计死亡率',
       '更新时间'
     ];
     this.$nextTick().then(() => this.initializeChart());
@@ -43,13 +44,14 @@ export default {
   methods: {
     initializeChart() {
       const option = {
-        title: {text: '{underline|各指标相关散点图}'},
+        title: {text: '{underline|治疗率与死亡率相关散点图}'},
         dataset: this.convertDataset(this.dataset)
       };
       const config = {
         dimensions: this.dimensions,
         fullscreen: this.fullscreen,
-        valueType: 'percentage'
+        valueType: 'percentage',
+        legendRange: [2, 4]
       };
       this.chart = new ScatterChart(this.$refs.canvas, option, config);
     },

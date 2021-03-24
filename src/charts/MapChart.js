@@ -247,7 +247,7 @@ export default class MapChart extends BasicChart {
         dimension: index,
         inRange: {
           color: colorSet[index - 1],
-          colorLightness: [this.isDark ? 0.8 : 0.95, 0.2]
+          colorLightness: [this._isDark ? 0.8 : 0.95, 0.2]
         },
         textStyle: {
           color: foregroundColor,

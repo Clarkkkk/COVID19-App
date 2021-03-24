@@ -38,6 +38,10 @@ export default class ScatterChart extends BasicChart {
     for (const dimension of legendDimensions) {
       const option = isInitial ? this._createSeriesBasicOption() : {};
       option.name = dimension;
+      option.encode = {
+        x: this.dimensions.indexOf(legendDimensions[0]) - 1,
+        y: this.dimensions.indexOf(dimension)
+      },
       series.push(option);
     }
     this._setOption({series});
@@ -76,11 +80,11 @@ export default class ScatterChart extends BasicChart {
         formatter: ({seriesName, dimensionNames, data, name}) => {
           if (data) {
             const area = data[0];
+            const xValue = this._valueFormatter(data[1]);
+            const xName = dimensionNames[1];
             const index = dimensionNames.indexOf(seriesName);
-            const value = this._valueFormatter(data[index]);
-            const updateTime = data[data.length - 1];
-            const formatTime = (new Date(updateTime)).toLocaleString();
-            return `${area} | ${seriesName}：${value} <br> ${formatTime}`;
+            const yValue = this._valueFormatter(data[index]);
+            return `<b>${area}</b><br>${xName}：${xValue}<br>${seriesName}：${yValue}`;
           } else {
             return `${name} | 暂无数据`;
           }
@@ -108,10 +112,6 @@ export default class ScatterChart extends BasicChart {
           const value = params.value[index];
           return this._valueFormatter(value);
         }
-      },
-      encode: {
-        x: 1,
-        y: 2
       },
       datasetIndex: 1,
       emphasis: {
