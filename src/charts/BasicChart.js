@@ -123,10 +123,8 @@ class BasicChart {
   /* Initialization */
   _initializeColorMode() {
     const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
-    console.log(mediaQueryList);
     this._isDark = mediaQueryList.matches;
     mediaQueryList.addEventListener('change', (e) => {
-      console.log(e);
       this._isDark = e.matches;
       this._switchDarkMode();
     });

@@ -18,13 +18,17 @@ export default class CustomChart extends BasicChart {
 
   _initialize(option, config) {
     const layoutConfig = this._getLayoutConfig(option);
+    this.frameCount = [];
     this._setBasicOption(layoutConfig);
     this._setOption(option);
+
     this.chartTypes = config.chartTypes;
+    this._type = this.chartTypes[0].name;
     this.options = this._createOptions();
-    this.frameCount = [];
-    this._setOption(this.options[0]);
+    this._setOption(this.options.find((option) => option.type === this._type));
+
     this._setBasicToolbox();
+
     this._chart.on('legendselectchanged', () => {
       console.log('legend changed');
       this.isLegendChanged = true;
@@ -34,9 +38,15 @@ export default class CustomChart extends BasicChart {
 
   update(option) {
     this._setOption(option);
+    const pieIndex = this.options.findIndex((option) => option.type === 'pie');
+    this.options[pieIndex] = this._createPieOption();
+    if (this._type === 'pie') {
+      this._setOption(this.options[pieIndex]);
+    }
   }
 
   switchType(type) {
+    this._type = type;
     for (const option of this.options) {
       if (option.type === type) {
         this._setOption(option, {
@@ -45,6 +55,7 @@ export default class CustomChart extends BasicChart {
         break;
       }
     }
+    this._setDatasetIndex();
   }
 
   // set dataset index
@@ -248,7 +259,7 @@ export default class CustomChart extends BasicChart {
         show: false,
       },
       dataZoom: {
-        show: false
+        show: true
       }
     };
 

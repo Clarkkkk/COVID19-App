@@ -188,12 +188,6 @@ export default {
   align-items: flex-end;
 }
 
-.title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #222;
-}
-
 .news {
   flex: 1 1 40vw;
 }
