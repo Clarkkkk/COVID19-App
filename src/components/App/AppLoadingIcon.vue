@@ -29,6 +29,7 @@
   display: grid;
   place-items: center;
 }
+
 .spinner-icon {
   height: calc(var(--basic-length) * 20);
   width: calc(var(--basic-length) * 20);
@@ -52,6 +53,12 @@
   animation-duration: calc(var(--frame-time) * 12);
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bar {
+    background-color: #fff;
+  }
 }
 
 @keyframes loading-spinner {

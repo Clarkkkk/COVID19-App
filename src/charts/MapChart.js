@@ -27,6 +27,7 @@ export default class MapChart extends BasicChart {
     this._zoomLevelValue = 1;
     // set zooming tool's callbacks and map legend symbol
     this._setZoomFeatures();
+    this._roamLock = true;
     // setSeries should be called before dimensions relavant functions
     this._setSeries(config.area);
     this._setMapLegendSymbol();
@@ -96,6 +97,7 @@ export default class MapChart extends BasicChart {
     super._switchDarkMode();
     // set icon color for zoom in and zoom out
     this.zoomLevel = this.zoomLevel + 0;
+    this._setIconColor('myRoamLock', true);
     this._setVisualMap();
   }
 
@@ -104,6 +106,18 @@ export default class MapChart extends BasicChart {
     this._setOption({
       toolbox: {
         feature: {
+          myRoamLock: {
+            title: '拖拽锁定切换',
+            iconStyle: {
+              color: foregroundColor,
+              borderColor: foregroundColor,
+              borderWidth: 0.2
+            },
+            onclick: () => this._switchRoamLock(),
+            // eslint-disable-next-line max-len
+            icon: 'm 21.122486,17.131627 h 1 v 5 h -8 v -5 h 1 v -1 c 0,-3.999998 6,-3.999998 6,0 z m -2,0 v -1 c 0,-1.333333 -2,-1.333333 -2,0 v 1 z m -7.012394,4.934428 -4.0000001,-4 4.6605501,-0.01101 v 3.357798 z m 0,-20 4,3.9999997 H 8.1100919 Z m 0,12 c -2.6666655,0 -2.6666655,-4 0,-4 2.666666,0 2.666666,4 0,4 z m -10.0000002,-2 4.0000001,-4.0000003 v 8.0000003 z m 19.5573792,-0.175744 -3.590689,0 0,-3.7365049 z'
+
+          },
           myZoomIn: {
             title: '放大',
             iconStyle: {
@@ -164,6 +178,37 @@ export default class MapChart extends BasicChart {
     }, {
       lazyUpdate: false
     });
+  }
+
+  _switchRoamLock() {
+    this._roamLock = !this._roamLock;
+    /* eslint-disable max-len */
+    const roamIcon = 'M12 22l-4-4h8l-4 4zm0-20l4 4H8l4-4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM2 12l4-4v8l-4-4zm20 0l-4 4V8l4 4z';
+    const roamLockIcon = 'm 21.122486,17.131627 h 1 v 5 h -8 v -5 h 1 v -1 c 0,-3.999998 6,-3.999998 6,0 z m -2,0 v -1 c 0,-1.333333 -2,-1.333333 -2,0 v 1 z m -7.012394,4.934428 -4.0000001,-4 4.6605501,-0.01101 v 3.357798 z m 0,-20 4,3.9999997 H 8.1100919 Z m 0,12 c -2.6666655,0 -2.6666655,-4 0,-4 2.666666,0 2.666666,4 0,4 z m -10.0000002,-2 4.0000001,-4.0000003 v 8.0000003 z m 19.5573792,-0.175744 -3.590689,0 0,-3.7365049 z';
+    /* eslint-disable max-len */
+    const icon = this._roamLock ? roamLockIcon : roamIcon;
+    const roam = this._roamLock ? false : 'move';
+
+    this._setOption({
+      toolbox: {
+        feature: {
+          myRoamLock: {
+            icon
+          }
+        }
+      }
+    });
+
+    const series = [];
+    const legendDimensions = this._getLegendDimensions();
+    for (const dimension of legendDimensions) {
+      const option = {
+        name: dimension,
+        roam
+      };
+      series.push(option);
+    }
+    this._setOption({series});
   }
 
   // set the map labels to show or not
@@ -281,7 +326,7 @@ export default class MapChart extends BasicChart {
       aspectScale: 0.77,
       seriousLayoutBy: 'column',
       showLegendSymbol: false,
-      roam: 'move',
+      roam: !this._roamLock,
       nameMap,
       zoom: 1,
       label: {

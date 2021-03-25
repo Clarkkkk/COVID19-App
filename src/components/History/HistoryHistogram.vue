@@ -117,15 +117,4 @@ export default {
 </script>
 
 <style scoped>
-/*
-#history-histogram {
-  min-width: 40vw;
-  height: 80vmin;
-}
-*/
-
-.canvas {
-  width: 100%;
-  height: 100%;
-}
 </style>

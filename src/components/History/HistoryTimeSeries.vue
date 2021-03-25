@@ -100,15 +100,4 @@ export default {
 </script>
 
 <style scoped>
-/*
-#history-time-seires {
-  width: 100%;
-  height: 80vmin;
-}
-*/
-
-.canvas {
-  width: 100%;
-  height: 100%;
-}
 </style>

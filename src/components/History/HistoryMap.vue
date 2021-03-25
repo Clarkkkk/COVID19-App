@@ -87,26 +87,4 @@ export default {
 </script>
 
 <style scoped>
-/*
-#history-map {
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-  position: relative;
-  min-width: 80vw;
-  height: 80vw;
-  flex: 1 1 50vw;
-}
-
-@media screen and (min-aspect-ratio: 4/3) {
-  #history-map {
-    min-width: 60vw;
-    height: 50vw;
-  }
-}
-*/
-
-.canvas {
-  width: 100%;
-  height: 100%;
-}
 </style>

@@ -36,6 +36,7 @@ export default {
 $selector-option-width: 4rem;
 $selector-option-height: 1.3rem;
 $selector-padding: 2px;
+$number: 2;
 
 #app-selector {
   position: absolute;
@@ -57,11 +58,11 @@ $selector-padding: 2px;
 }
 
 .selector {
-  width: calc($number * $selector-option-width + $selector-padding * 2);
-  height: calc($selector-option-height + $selector-padding * 2);
+  width: calc(#{$number * $selector-option-width} + #{$selector-padding * 2});
+  height: calc(#{$selector-option-height} + #{$selector-padding * 2});
   padding: $selector-padding;
   box-sizing: border-box;
-  background-color: $grey-lightest;
+  background-color: var(--selector-background);
   display: flex;
   border-radius: 5px;
   position: relative;
@@ -74,9 +75,9 @@ $selector-padding: 2px;
     left: $selector-padding;
     width: $selector-option-width;
     height: $selector-option-height;
-    background-color: $white;
+    background-color: var(--selector-indicator);
     border-radius: 4px;
-    box-shadow: 0 0 6px $grey-lighter;
+    box-shadow: 0 0 6px var(--shadow-color);
     z-index: 0;
     transition: transform 300ms;
   }
@@ -92,6 +93,7 @@ $selector-padding: 2px;
     text-align: center;
     display: inline;
     font-size: $font-size-small;
+    color: var(--app-text-color);
     z-index: 10;
   }
 }

@@ -259,7 +259,13 @@ class BasicChart {
 
   _showLoading() {
     this._loading = true;
-    this._chart.showLoading();
+    const {foregroundColor, backgroundColor} = this._getColors();
+    this._chart.showLoading({
+      text: '加载中',
+      fontSize: 14,
+      textColor: foregroundColor,
+      maskColor: backgroundColor + 'd0'
+    });
   }
 
   _resize() {
@@ -271,11 +277,11 @@ class BasicChart {
   /* Color mode methods */
   _getColors() {
     // basic colors
-    // eslint-disable-next-line max-len
+    /* eslint-disable max-len */
     const DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
     const BACKGROUND_COLOR = '#ffffff';
-    const FOREGROUND_COLOR = '#333';
-    const UNAVAILABLE_COLOR = '#aaa';
+    const FOREGROUND_COLOR = '#333333';
+    const UNAVAILABLE_COLOR = '#aaaaaa';
     const APP_COLOR = '#00a59d';
     const APP_COLOR_LIGHTER = '#00a59d';
     const APP_COLOR_DARKER = '#00666d';
@@ -284,8 +290,8 @@ class BasicChart {
     // eslint-disable-next-line max-len
     const DIMENSION_COLOR_DARK = ['#4992ff', '#7cffb2', '#fddd60', '#ff6e76', '#58d9f9', '#05c091', '#ff8a45', '#8d48e3', '#dd79ff'];
     const BACKGROUND_COLOR_DARK = '#181818';
-    const FOREGROUND_COLOR_DARK = '#fff';
-    const UNAVAILABLE_COLOR_DARK = '#555';
+    const FOREGROUND_COLOR_DARK = '#ffffff';
+    const UNAVAILABLE_COLOR_DARK = '#555555';
     const UNDERLINE_COLOR_DARK = APP_COLOR;
     return {
       colorSet: this._isDark ? DIMENSION_COLOR_DARK : DIMENSION_COLOR,
@@ -295,6 +301,7 @@ class BasicChart {
       unavailableColor: this._isDark ? UNAVAILABLE_COLOR_DARK : UNAVAILABLE_COLOR,
       underlineColor: this._isDark ? UNDERLINE_COLOR_DARK : UNDERLINE_COLOR
     };
+    /* eslint-disable max-len */
   }
 
   _switchDarkMode() {
@@ -604,6 +611,7 @@ class BasicChart {
           border: none;
           background-color: #ffffffb0;
           backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
           text-align: left;
           max-width: ${this._isNarrow ? 300 : 500}px;
           white-space: nowrap;

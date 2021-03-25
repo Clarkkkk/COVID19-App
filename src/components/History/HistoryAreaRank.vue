@@ -105,19 +105,4 @@ export default {
 </script>
 
 <style scoped>
-/*
-#history-area-rank {
-  min-width: 20rem;
-  min-height: 32rem;
-  height: 32rem;
-  flex: 1 1 18rem;
-  box-shadow: var(--app-card-shadow);
-  border-radius: var(--app-card-radius);
-}
-*/
-
-.canvas {
-  width: 100%;
-  height: 100%;
-}
 </style>

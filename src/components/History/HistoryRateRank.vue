@@ -178,15 +178,4 @@ export default {
 </script>
 
 <style scoped>
-/*
-#history-rate-rank {
-  min-width: 40vw;
-  height: 80vmin;
-}
-*/
-
-.canvas {
-  width: 100%;
-  height: 100%;
-}
 </style>

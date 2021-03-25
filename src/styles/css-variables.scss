@@ -14,6 +14,8 @@
   --scrollbar-color: #{$grey-lighter};
   --scrollbar-background: #{$white};
   --header-color: #{color.change($app-color, $alpha: 0.8125)};
+  --selector-background: #{$grey-lightest};
+  --selector-indicator: #{$white};
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,6 +33,8 @@
     --scrollbar-color: #{$grey-darker};
     --scrollbar-background: #{$grey-darker};
     --header-color: #{color.change($app-color, $alpha: 0.8125)};
+    --selector-background: #{$black};
+    --selector-indicator: #{$black-ter};
   }
 }
 

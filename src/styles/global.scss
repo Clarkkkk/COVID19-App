@@ -19,9 +19,7 @@
   @extend %full-size;
 }
 
-body {
+:root {
   letter-spacing: 0.5px;
   background-color: var(--app-background-color);
 }
-
-
