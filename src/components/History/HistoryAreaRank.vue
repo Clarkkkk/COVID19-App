@@ -26,6 +26,14 @@ export default {
     this.$nextTick().then(() => this.initializeChart());
   },
 
+  activated() {
+    this.chart.activated();
+  },
+
+  deactivated() {
+    this.chart.deactivated();
+  },
+
   watch: {
     area() {
       this.chart.showLoading();

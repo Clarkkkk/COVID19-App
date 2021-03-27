@@ -27,6 +27,14 @@ export default {
     this.$nextTick().then(() => this.initializeChart());
   },
 
+  activated() {
+    this.map.activated();
+  },
+
+  deactivated() {
+    this.map.deactivated();
+  },
+
   watch: {
     dataset(newDataset) {
       // if dataset is changed, this.area shoule have been changed

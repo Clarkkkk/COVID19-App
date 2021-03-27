@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import {createDebounce} from '@/utils';
+const debounce = createDebounce(100);
 export default {
   data() {
     return {
@@ -74,6 +76,9 @@ export default {
     this.moveIndicator(false);
     this.$refs.indicator.addEventListener('animationend', () => {
       this.moving = false;
+    });
+    window.addEventListener('resize', () => {
+      debounce(() => this.moveIndicator(false));
     });
   }
 };

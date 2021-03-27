@@ -50,6 +50,14 @@ export default {
     });
   },
 
+  activated() {
+    this.chart.activated();
+  },
+
+  deactivated() {
+    this.chart.deactivated();
+  },
+
   watch: {
     area(val) {
       const titleText = this.area === 'China' ? '中国' : '全球';

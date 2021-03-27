@@ -59,6 +59,14 @@ export default {
     });
   },
 
+  activated() {
+    this.chart.activated();
+  },
+
+  deactivated() {
+    this.chart.deactivated();
+  },
+
   watch: {
     area(val) {
       this.chart.showLoading();

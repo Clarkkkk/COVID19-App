@@ -26,6 +26,14 @@ export default {
     this.$nextTick().then(() => this.initializeChart());
   },
 
+  activated() {
+    this.map.activated();
+  },
+
+  deactivated() {
+    this.map.deactivated();
+  },
+
   watch: {
     area() {
       this.map.showLoading();

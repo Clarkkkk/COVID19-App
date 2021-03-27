@@ -97,6 +97,7 @@ class BasicChart {
     // used in fullscreen switch
     this._fullscreen = fullscreen;
     this._isNarrow = window.screen.width <= 1024;
+    this._active = true;
 
     this._initializeTimelineTooltip();
     this._priority = priority;
@@ -109,7 +110,7 @@ class BasicChart {
     // resize the map when window resizes
     const resizeDebounce = createDebounce(200);
     window.addEventListener('resize', () => {
-      resizeDebounce(() => this._resize());
+      this._active && resizeDebounce(() => this._resize());
     });
 
     // for test
@@ -233,6 +234,15 @@ class BasicChart {
 
   showLoading() {
     this._showLoading();
+  }
+
+  activated() {
+    this._active = true;
+    this._resize();
+  }
+
+  deactivated() {
+    this._active = false;
   }
   /* Public methods */
 

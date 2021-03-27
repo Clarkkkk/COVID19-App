@@ -60,7 +60,7 @@ import {
   createDebounce,
   fetchJSON
 } from '@/utils';
-const debounce = createDebounce(6000);
+const debounce = createDebounce(5000);
 export default {
   data() {
     return {
