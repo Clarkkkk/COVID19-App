@@ -23,7 +23,8 @@ export default {
 
   created() {
     this.map;
-    this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡', '更新时间'];
+    this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
+      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '更新时间'];
     this.$nextTick().then(() => this.initializeChart());
   },
 
@@ -64,4 +65,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#today-map {
+  height: 105vh;
+}
 </style>

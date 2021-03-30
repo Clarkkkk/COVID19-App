@@ -78,7 +78,7 @@ export default {
       if (this.datasets[this.area]) {
         return Promise.resolve(this.datasets[this.area]);
       } else {
-        return fetchJSON('/latest').then((res) => {
+        return fetchJSON('/covid/latest').then((res) => {
           this.datasets[this.area] = this.createDataset(res);
         });
       }

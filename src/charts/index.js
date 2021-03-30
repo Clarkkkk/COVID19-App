@@ -5,6 +5,7 @@ import HistogramChart from './HistogramChart';
 import LineChart from './LineChart';
 import MapChart from './MapChart';
 import ScatterChart from './ScatterChart';
+import ScatterChart3d from './ScatterChart3d';
 
 export {
   BasicChart,
@@ -13,5 +14,6 @@ export {
   HistogramChart,
   LineChart,
   MapChart,
-  ScatterChart
+  ScatterChart,
+  ScatterChart3d
 };

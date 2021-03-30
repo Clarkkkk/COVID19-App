@@ -222,9 +222,12 @@ export default class HistogramChart extends BasicChart {
   }
 
   _calcMiddle(arr) {
-    const index = arr.length % 2 ?
-      Math.floor(arr.length / 2) :
-      (arr[arr.length / 2] + arr[arr.length / 2 + 1]) / 2;
-    return arr[index];
+    let middle;
+    if (arr.length % 2) {
+      middle = arr[Math.floor(arr.length / 2)];
+    } else {
+      middle = (arr[arr.length / 2 - 1] + arr[arr.length / 2]) / 2;
+    }
+    return middle;
   }
 }

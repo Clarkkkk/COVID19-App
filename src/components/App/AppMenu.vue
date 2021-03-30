@@ -54,6 +54,11 @@ export default {
       // const index = this.pages.findIndex((page) => page.name === this.currentPage);
       const routeElem = document.querySelector('.menu-item.active') ||
         document.querySelector('.menu-item');
+
+      // when menu is hidden, return
+      if (!routeElem) {
+        return;
+      }
         //console.log(routeElem.offsetParent);
         //console.log(routeElem.offsetLeft);
       const indicator = this.$refs.indicator;

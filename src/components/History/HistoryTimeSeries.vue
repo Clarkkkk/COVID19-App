@@ -32,7 +32,7 @@ export default {
       const option = {
         title: {
           text: '{underline|地区疫情时间线}'
-          },
+        },
         dataset: this.datasets[this.area],
         legend: {
           selectedMode: 'multiple',
@@ -53,6 +53,7 @@ export default {
       const config = {
         dimensions: this.dimensions,
         fullscreen: this.fullscreen,
+        legendRange: [1, this.dimensions.length],
         priority: 5
       };
       this.chart = new LineChart(this.$refs.canvas, option, config);
@@ -81,7 +82,7 @@ export default {
       if (this.datasets[this.area]) {
         return Promise.resolve(this.datasets[this.area]);
       } else {
-        return fetchJSON('/countries/' + area).then((data) => {
+        return fetchJSON('/covid/' + area).then((data) => {
           this.datasets[this.area] = this.createDataset(data);
         });
       }

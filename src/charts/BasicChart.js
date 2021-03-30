@@ -1,5 +1,7 @@
 
 import * as echarts from 'echarts/core';
+import {Scatter3DChart} from 'echarts-gl/charts';
+import {Grid3DComponent} from 'echarts-gl/components';
 
 // import charts
 import {
@@ -50,7 +52,9 @@ echarts.use(
     GeoComponent,
     DatasetComponent,
     TransformComponent,
-    CanvasRenderer
+    CanvasRenderer,
+    Scatter3DChart,
+    Grid3DComponent
   ]
 );
 
@@ -96,7 +100,7 @@ class BasicChart {
     this.legendRange = legendRange;
     // used in fullscreen switch
     this._fullscreen = fullscreen;
-    this._isNarrow = window.screen.width <= 1024;
+    this._isNarrow = window.screen.width < 1024;
     this._active = true;
 
     this._initializeTimelineTooltip();
@@ -288,6 +292,7 @@ class BasicChart {
     /* eslint-disable max-len */
     const DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
     const BACKGROUND_COLOR = '#ffffff';
+    const SUB_BACKGROUND_COLOR = '#eeeeee';
     const FOREGROUND_COLOR = '#333333';
     const UNAVAILABLE_COLOR = '#aaaaaa';
     const APP_COLOR = '#00a59d';
@@ -298,6 +303,7 @@ class BasicChart {
     // eslint-disable-next-line max-len
     const DIMENSION_COLOR_DARK = ['#4992ff', '#7cffb2', '#fddd60', '#ff6e76', '#58d9f9', '#05c091', '#ff8a45', '#8d48e3', '#dd79ff'];
     const BACKGROUND_COLOR_DARK = '#181818';
+    const SUB_BACKGROUND_COLOR_DARK = '#111111';
     const FOREGROUND_COLOR_DARK = '#ffffff';
     const UNAVAILABLE_COLOR_DARK = '#555555';
     const UNDERLINE_COLOR_DARK = APP_COLOR;
@@ -305,9 +311,10 @@ class BasicChart {
       colorSet: this._isDark ? DIMENSION_COLOR_DARK : DIMENSION_COLOR,
       foregroundColor: this._isDark ? FOREGROUND_COLOR_DARK : FOREGROUND_COLOR,
       backgroundColor: this._isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
+      subBackgroundColor: this._isDark ? SUB_BACKGROUND_COLOR_DARK : SUB_BACKGROUND_COLOR,
       shadowColor: this._isDark ? BACKGROUND_COLOR_DARK : BACKGROUND_COLOR,
       unavailableColor: this._isDark ? UNAVAILABLE_COLOR_DARK : UNAVAILABLE_COLOR,
-      underlineColor: this._isDark ? UNDERLINE_COLOR_DARK : UNDERLINE_COLOR
+      underlineColor: this._isDark ? UNDERLINE_COLOR_DARK : UNDERLINE_COLOR,
     };
     /* eslint-disable max-len */
   }
@@ -668,7 +675,7 @@ class BasicChart {
       }
     };
 
-    const {dataZoom, timeline, visualMap, subtext} = layoutConfig;
+    const {dataZoom, timeline, visualMap, subtext, is3d} = layoutConfig;
     if (subtext) {
       basicOption.grid.top += 20;
     }
@@ -715,6 +722,16 @@ class BasicChart {
           }
         }
       };
+    }
+
+    if (is3d) {
+      basicOption.grid3D = {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0
+      };
+      delete basicOption.grid;
     }
 
     this._setOption(basicOption);

@@ -264,7 +264,7 @@ export default class MapChart extends BasicChart {
     });
     // normalize the number, for example, 356 to 300, 1234 to 1000
     const orderOfMagnitude = 10 ** Math.floor(Math.log10(max));
-    max = max - (max % orderOfMagnitude);
+    max = orderOfMagnitude ? max - (max % orderOfMagnitude) : 0;
     const pieces = [];
     // increase fast, 1, 10, 100, 1000, etc
     if (orderOfMagnitude >= 10000) {
@@ -291,8 +291,9 @@ export default class MapChart extends BasicChart {
         pieces: pieces,
         dimension: index,
         inRange: {
-          color: colorSet[index - 1],
-          colorLightness: [this._isDark ? 0.8 : 0.95, 0.2]
+          color: ['white', colorSet[index - 1]],
+          colorLightness: [this._isDark ? 0.6 : 0.99, 0.2],
+          colorSaturation: [0.6, 1]
         },
         textStyle: {
           color: foregroundColor,

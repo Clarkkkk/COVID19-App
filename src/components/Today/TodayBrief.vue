@@ -3,7 +3,7 @@
     <div class="tile is-parent">
       <div class="content confirmed">
         <div class="category">累计确诊</div>
-        <div class="count">{{ data.Confirmed }}</div>
+        <div class="count">{{ data.Confirmed || '-' }}</div>
         <div class="comment">新增 {{ data.ConfirmedIncr }} 人</div>
       </div>
     </div>
@@ -11,15 +11,22 @@
     <div class="tile is-parent" ref="map">
       <div class="content recovered">
         <div class="category">治愈</div>
-        <div class="count">{{ data.Recovered }}</div>
+        <div class="count">{{ data.Recovered || '-' }}</div>
         <div class="comment">新增 {{ data.RecoveredIncr }} 人</div>
       </div>
     </div>
     <div class="tile is-parent">
       <div class="content deaths">
         <div class="category">死亡</div>
-        <div class="count">{{ data.Deaths }}</div>
+        <div class="count">{{ data.Deaths || '-' }}</div>
         <div class="comment">新增 {{ data.DeathsIncr }} 人</div>
+      </div>
+    </div>
+    <div class="tile is-parent">
+      <div class="content deaths">
+        <div class="category">疫苗接种剂次</div>
+        <div class="count">{{ vaccineData[this.area].total || '-' }}</div>
+        <div class="comment">日均 {{ vaccineData[this.area].daily }} 剂</div>
       </div>
     </div>
     <div class="tile is-parent">
@@ -34,13 +41,18 @@
 
 <script>
 const ONE_DAY_SECONDS = 24 * 60 * 60;
+import {fetchJSON} from '@/utils';
 export default {
-  props: ['data'],
+  props: ['data', 'area'],
   data() {
     return {
       currentDeathsCount: 0,
       currentConfirmedCount: 0,
-      confirmedRate: 0
+      confirmedRate: 0,
+      vaccineData: {
+        China: {},
+        World: {}
+      }
     };
   },
 
@@ -80,6 +92,17 @@ export default {
       this.currentConfirmedCount =
         (this.data.Confirmed + this.data.ConfirmedIncr * passedTime).toFixed(1);
     }, 50);
+
+    fetchJSON('/vaccine/latest').then((res) => {
+      for (const item of res) {
+        if (item.country === 'World') {
+          this.vaccineData['World'] = Object.freeze(item.data);
+        } else if (item.country === 'China') {
+          this.vaccineData['China'] = Object.freeze(item.data);
+        }
+      }
+      console.log(this.vaccineData);
+    });
   }
 };
 </script>
@@ -111,19 +134,19 @@ export default {
 
   > .count {
     font-weight: bold;
-    font-size: 2rem;
+    font-size: $font-size-biggest;
     color: var(--app-color);
   }
 
   > .category {
     color: var(--app-sub-text-color);
-    font-size: 0.8rem;
+    font-size: $font-size-small;
     font-weight: bold;
   }
 
   > .comment {
     color: var(--app-sub-text-color);
-    font-size: 0.8rem;
+    font-size: $font-size-small;
     white-space: nowrap;
   }
 }

@@ -34,7 +34,7 @@
     --scrollbar-background: #{$grey-darker};
     --header-color: #{color.change($app-color, $alpha: 0.8125)};
     --selector-background: #{$black};
-    --selector-indicator: #{$black-ter};
+    --selector-indicator: #{$grey-darker};
   }
 }
 

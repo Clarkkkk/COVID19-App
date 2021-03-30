@@ -40,6 +40,10 @@
       class="column is-half"
       :area="currentArea"
     />
+    <history-vaccine
+      class="column is-full"
+      :area="currentArea"
+    />
     </template>
     <app-loading-icon class="tile is-parent" v-else ref="map" />
   </div>
@@ -51,7 +55,8 @@ import {
   HistoryAreaRank,
   HistoryRateRank,
   HistoryTimeSeries,
-  HistoryHistogram
+  HistoryHistogram,
+  HistoryVaccine
 } from '@/components/History';
 import {AppLoadingIcon} from '@/components/App';
 import {
@@ -82,6 +87,7 @@ export default {
     HistoryRateRank,
     HistoryTimeSeries,
     HistoryHistogram,
+    HistoryVaccine,
     AppLoadingIcon
   },
 
@@ -123,7 +129,7 @@ export default {
       while (more) {
         // fetch and normalize data
         const rawData =
-          await fetchJSON(`/countries/${area}/all`, {limit, page});
+          await fetchJSON(`/covid/${area}/all`, {limit, page});
         const data = this.normalizeData(rawData);
         const dates = rawData.data.map((item) => item.Date);
 

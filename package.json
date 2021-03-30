@@ -11,6 +11,7 @@
     "bulma": "^0.9.2",
     "core-js": "^3.8.3",
     "echarts": "^5.0.1",
+    "echarts-gl": "^2.0.2",
     "echarts-stat": "^1.2.0",
     "register-service-worker": "^1.7.1",
     "sass": "^1.32.8",
