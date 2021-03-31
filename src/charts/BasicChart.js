@@ -1,7 +1,5 @@
 
 import * as echarts from 'echarts/core';
-import {Scatter3DChart} from 'echarts-gl/charts';
-import {Grid3DComponent} from 'echarts-gl/components';
 
 // import charts
 import {
@@ -52,9 +50,7 @@ echarts.use(
     GeoComponent,
     DatasetComponent,
     TransformComponent,
-    CanvasRenderer,
-    Scatter3DChart,
-    Grid3DComponent
+    CanvasRenderer
   ]
 );
 
@@ -350,19 +346,14 @@ class BasicChart {
         }
       },
       toolbox: {
-        feature: {
-          saveAsImage: {
-            iconStyle: {
-              borderColor: foregroundColor,
-              shadowColor: shadowColor
-            }
-          },
-          myFullScreen: {
-            iconStyle: {
-              color: foregroundColor,
-              borderColor: foregroundColor,
-              shadowColor: shadowColor
-            }
+        iconStyle: {
+          color: foregroundColor,
+          shadowColor: shadowColor
+        },
+        emphasis: {
+          iconStyle: {
+            color: foregroundColor,
+            shadowColor: '#888'
           }
         }
       }
@@ -466,30 +457,26 @@ class BasicChart {
     const {shadowColor, foregroundColor} = this._getColors();
     const toolbox = {
       iconStyle: {
+        color: foregroundColor,
         shadowBlur: 5,
-        shadowColor: shadowColor
+        shadowColor: shadowColor,
+        borderWidth: 0
       },
       emphasis: {
         iconStyle: {
+          color: foregroundColor,
           shadowBlur: 5,
           shadowColor: '#888',
-          borderColor: foregroundColor
+          borderWidth: 0
         }
       },
       feature: {
         saveAsImage: {
           pixelRatio: 2,
-          iconStyle: {
-            borderColor: foregroundColor,
-            borderWidth: 2
-          }
+          icon: 'M3 19h18v2H3v-2zm10-5.828L19.071 7.1l1.414 1.414L12 17 3.515 8.515 4.929 7.1 11 13.17V2h2v11.172z'
         },
         myFullScreen: {
           title: '全屏显示',
-          iconStyle: {
-            color: foregroundColor,
-            borderWidth: 0.2
-          },
           onclick: () => this.switchFullScreen(),
           // eslint-disable-next-line max-len
           icon: 'M20 3h2v6h-2V5h-4V3h4zM4 3h4v2H4v4H2V3h2zm16 16v-4h2v6h-6v-2h4zM4 19h4v2H2v-6h2v4z'
@@ -565,6 +552,7 @@ class BasicChart {
       color: colorSet,
       backgroundColor,
       toolbox: {
+        width: this._isNarrow ? 90 : 'auto',
         itemSize: 20,
         itemGap: 20,
         top: 10 + padding,
@@ -741,5 +729,6 @@ class BasicChart {
 }
 
 BasicChart.queue = new ExecuteQueue();
+BasicChart.echarts = echarts;
 
 export default BasicChart;

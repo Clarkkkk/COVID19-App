@@ -57,7 +57,7 @@ export default {
         dimensions: this.dimensions,
         fullscreen: this.fullscreen,
         priority: 10,
-        area: 'China'
+        area: 'CN'
       });
     }
   }

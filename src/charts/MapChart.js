@@ -108,11 +108,6 @@ export default class MapChart extends BasicChart {
         feature: {
           myRoamLock: {
             title: '拖拽锁定切换',
-            iconStyle: {
-              color: foregroundColor,
-              borderColor: foregroundColor,
-              borderWidth: 0.2
-            },
             onclick: () => this._switchRoamLock(),
             // eslint-disable-next-line max-len
             icon: 'm 21.122486,17.131627 h 1 v 5 h -8 v -5 h 1 v -1 c 0,-3.999998 6,-3.999998 6,0 z m -2,0 v -1 c 0,-1.333333 -2,-1.333333 -2,0 v 1 z m -7.012394,4.934428 -4.0000001,-4 4.6605501,-0.01101 v 3.357798 z m 0,-20 4,3.9999997 H 8.1100919 Z m 0,12 c -2.6666655,0 -2.6666655,-4 0,-4 2.666666,0 2.666666,4 0,4 z m -10.0000002,-2 4.0000001,-4.0000003 v 8.0000003 z m 19.5573792,-0.175744 -3.590689,0 0,-3.7365049 z'
@@ -120,11 +115,6 @@ export default class MapChart extends BasicChart {
           },
           myZoomIn: {
             title: '放大',
-            iconStyle: {
-              color: foregroundColor,
-              borderColor: foregroundColor,
-              borderWidth: 0.2
-            },
             onclick: () => this.zoomLevel *= 2,
             // eslint-disable-next-line max-len
             icon: 'M637 443H519V309c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v134H325c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h118v134c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V519h118c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8zm284 424L775 721c122.1-148.9 113.6-369.5-26-509-148-148.1-388.4-148.1-537 0-148.1 148.6-148.1 389 0 537 139.5 139.6 360.1 148.1 509 26l146 146c3.2 2.8 8.3 2.8 11 0l43-43c2.8-2.7 2.8-7.8 0-11zM696 696c-118.8 118.7-311.2 118.7-430 0-118.7-118.8-118.7-311.2 0-430 118.8-118.7 311.2-118.7 430 0 118.7 118.8 118.7 311.2 0 430z'
@@ -133,9 +123,7 @@ export default class MapChart extends BasicChart {
             title: '缩小',
             iconStyle: {
               color: unavailableColor,
-              borderColor: unavailableColor,
-              shadowColor: 'transparent',
-              borderWidth: 0.2
+              shadowColor: 'transparent'
             },
             onclick: () => this.zoomLevel /= 2,
             // eslint-disable-next-line max-len
@@ -293,7 +281,7 @@ export default class MapChart extends BasicChart {
         inRange: {
           color: ['white', colorSet[index - 1]],
           colorLightness: [this._isDark ? 0.6 : 0.99, 0.2],
-          colorSaturation: [0.6, 1]
+          colorSaturation: [0.6, 0.8]
         },
         textStyle: {
           color: foregroundColor,

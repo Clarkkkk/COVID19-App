@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       fullscreen: {value: false},
-      area: 'united kingdom'
+      area: 'gb'
     };
   },
 
@@ -69,7 +69,7 @@ export default {
         return Promise.resolve(this.datasets[this.area]);
       } else {
         return Promise.all([
-          fetchJSON('/vaccine/' + 'gb'),
+          fetchJSON('/vaccine/' + this.area),
           fetchJSON('/covid/' + this.area)
         ]).then((data) => {
           this.datasets[this.area] = this.createDataset(data);

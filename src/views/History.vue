@@ -17,6 +17,7 @@
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
+
     <history-area-rank
       class="column is-two-fifths"
       :area="currentArea"
@@ -36,10 +37,12 @@
       :datasetArr="currentDatasetArr"
       :dates="dates"
     />
+
     <history-histogram
       class="column is-half"
       :area="currentArea"
     />
+
     <history-vaccine
       class="column is-full"
       :area="currentArea"
@@ -71,9 +74,9 @@ export default {
     return {
       selectGroup: ['中国', '世界'],
       selected: '中国',
-      currentArea: 'China',
+      currentArea: 'CN',
       datasetArrays: {
-        China: undefined,
+        CN: undefined,
         World: undefined
       },
       dates: [],
@@ -108,7 +111,7 @@ export default {
     selected(area) {
       // the currentArea is used in series's map name
       if (area === '中国') {
-        this.currentArea = 'China';
+        this.currentArea = 'CN';
       } else if (area === '世界') {
         this.currentArea = 'World';
       }

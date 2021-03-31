@@ -34,7 +34,7 @@ export default {
     this.datasets = {};
 
     this.initializeData(this.area).then((res) => {
-      const titleText = this.area === 'China' ? '中国' : '全球';
+      const titleText = this.area === 'CN' ? '中国' : '全球';
       this.chart = new HistogramChart(this.$refs.canvas, {
         title: {
           text: `{underline|${titleText}各地区疫情指标直方图}`
@@ -60,7 +60,7 @@ export default {
 
   watch: {
     area(val) {
-      const titleText = this.area === 'China' ? '中国' : '全球';
+      const titleText = this.area === 'CN' ? '中国' : '全球';
       this.chart.showLoading();
       this.initializeData(val).then(() => {
         this.chart.update({
@@ -107,7 +107,7 @@ export default {
           ]);
         }
       } else {
-        const countryData = rawData.find((item) => item.country === this.area);
+        const countryData = rawData.find((item) => item.iso === this.area);
         for (const item of countryData.provinces) {
           source.push([
             item.data.Confirmed / this.getPopulation(item.iso) * 1000000,
