@@ -24,8 +24,9 @@ export default {
 
   created() {
     this.chart;
-    this.dimensions = ['日期', '现存确诊', '累计确诊', '治愈', '死亡',
-      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡'];
+    this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
+      '总接种剂次', '日均接种剂次', '每百人接种剂次', '新增现存确诊',
+      '新增累计确诊', '新增治愈', '新增死亡', '日期'];
     this.datasets = {};
 
     this.initializeData(this.area).then(() => {
@@ -53,7 +54,7 @@ export default {
       const config = {
         dimensions: this.dimensions,
         fullscreen: this.fullscreen,
-        legendRange: [1, this.dimensions.length],
+        legendRange: [1, this.dimensions.length - 1],
         priority: 5
       };
       this.chart = new LineChart(this.$refs.canvas, option, config);
@@ -97,6 +98,9 @@ export default {
           item.Confirmed,
           item.Recovered,
           item.Deaths,
+          item.total,
+          item.daily,
+          item.totalPerHundred,
           item.CurrentConfirmedIncr,
           item.ConfirmedIncr,
           item.RecoveredIncr,

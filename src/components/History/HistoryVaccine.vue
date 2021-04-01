@@ -3,6 +3,15 @@
     id="history-time-seires"
     :fullscreen="fullscreen"
   >
+    <div class="select-container">
+      <div class="select is-small">
+        <select v-model="selected">
+          <option v-for="option in selectGroup" :key="option">
+            {{option}}
+          </option>
+        </select>
+      </div>
+    </div>
     <div ref="canvas" class="canvas"></div>
   </app-chart-container>
 </template>
@@ -12,14 +21,32 @@ import {ScatterChart3d} from '@/charts';
 import {AppChartContainer} from '@/components/App';
 import {
   fetchJSON,
-  isoCountryToEchartsName as isoToCountry,
+  echartsNameToIsoCountry as countryToIso
 } from '@/utils';
 export default {
   data() {
     return {
       fullscreen: {value: false},
-      area: 'gb'
+      selected: '世界',
+      selectGroup: ['世界', '中国', '美国', '法国', '英国', '德国', '意大利', '印度', '俄罗斯', '以色列', '日本']
     };
+  },
+
+  computed: {
+    /** @return { string } **/
+    area() {
+      return countryToIso[this.selected];
+    }
+  },
+
+  watch: {
+    area(val) {
+      this.initializeData().then(() => {
+        this.chart.update({
+          dataset: this.datasets[val]
+        });
+      });
+    }
   },
 
   components: {
@@ -108,5 +135,35 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/styles/variables';
+@import "bulma/sass/utilities/mixins";
+#history-time-seires {
+  position: relative;
+}
+
+.select-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(4.5rem + #{$padding-small});
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.select, select {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+@include desktop {
+  .select-container {
+    height: calc(1.5rem + #{$padding-normal});
+  }
+}
 </style>

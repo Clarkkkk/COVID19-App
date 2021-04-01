@@ -2,12 +2,12 @@
   <div id="today" class="tile is-ancestor is-vertical">
     <template v-if="dataAvailable">
     <div class="header tile is-parent">
-        <div class="select">
-          <select v-model="selected">
-            <option v-for="option in selectGroup" :key="option">
-              {{option}}
-            </option>
-          </select>
+      <div class="select">
+        <select v-model="selected">
+          <option v-for="option in selectGroup" :key="option">
+            {{option}}
+          </option>
+        </select>
       </div>
     </div>
 

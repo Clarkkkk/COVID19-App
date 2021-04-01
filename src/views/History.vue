@@ -104,7 +104,8 @@ export default {
   created() {
     this.initializeData(this.currentArea);
     this.defaultDimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '日期'];
+      '总接种剂次', '日均接种剂次', '每百人接种剂次', '新增现存确诊',
+      '新增累计确诊', '新增治愈', '新增死亡', '日期'];
   },
 
   watch: {
@@ -183,6 +184,9 @@ export default {
             singleDayData.Confirmed,
             singleDayData.Recovered,
             singleDayData.Deaths,
+            singleDayData.total,
+            singleDayData.daily,
+            singleDayData.totalPerHundred,
             singleDayData.CurrentConfirmedIncr,
             singleDayData.ConfirmedIncr,
             singleDayData.RecoveredIncr,

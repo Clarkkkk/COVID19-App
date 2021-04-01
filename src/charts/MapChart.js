@@ -102,7 +102,7 @@ export default class MapChart extends BasicChart {
   }
 
   _setZoomFeatures() {
-    const {foregroundColor, unavailableColor} = this._getColors();
+    const {unavailableColor} = this._getColors();
     this._setOption({
       toolbox: {
         feature: {

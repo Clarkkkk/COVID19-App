@@ -79,7 +79,7 @@ module.exports = {
     return {
       optimization: {
         splitChunks: {
-          chunks: 'async',
+          chunks: 'all',
           minSize: 300,
           cacheGroups: {
             vendors: {
@@ -90,10 +90,16 @@ module.exports = {
             },
             echarts: {
               name: `chunk-echarts`,
-              test: /[\\/]echarts[\\/]|[\\/]zrender[\\/]/,
+              test: /[\\/]echarts[\\/]|[\\/]echarts-stat[\\/]|[\\/]zrender[\\/]/,
               priority: -5,
               chunks: 'initial'
-            }
+            },
+            echartsGl: {
+              name: `chunk-echarts-gl`,
+              test: /[\\/]echarts-gl[\\/]|[\\/]claygl[\\/]/,
+              priority: -1,
+              chunks: 'initial'
+            },
           }
         }
       }

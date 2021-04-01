@@ -5,6 +5,7 @@ import fetchJSON from './fetchJSON';
 import {
   nameMap,
   isoCountryToEchartsName,
+  echartsNameToIsoCountry,
   isoProvinceToEchartsName,
   countryPopulation,
   provincePopulation
@@ -17,6 +18,7 @@ export {
   fetchJSON,
   nameMap,
   isoCountryToEchartsName,
+  echartsNameToIsoCountry,
   isoProvinceToEchartsName,
   countryPopulation,
   provincePopulation
