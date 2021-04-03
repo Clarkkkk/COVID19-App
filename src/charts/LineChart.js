@@ -1,4 +1,6 @@
 import BasicChart from './BasicChart';
+import {LineChart as EchartsLineChart} from 'echarts/charts';
+BasicChart.echarts.use(EchartsLineChart);
 
 export default class LineChart extends BasicChart {
   constructor(elem, option, basicConfig) {

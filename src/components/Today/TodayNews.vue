@@ -68,7 +68,7 @@ export default {
 
     parseDescription(str) {
       const wraps = /(\r|\n|\t)+/g;
-      const content = /^(.*)?(<p>)(<a.*】)(<\/?.{0,2}>)*/;
+      const content = /^(.*)?(<p>)(<a[^】]*】)(<\/?.{0,2}>)*/;
       const sources =
         /(（\s*)(<a href="[^"]*")([^>]*)(>)([^<]*)(<\/a>)(\s*）)/g;
       return str
@@ -166,6 +166,12 @@ export default {
     margin: 0;
     margin-bottom: 0.6rem;
     padding: 0;
+  }
+
+  .description::v-deep blockquote {
+    border-left: solid 3px $app-color-lighter;
+    padding-left: $padding-smaller;
+    font-size: $font-size-small;
   }
 
   footer {

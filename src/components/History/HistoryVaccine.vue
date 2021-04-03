@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import {ScatterChart3d} from '@/charts';
+import {ScatterChart3d} from '@/charts3d';
 import {AppChartContainer} from '@/components/App';
 import {
   fetchJSON,
@@ -106,7 +106,6 @@ export default {
 
     createDataset(rawData) {
       const vaccineData = rawData[0].data;
-      console.log(vaccineData);
       const covidData = rawData[1].data;
       const source = [];
       let start;

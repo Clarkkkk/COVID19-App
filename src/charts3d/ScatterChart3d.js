@@ -1,4 +1,4 @@
-import BasicChart from './BasicChart';
+import BasicChart from '../charts/BasicChart';
 import {Scatter3DChart} from 'echarts-gl/charts';
 import {Grid3DComponent} from 'echarts-gl/components';
 BasicChart.echarts.use([
@@ -12,13 +12,13 @@ export default class ScatterChart3d extends BasicChart {
     this._seriesEncode = basicConfig.seriesEncode;
     // this.chartId = this._priority + '-scatter3d';
     this._showLoading();
-    BasicChart.queue.push(this._priority, () => {
-      this._initialize(option);
+    BasicChart.queue.push(this._priority, async () => {
+      await this._initialize(option);
       this._hideLoading();
     });
   }
 
-  _initialize(option) {
+  async _initialize(option) {
     this._setOption(option);
     console.log(this._getOption());
     const layoutConfig = this._getLayoutConfig(option);

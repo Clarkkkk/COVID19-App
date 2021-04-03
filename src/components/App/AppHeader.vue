@@ -3,9 +3,9 @@
     <div class="app-title-container">
       <span class="app-title">COVID-19疫情信息小站</span>
       <span class="app-sub-title">
-        疫情数据每天下午2:00更新 | 新闻每小时更新
+        疫情数据每天下午约 2:00 更新 | 疫苗数据每天下午约 6:00 更新 | 新闻每小时更新
         <br>
-        数据来源：<a href="https://github.com/datasets/covid-19" target="_blank" rel="noopener">datahub.io</a>、<a href="https://t.me/nCoV2019" target="_blank" rel="noopener">@nCoV2019 telegram频道</a>
+        数据来源：<a href="https://github.com/datasets/covid-19" target="_blank" rel="noopener">datahub.io</a>、<a href="https://github.com/owid/covid-19-data/tree/master/public/data/vaccinations" target="_blank" rel="noopener">Our World in Data</a>、<a href="https://t.me/nCoV2019" target="_blank" rel="noopener">@nCoV2019 telegram频道</a>
       </span>
     </div>
     <div class="app-menu-container" ref="menu">

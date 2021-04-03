@@ -141,6 +141,9 @@ class BasicChart {
         triggerOn = 'none';
       } else {
         triggerOn = 'mousemove|click';
+        this._chart.dispatchAction({
+          type: 'hideTip',
+        });
       }
       // timeline.tooltip is not configurable
       // set the global tooltip instead
@@ -178,6 +181,17 @@ class BasicChart {
           }
         }
       });
+
+      // echarts won't fire `timelineplaychanged` event when playing ends
+      // fire it manully to reset tooltip
+      if (index === dates.length - 1) {
+        setTimeout(() => {
+          this._chart.dispatchAction({
+            type: 'timelinePlayChange',
+            playState: false
+          });
+        }, 300);
+      }
     });
   }
 
@@ -286,7 +300,7 @@ class BasicChart {
   _getColors() {
     // basic colors
     /* eslint-disable max-len */
-    const DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
+    const DIMENSION_COLOR = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
     const BACKGROUND_COLOR = '#ffffff';
     const SUB_BACKGROUND_COLOR = '#eeeeee';
     const FOREGROUND_COLOR = '#333333';
@@ -297,7 +311,7 @@ class BasicChart {
     const UNDERLINE_COLOR = APP_COLOR_LIGHTER;
     // dark colors
     // eslint-disable-next-line max-len
-    const DIMENSION_COLOR_DARK = ['#4992ff', '#7cffb2', '#fddd60', '#ff6e76', '#58d9f9', '#05c091', '#ff8a45', '#8d48e3', '#dd79ff'];
+    const DIMENSION_COLOR_DARK = ['#4992ff', '#7cffb2', '#fddd60', '#ff6e76', '#58d9f9', '#05c091', '#ff8a45', '#8d48e3', '#dd79ff', '#4992ff', '#7cffb2', '#fddd60', '#ff6e76', '#58d9f9', '#05c091', '#ff8a45', '#8d48e3', '#dd79ff'];
     const BACKGROUND_COLOR_DARK = '#181818';
     const SUB_BACKGROUND_COLOR_DARK = '#111111';
     const FOREGROUND_COLOR_DARK = '#ffffff';

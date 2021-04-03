@@ -13,12 +13,12 @@ const routes = [
   {
     path: '/history',
     name: 'history',
-    component: () => import('@/views/History.vue'),
+    component: () => import(/* webpackChunkName: "page" */ '@/views/History.vue'),
   },
   {
     path: '/links',
     name: 'links',
-    component: () => import('@/views/Links.vue'),
+    component: () => import(/* webpackChunkName: "page" */ '@/views/Links.vue'),
   }
 ];
 

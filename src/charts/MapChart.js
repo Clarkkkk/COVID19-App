@@ -43,6 +43,13 @@ export default class MapChart extends BasicChart {
       this._setMapLegendSymbol();
       this._setVisualMap();
     });
+
+    this._chart.on('mouseup', (params) => {
+      if (params.componentType !== 'series') return;
+      const dimension = this._getSelected().dimension;
+      const index = this._getLegendDimensions().indexOf(dimension);
+      this._center = this._getOption().series[index].center;
+    });
   }
 
   // register a new map and update it with the option
@@ -83,7 +90,7 @@ export default class MapChart extends BasicChart {
     // set the icon color to reflect if it is available
     // according to the zoom level
     this._setIconColor('myZoomOut', this._zoomLevelValue >= 2);
-    this._setIconColor('myZoomIn', this._zoomLevelValue < 9);
+    this._setIconColor('myZoomIn', this._zoomLevelValue < 8);
     // when zoom level is 2 and above, show the map label
     this._setMapLabel(this._zoomLevelValue >= 2);
     this._setMapLegendSymbol();
@@ -159,9 +166,11 @@ export default class MapChart extends BasicChart {
   }
 
   _setZoomLevel(level) {
+    // center must be set to reflect the current center
     this._setOption({
       series: {
-        zoom: level
+        zoom: level,
+        center: this._center
       }
     }, {
       lazyUpdate: false

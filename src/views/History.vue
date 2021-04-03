@@ -15,7 +15,7 @@
       :area="currentArea"
       :dimensions="defaultDimensions"
       :datasetArr="currentDatasetArr"
-      :dates="dates"
+      :dates="currentDates"
     />
 
     <history-area-rank
@@ -23,7 +23,7 @@
       :area="currentArea"
       :dimensions="defaultDimensions"
       :datasetArr="currentDatasetArr"
-      :dates="dates"
+      :dates="currentDates"
     />
 
     <history-time-series
@@ -35,7 +35,7 @@
       class="column is-half"
       :area="currentArea"
       :datasetArr="currentDatasetArr"
-      :dates="dates"
+      :dates="currentDates"
     />
 
     <history-histogram
@@ -68,7 +68,7 @@ import {
   createDebounce,
   fetchJSON
 } from '@/utils';
-const debounce = createDebounce(5000);
+const debounce = createDebounce(3000);
 export default {
   data() {
     return {
@@ -79,7 +79,10 @@ export default {
         CN: undefined,
         World: undefined
       },
-      dates: [],
+      dates: {
+        CN: [],
+        World: []
+      },
       dataAvailable: false
     };
   },
@@ -98,6 +101,11 @@ export default {
     /** @return { array } **/
     currentDatasetArr() {
       return this.datasetArrays[this.currentArea];
+    },
+
+    /** @return { array } **/
+    currentDates() {
+      return this.dates[this.currentArea];
     }
   },
 
@@ -140,13 +148,13 @@ export default {
         const thisArr = this.datasetArrays;
         if (isFirstFetch) {
           // use the first page of data to render the chart
-          this.dates = dates;
+          this.dates[area] = Object.freeze(dates);
           thisArr[area] = areaDataArr = Object.freeze(data);
           isFirstFetch = false;
           // wait for the router change animation
           setTimeout(() => this.dataAvailable = true, 500);
         } else {
-          this.dates = [...this.dates, ...dates];
+          this.dates[area] = Object.freeze([...this.dates[area], ...dates]);
           // append new data and save it to the array
           areaDataArr = Object.freeze([...areaDataArr, ...data]);
           if (this.currentArea === area) {
