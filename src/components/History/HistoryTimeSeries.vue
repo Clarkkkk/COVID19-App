@@ -25,8 +25,7 @@ export default {
   created() {
     this.chart;
     this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-      '总接种剂次', '日均接种剂次', '每百人接种剂次', '新增现存确诊',
-      '新增累计确诊', '新增治愈', '新增死亡', '日期'];
+      '总接种剂次', '日均接种剂次', '每百人接种剂次', '新增确诊', '新增治愈', '新增死亡', '日期'];
     this.datasets = {};
 
     this.initializeData(this.area).then(() => {
@@ -101,7 +100,6 @@ export default {
           item.total,
           item.daily,
           item.totalPerHundred,
-          item.CurrentConfirmedIncr,
           item.ConfirmedIncr,
           item.RecoveredIncr,
           item.DeathsIncr,

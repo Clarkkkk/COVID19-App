@@ -55,7 +55,7 @@ export default {
 
   created() {
     this.chart;
-    this.dimensions = ['日期', '新增累计确诊', '总接种剂次', '日均接种剂次', '每百人接种剂次'];
+    this.dimensions = ['日期', '新增确诊', '总接种剂次', '日均接种剂次', '每百人接种剂次'];
     this.datasets = {};
     this.initializeData().then(() => {
       const option = {

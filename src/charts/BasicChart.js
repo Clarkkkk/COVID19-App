@@ -443,6 +443,7 @@ class BasicChart {
   // if valueType is an array,
   // it means values in different dimensions have different types
   _valueFormatter(value, dimensionIndex) {
+    if (typeof value !== 'number') return value;
     const type = Array.isArray(this.valueType) ?
       this.valueType[dimensionIndex] : this.valueType;
     if (type === 'percentage') {
@@ -662,12 +663,12 @@ class BasicChart {
           } = params;
 
           if (data && componentType === 'series') {
-            const province = data[0];
+            const area = data[0];
             const index = dimensionNames.indexOf(seriesName);
             const value = this._valueFormatter(data[index], index);
             const updateTime = data[data.length - 1];
-            const formatTime = (new Date(updateTime)).toLocaleString();
-            return `${province} | ${seriesName}：${value} <br> ${formatTime}`;
+            const formatTime = (new Date(updateTime)).toLocaleDateString('zh-Hans-CN', {year: 'numeric', month: 'long', day: 'numeric'});
+            return `${area} | ${seriesName}：${value === undefined ? '暂无数据' : value} <br> ${formatTime}`;
           } else if (componentType === 'timeline') {
             return name;
           } else {

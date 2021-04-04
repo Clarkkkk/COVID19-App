@@ -28,7 +28,7 @@ export default {
   created() {
     this.chart;
     this.dimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '更新时间'];
+      '新增确诊', '新增治愈', '新增死亡', '更新时间'];
     this.$nextTick().then(() => this.initializeChart());
   },
 
@@ -59,7 +59,7 @@ export default {
       const dataset = [
         this.dataset,
         ...this.createTransforms(['现存确诊', '累计确诊', '治愈', '死亡',
-          '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', ])
+          '新增确诊', '新增治愈', '新增死亡'])
       ];
       const option = {
         title: {text: '{underline|各地数据}'},

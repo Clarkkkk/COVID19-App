@@ -31,7 +31,7 @@ export default class MapChart extends BasicChart {
     // setSeries should be called before dimensions relavant functions
     this._setSeries(config.area);
     this._setMapLegendSymbol();
-    this._setVisualMap();
+    this._setVisualMap(option);
     this._setBasicToolbox();
 
     // To fire a finished event
@@ -59,7 +59,7 @@ export default class MapChart extends BasicChart {
     await this._registerMap(area);
     this._setSeries(area);
     this._setOption(option);
-    this._setVisualMap();
+    this._setVisualMap(option);
     this._setMapLegendSymbol();
     this._resetSeriesCenter();
     this.zoomLevel = 1;
@@ -246,19 +246,44 @@ export default class MapChart extends BasicChart {
     this._setOption({series: series});
   }
 
+  _getMaxData(userOption) {
+    const options = userOption.options;
+    const dataset = userOption.dataset || options[0].dataset;
+    const max = new Array(dataset.dimensions.length);
+    max.fill(0);
+    if (options) {
+      options.forEach((option) => {
+        const source = option.dataset.source || option.dataset[0].source;
+        source.forEach((arr) => {
+          arr.forEach((item, index) => {
+            if (item > max[index]) {
+              max[index] = item;
+            }
+          });
+        });
+      });
+    } else {
+      const source = dataset.source || dataset[0].source;
+      source.forEach((arr) => {
+        arr.forEach((item, index) => {
+          if (item > max[index]) {
+            max[index] = item;
+          }
+        });
+      });
+    }
+    return max;
+  }
+
   // set pieces for visualMap
-  _setVisualMap() {
+  _setVisualMap(option) {
+    if (option) {
+      this._maxArr = this._getMaxData(option);
+    }
     const {colorSet, shadowColor, foregroundColor} = this._getColors();
-    const option = this._getOption();
     const index = this._getSelected().index;
-    const source = option.dataset[0].source;
     // find the max number in the data of selected dimension
-    let max = 0;
-    source.forEach((arr) => {
-      if (arr[index] > max) {
-        max = arr[index];
-      }
-    });
+    let max = this._maxArr[index];
     // normalize the number, for example, 356 to 300, 1234 to 1000
     const orderOfMagnitude = 10 ** Math.floor(Math.log10(max));
     max = orderOfMagnitude ? max - (max % orderOfMagnitude) : 0;

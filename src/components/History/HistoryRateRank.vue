@@ -49,7 +49,7 @@ export default {
     },
 
     datasetArr(arr) {
-      // the data of the current area is not fetched yet
+      // the data of the current area is not fetched yet when switching area
       if (!arr) {
         return;
       }

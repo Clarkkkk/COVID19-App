@@ -115,7 +115,7 @@ export default {
 
   created() {
     this.defaultDimensions = ['地方名', '现存确诊', '累计确诊', '治愈', '死亡',
-      '新增现存确诊', '新增累计确诊', '新增治愈', '新增死亡', '更新时间'];
+      '新增确诊', '新增治愈', '新增死亡', '更新时间'];
     // fetch and normalize data
     fetchJSON('/covid/latest').then((res) => {
       this.datasets['World'] = this.createDataset(res);
@@ -157,7 +157,6 @@ export default {
           item.data.Confirmed,
           item.data.Recovered,
           item.data.Deaths,
-          item.data.CurrentConfirmedIncr,
           item.data.ConfirmedIncr,
           item.data.RecoveredIncr,
           item.data.DeathsIncr,
